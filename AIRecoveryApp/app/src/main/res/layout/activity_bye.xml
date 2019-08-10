@@ -164,7 +164,7 @@
             android:layout_alignLeft="@+id/iv_bye_res"
             android:layout_below="@+id/tv_bye_res"
             android:background="#bfbfbf"/>
-        <com.bdl.aisports.widget.PieChartView
+        <com.bdl.airecovery.widget.PieChartView
             android:id="@+id/pie_chart"
             android:layout_width="700dp"
             android:layout_height="400dp"

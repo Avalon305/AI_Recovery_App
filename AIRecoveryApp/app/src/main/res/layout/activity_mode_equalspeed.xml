@@ -206,7 +206,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content">
             <!--顺向力值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_me_positivenumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -224,7 +224,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content">
             <!--反向力值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_me_inversusnumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -332,7 +332,7 @@
                 android:text="活动范围"
                 android:textSize="32sp" />
             <!--功率seekbar-->
-            <com.bdl.aisports.widget.MySeekBar
+            <com.bdl.airecovery.widget.MySeekBar
                 android:id="@+id/sb_scope"
                 android:layout_width="250sp"
                 android:layout_height="wrap_content"

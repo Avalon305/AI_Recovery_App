@@ -324,7 +324,7 @@
             android:layout_marginLeft="120dp"
             android:layout_marginBottom="50dp"
             android:layout_alignParentBottom="true">
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_mb_watt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -374,7 +374,7 @@
                 android:textColor="@color/OrangeRed"
                 android:textSize="32sp" />
             <!--功率seekbar-->
-            <com.bdl.aisports.widget.MySeekBar
+            <com.bdl.airecovery.widget.MySeekBar
                 android:id="@+id/sb_speed"
                 android:layout_width="250sp"
                 android:layout_height="wrap_content"

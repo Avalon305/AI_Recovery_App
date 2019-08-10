@@ -244,7 +244,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/tv_tips_right">
             <!--当前调整部分的数值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
