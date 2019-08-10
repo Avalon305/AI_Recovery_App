@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/background2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/titlebg">
+        <!--模式-->
+        <TextView
+            android:id="@+id/tv_mh_title"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="25dp"
+            android:paddingLeft="5dp"
+            android:layout_centerVertical="true"
+            android:textSize="40dp"
+            android:text="心率模式" />
+
+        <TextView
+            android:id="@+id/tv_mh_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_toLeftOf="@+id/tv_mh_person"
+            android:layout_margin="10dp"
+            android:layout_centerVertical="true"
+            android:textSize="40dp"
+            android:text="欢迎您," />
+        <!--获取用户名来显示文本-->
+        <TextView
+            android:id="@+id/tv_mh_person"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_toLeftOf="@+id/iv_mh_state"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:text="admin"
+            android:textSize="40dp" />
+
+        <ImageView
+            android:id="@+id/iv_mh_state"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignEnd="@+id/tv_mh_title"
+            android:layout_marginRight="30dp"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/guanliyuan1" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tv_mh_title">
+        <!--帮助图标-->
+        <ImageView
+            android:id="@+id/iv_mh_help"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_questioncircle" />
+
+        <TextView
+            android:id="@+id/tv_mh_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_help"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mh_help"
+            android:text=""
+            android:textSize="25dp" />
+        <!--心率-->
+        <ImageView
+            android:id="@+id/iv_mh_heartrate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mh_help"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_heartrate" />
+
+        <TextView
+            android:id="@+id/tv_mh_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_heartrate"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mh_heartrate"
+            android:text="心率: "
+            android:textSize="40sp" />
+        <!--获取心率值显示此文本-->
+        <TextView
+            android:id="@+id/tv_mh_getrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_heartrate"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mh_heart"
+            android:text="--"
+            android:textSize="40sp" />
+
+        <TextView
+            android:id="@+id/tv_mh_ratespace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_heartrate"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/tv_mh_getrate"
+            android:text=""
+            android:textSize="40sp" />
+
+        <!--次数-->
+        <ImageView
+            android:id="@+id/iv_mh_number"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mh_heartrate"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_number" />
+
+        <TextView
+            android:id="@+id/tv_mh_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_number"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mh_number"
+            android:text="次数: "
+            android:textSize="40sp" />
+        <!--获取次数值显示此文本-->
+        <TextView
+            android:id="@+id/tv_mh_getnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_number"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mh_number"
+            android:text="0"
+            android:textSize="40sp" />
+
+        <!--训练倒计时-->
+        <ImageView
+            android:id="@+id/iv_mh_time"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mh_number"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_hourglass" />
+
+        <TextView
+            android:id="@+id/tv_mh_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_time"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mh_time"
+            android:text="训练倒计时: "
+            android:textSize="40sp" />
+        <!--倒计时文本-->
+        <TextView
+            android:id="@+id/tv_mh_gettime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mh_time"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mh_time"
+            android:text="--"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/btn_mh_coach"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:layout_below="@+id/iv_mh_time"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/button_selector"
+            android:text="测试状态"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+        <!--暂停-->
+        <Button
+            android:id="@+id/btn_mh_pause"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:layout_alignBottom="@+id/btn_mh_coach"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/btn_mh_coach"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/button_selector"
+            android:text="暂停"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+
+        <!--下方顺反方向力量数值-->
+        <RelativeLayout
+            android:id="@+id/rl_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true">
+            <!--增加顺向力-->
+
+            <RelativeLayout
+                android:id="@+id/rl_mh_positivenumber"
+                android:layout_above="@+id/tv_mh_positive"
+                android:layout_alignLeft="@id/tv_mh_positive"
+                android:gravity="center_horizontal"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content">
+                <!--顺向力值-->
+                <com.bdl.aisports.widget.NumTextView
+                    android:id="@+id/tv_mh_positivenumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:translationZ="3dp"
+                    android:includeFontPadding="false"
+                    android:text="22"
+                    android:textSize="120dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_mh_inversusnumber"
+                android:layout_above="@+id/tv_mh_inversus"
+                android:layout_alignLeft="@id/tv_mh_inversus"
+                android:gravity="center_horizontal"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content">
+                <!--反向力值-->
+                <com.bdl.aisports.widget.NumTextView
+                    android:id="@+id/tv_mh_inversusnumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:translationZ="3dp"
+                    android:includeFontPadding="false"
+                    android:textSize="120dp"
+                    android:text="21" />
+            </RelativeLayout>
+
+            <!--顺反向力提示文本-->
+            <TextView
+                android:id="@+id/tv_mh_positive"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="250dp"
+                android:textStyle="normal"
+                android:scaleX="1.1"
+                android:textSize="33dp"
+                android:text="顺向力" />
+            <!--阴影-->
+            <!--<ImageView-->
+                <!--android:id="@+id/iv_positivenumber_shadow"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_above="@id/tv_mh_positive"-->
+                <!--android:layout_marginBottom="-17dp"-->
+                <!--android:layout_marginLeft="150dp"-->
+                <!--android:src="@drawable/shadow"/>-->
+            <TextView
+                android:id="@+id/tv_mh_inversus"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="250dp"
+                android:scaleX="1.1"
+                android:textStyle="normal"
+                android:textSize="33dp"
+                android:text="反向力" />
+            <!--阴影-->
+            <!--<ImageView-->
+                <!--android:id="@+id/iv_inversusnumber_shadow"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_above="@id/tv_mh_positive"-->
+                <!--android:layout_marginBottom="-17dp"-->
+                <!--android:layout_marginRight="150dp"-->
+                <!--android:src="@drawable/shadow"/>-->
+        </RelativeLayout>
+
+        <!--心率区间提示信息-->
+        <TextView
+            android:id="@+id/tv_mh_tips0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_mh_pause"
+            android:layout_toEndOf="@+id/tv_mh_gettime"
+            android:layout_toRightOf="@+id/tv_mh_gettime"
+            android:text="您当前所处的心率区间为："
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_mh_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_mh_tips0"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="550dp"
+            android:text="生活区间"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_mh_tips1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_mh_tips"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="510dp"
+            android:text=""
+            android:textSize="40sp" />
+
+
+        <!--折线图底板-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/backboard2"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="-10dp"
+            android:layout_alignParentEnd="true"/>
+        <!--折线图-->
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/mh_chart"
+            android:layout_width="580dp"
+            android:layout_height="280dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="55dp"
+            android:padding="10dp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

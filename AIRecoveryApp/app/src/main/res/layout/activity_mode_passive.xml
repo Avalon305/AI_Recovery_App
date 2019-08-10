@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/background2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--标题栏-->
+    <RelativeLayout
+        android:id="@id/rl_top_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/titlebg">
+        <!--模式-->
+        <TextView
+            android:id="@+id/tv_mp_title"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="25dp"
+            android:paddingLeft="5dp"
+            android:layout_centerVertical="true"
+            android:textSize="40dp"
+            android:text="被动模式" />
+        <TextView
+            android:id="@+id/tv_mp_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/tv_mp_person"
+            android:layout_centerVertical="true"
+            android:text="欢迎您,"
+            android:textSize="40dp" />
+        <!--获取用户名来显示文本-->
+        <TextView
+            android:id="@+id/tv_mp_person"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/iv_mp_state"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:text="admin"
+            android:textSize="40dp" />
+        <!--角色图标-->
+        <ImageView
+            android:id="@+id/iv_mp_state"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            app:srcCompat="@drawable/guanliyuan1" />
+    </RelativeLayout>
+
+
+    <!--左侧信息栏-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/rl_top_title">
+        <!--帮助图标-->
+        <ImageView
+            android:id="@+id/iv_mp_help"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_questioncircle" />
+        <!--心率-->
+        <ImageView
+            android:id="@+id/iv_mp_heartrate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mp_help"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_heartrate" />
+        <TextView
+            android:id="@+id/tv_mp_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mp_heartrate"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mp_heartrate"
+            android:text="心率: "
+            android:textSize="40sp" />
+        <!--获取心率值显示此文本-->
+        <TextView
+            android:id="@+id/tv_mp_getrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mp_heartrate"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mp_heart"
+            android:text="--"
+            android:textSize="40sp" />
+
+        <!--次数-->
+        <ImageView
+            android:id="@+id/iv_mp_number"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mp_heartrate"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_number" />
+        <TextView
+            android:id="@+id/tv_mp_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mp_number"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mp_number"
+            android:text="次数: "
+            android:textSize="40sp" />
+        <!--获取次数值显示此文本-->
+        <TextView
+            android:id="@+id/tv_mp_getnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mp_number"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mp_number"
+            android:text="0"
+            android:textSize="40sp" />
+
+        <!--训练倒计时-->
+        <ImageView
+            android:id="@+id/iv_mp_time"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mp_number"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_hourglass" />
+        <TextView
+            android:id="@+id/tv_mp_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mp_time"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mp_time"
+            android:text="训练倒计时: "
+            android:textSize="40sp" />
+        <!--倒计时文本-->
+        <TextView
+            android:id="@+id/tv_mp_gettime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mp_time"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mp_time"
+            android:text="暂无"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/btn_mp_coach"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:layout_below="@+id/iv_mp_time"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/button_selector"
+            android:text="测试状态"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+        <!--暂停-->
+        <Button
+            android:id="@+id/btn_mp_pause"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:layout_alignBottom="@+id/btn_mp_coach"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/btn_mp_coach"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/button_selector"
+            android:text="暂停"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+    </RelativeLayout>
+
+    <!--下方速度数值-->
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true">
+        <!--减小速度-->
+        <ImageView
+            android:id="@+id/iv_mp_speedminus"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_alignBottom="@+id/rl_mp_speednumber"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="15dp"
+            android:rotation="180"
+            android:layout_toLeftOf="@id/rl_mp_speednumber"
+            android:src="@drawable/mode_plus_selector" />
+        <!--增加速度-->
+        <ImageView
+            android:id="@+id/iv_mp_speedplus"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_toRightOf="@id/rl_mp_speednumber"
+            android:layout_alignBottom="@+id/rl_mp_speednumber"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="15dp"
+            android:padding="4dp"
+            android:src="@drawable/mode_minus_selector" />
+
+        <RelativeLayout
+            android:id="@+id/rl_mp_speednumber"
+            android:layout_above="@+id/tv_mp_speed_tip"
+            android:layout_alignLeft="@id/tv_mp_speed_tip"
+            android:gravity="center_horizontal"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content">
+            <!--顺向力值-->
+            <com.bdl.aisports.widget.NumTextView
+                android:id="@+id/tv_mp_speednumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:translationZ="3dp"
+                android:includeFontPadding="false"
+                android:text="5"
+                android:textSize="120dp" />
+        </RelativeLayout>
+
+        <!--速度提示文本-->
+        <TextView
+            android:id="@+id/tv_mp_speed_tip"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="180dp"
+            android:textStyle="normal"
+            android:scaleX="1.1"
+            android:textSize="33dp"
+            android:text="速度" />
+    </RelativeLayout>
+
+    <!--右侧动画栏-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title"
+        android:layout_marginTop="-7dp"
+        android:layout_alignParentEnd="true">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/backboard3"/>
+        <!--小球弹跳的视图-->
+        <com.bdl.aisports.widget.MyBallView
+            android:id="@+id/bv_mp_ball"
+            android:layout_width="600sp"
+            android:layout_height="400sp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/oval_path"
+            android:layout_centerHorizontal="true" />
+zz
+    </RelativeLayout>
+
+</RelativeLayout>

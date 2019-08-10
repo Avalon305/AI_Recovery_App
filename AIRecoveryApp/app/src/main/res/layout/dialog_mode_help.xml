@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--警示-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+
+        <ImageView
+            android:id="@+id/iv_help_machine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="103dp"
+            android:layout_marginRight="103dp"
+            android:background="@drawable/devsetting" />
+
+        <TextView
+            android:id="@+id/tv_help_machine_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/iv_help_machine"
+            android:layout_marginLeft="54dp"
+            android:layout_marginStart="54dp"
+            android:text="设备名称"
+            android:textColor="@color/Black"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/tv_help_machine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_help_machine_tip"
+            android:layout_alignBottom="@+id/tv_help_machine_tip"
+            android:layout_marginLeft="62dp"
+            android:layout_marginStart="62dp"
+            android:layout_toEndOf="@+id/tv_help_machine_tip"
+            android:layout_toRightOf="@+id/tv_help_machine_tip"
+            android:text="如：拉伸机"
+            android:textColor="@color/Black"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/tv_help_use_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv_help_machine_tip"
+            android:layout_alignStart="@+id/tv_help_machine_tip"
+            android:layout_below="@+id/tv_help_machine_tip"
+            android:layout_marginTop="43dp"
+            android:textColor="@color/Black"
+            android:text="使用说明"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/tv_help_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_help_use_tip"
+            android:layout_marginTop="38dp"
+            android:layout_toEndOf="@+id/tv_help_use_tip"
+            android:layout_toRightOf="@+id/tv_help_use_tip"
+            android:text="1.如按动按钮，启动机器"
+            android:textColor="@color/Black"
+            android:textSize="28sp" />
+
+        <ImageView
+            android:id="@+id/iv_help_split"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="82dp"
+            android:background="#f4ea2a"
+            android:textColor="@color/Black" />
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_help_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="37dp"
+            android:layout_marginEnd="33dp"
+            android:layout_marginRight="33dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingTop="10dp"
+            android:text="关闭"
+            android:textColor="#000"
+            android:textSize="22sp"
+            app:qmui_backgroundColor="#EAEAEA"
+            app:qmui_borderWidth="2dp" />
+
+        <TextView
+            android:id="@+id/tv_help_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="15dp"
+            android:text="帮助"
+            android:textColor="#429213"
+            android:textSize="40dp" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--时间过少无法训练提示 模态框-->
+
+    <!--标题-->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30sp"
+        android:layout_marginTop="20sp"
+        android:text="提示"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="100sp" />
+    <!--分割线-->
+    <ImageView
+        android:id="@+id/split_line"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_below="@+id/tv_title"
+        android:background="@color/colorAccent"/>
+    <!--提示语1-->
+    <TextView
+        android:id="@+id/tv_note_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/split_line"
+        android:layout_marginLeft="40sp"
+        android:layout_marginTop="50sp"
+        android:text="低于合理训练时间的最低限（12秒），训练无法启动"
+        android:textSize="50sp"/>
+    <!--提示语2-->
+    <TextView
+        android:id="@+id/tv_note_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_note_1"
+        android:layout_marginLeft="40sp"
+        android:layout_marginTop="30sp"
+        android:text="您将在3秒后退出系统..."
+        android:textSize="50sp"/>
+
+</RelativeLayout>

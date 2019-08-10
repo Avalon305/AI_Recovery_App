@@ -1,0 +1,771 @@
+  [
+  {
+    "deviceName": "腿部推蹬机(力量循环)",
+    "displayName": "腿部推蹬机",
+    "deviceType": 2,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs0",
+    "helpImg": "帮助图0",
+    "helpWord": "使用说明0.....",
+    "DeviceInnerID": "0",
+    "consequentForce": "25",
+    "reverseForce": "25",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "140",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "40",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "脚踏板位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式背阔肌高拉机(力量循环)",
+    "displayName": "坐式背阔肌高拉机",
+    "deviceType": 1,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs1",
+    "helpImg": "帮助图1",
+    "helpWord": "使用说明1.....",
+    "DeviceInnerID": "1",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "三头肌训练机(力量循环)",
+    "displayName": "三头肌训练机",
+    "deviceType": 1,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs2",
+    "helpImg": "帮助图2",
+    "helpWord": "使用说明2.....",
+    "DeviceInnerID": "2",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "腿部内弯机(力量循环)",
+    "displayName": "腿部内弯机",
+    "deviceType": 1,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs3",
+    "helpImg": "帮助图3",
+    "helpWord": "使用说明3.....",
+    "DeviceInnerID": "3",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "后方限制",
+        "value": "0",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "腿部外弯机(力量循环)",
+    "displayName": "腿部外弯机",
+    "deviceType": 2,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs4",
+    "helpImg": "帮助图4",
+    "helpWord": "使用说明4.....",
+    "DeviceInnerID": "4",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "蝴蝶机(力量循环)",
+    "displayName": "蝴蝶机",
+    "deviceType": 1,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs5",
+    "helpImg": "帮助图5",
+    "helpWord": "使用说明5.....",
+    "DeviceInnerID": "5",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "反向蝴蝶机(力量循环)",
+    "displayName": "反向蝴蝶机",
+    "deviceType": 2,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs6",
+    "helpImg": "帮助图6",
+    "helpWord": "使用说明6.....",
+    "DeviceInnerID": "6",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式背部伸展机(力量循环)",
+    "displayName": "坐式背部伸展机",
+    "deviceType": 2,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs7",
+    "helpImg": "帮助图7",
+    "helpWord": "使用说明7.....",
+    "DeviceInnerID": "7",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "杠杆角度",
+        "value": "0",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "滚轮位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      },
+      {
+        "name": "杠杆角度",
+        "machine": "1",
+        "type": "0",
+        "cmd": "指令2"
+      }
+    ]
+  },
+  {
+    "deviceName": "躯干扭转组合(力量循环)",
+    "displayName": "躯干扭转组合",
+    "deviceType": 3,
+    "activityType": 0,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs8",
+    "helpImg": "帮助图8",
+    "helpWord": "使用说明8.....",
+    "DeviceInnerID": "8",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式腿伸展训练机(力量耐力循环)",
+    "displayName": "坐式腿伸展训练机",
+    "deviceType": 2,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs9",
+    "helpImg": "帮助图9",
+    "helpWord": "使用说明9.....",
+    "DeviceInnerID": "9",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "座位高度",
+        "value": "0",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      },
+      {
+        "name": "杠杆角度",
+        "value": "0",
+        "type": "0",
+        "machine": "2",
+        "cmd": "指令4",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "滚轮位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令2"
+      },
+      {
+        "name": "杠杆角度",
+        "type": "0",
+        "machine": "2",
+        "cmd": "指令3"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式推胸机(力量耐力循环)",
+    "displayName": "坐式推胸机",
+    "deviceType": 2,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs10",
+    "helpImg": "帮助图10",
+    "helpWord": "使用说明10.....",
+    "DeviceInnerID": "10",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "value": "0",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令2"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式划船机(力量耐力循环)",
+    "displayName": "坐式划船机",
+    "deviceType": 1,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs11",
+    "helpImg": "帮助图11",
+    "helpWord": "使用说明11.....",
+    "DeviceInnerID": "11",
+    "consequentForce": "25",
+    "reverseForce": "25",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "130",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "50",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "value": "0",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "机械臂位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令2"
+      }
+    ]
+  },
+  {
+    "deviceName": "椭圆跑步机(力量耐力循环)",
+    "displayName": "椭圆跑步机",
+    "deviceType": 4,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs12",
+    "helpImg": "帮助图12",
+    "helpWord": "使用说明12.....",
+    "DeviceInnerID": "12",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "初始功率",
+        "value": "40",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "100"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "跑步机踏板",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式屈腿训练机(力量耐力循环)",
+    "displayName": "坐式屈腿训练机",
+    "deviceType": 1,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs13",
+    "helpImg": "帮助图13",
+    "helpWord": "使用说明13.....",
+    "DeviceInnerID": "13",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "杠杆角度",
+        "type": "0",
+        "value": "0",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "滚轮位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      },
+      {
+        "name": "杠杆角度",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令2"
+      }
+    ]
+  },
+  {
+    "deviceName": "腹肌训练机(力量耐力循环)",
+    "displayName": "腹肌训练机",
+    "deviceType": 1,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs14",
+    "helpImg": "帮助图14",
+    "helpWord": "使用说明14.....",
+    "DeviceInnerID": "14",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "杠杆角度",
+        "type": "0",
+        "value": "0",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "滚轮位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      },
+      {
+        "name": "杠杆角度",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令2"
+      }
+    ]
+  },
+  {
+    "deviceName": "坐式背部伸展机(力量耐力循环)",
+    "displayName": "坐式背部伸展机",
+    "deviceType": 2,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs7",
+    "helpImg": "帮助图15",
+    "helpWord": "使用说明15.....",
+    "DeviceInnerID": "15",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "前方限制",
+        "value": "150",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "后方限制",
+        "value": "20",
+        "machine": "动态电机",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "199"
+      },
+      {
+        "name": "杠杆角度",
+        "type": "0",
+        "value": "10",
+        "machine": "1",
+        "cmd": "指令3",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "滚轮位置",
+        "machine": "动态电机",
+        "cmd": "指令1"
+      }
+    ]
+  },
+  {
+    "deviceName": "健身车(力量耐力循环)",
+    "displayName": "健身车",
+    "deviceType": 4,
+    "activityType": 1,
+    "generalImg": "devsetting",
+    "muscleImg": "muscle_bs16",
+    "helpImg": "帮助图16",
+    "helpWord": "使用说明16.....",
+    "DeviceInnerID": "16",
+    "consequentForce": "40",
+    "reverseForce": "40",
+    "maxLimit": 200,
+    "minLimit": 0,
+    "personalList": [
+      {
+        "name": "初始功率",
+        "value": "40",
+        "machine": "动态电机",
+        "cmd": "指令1",
+        "min": "0",
+        "max": "100"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "value": "10",
+        "machine": "1",
+        "cmd": "指令2",
+        "min": "0",
+        "max": "8"
+      }
+    ],
+    "testItemList": [
+      {
+        "name": "健身车踏板",
+        "machine": "动态电机",
+        "cmd": "指令2"
+      },
+      {
+        "name": "座位高度",
+        "type": "0",
+        "machine": "1",
+        "cmd": "指令1"
+      }
+    ]
+  }
+]

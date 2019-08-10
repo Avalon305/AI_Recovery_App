@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/updatesoft">
+
+    <!--更新页标题设置-->
+    <!--更新页标题设置-->
+    <TextView
+        android:id="@+id/tv_loading_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:background="@color/bg_color"
+        android:text="  软件更新页"
+        android:textColor="@color/Black"
+        android:textSize="40dp"
+        tools:background="@color/title_color" />
+
+    <!--软件自检更新页正文-->
+
+    <TextView
+        android:id="@+id/tv_repository_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_loading_title"
+        android:layout_alignStart="@+id/tv_loading_title"
+        android:layout_marginStart="456dp"
+        android:layout_marginTop="130dp"
+        android:text="资源位置"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_package_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_repository_tip"
+        android:layout_alignStart="@+id/tv_repository_tip"
+        android:layout_marginStart="246dp"
+        android:layout_marginTop="165dp"
+        android:text="资源包类型"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_nversion_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_package_tip"
+        android:layout_alignStart="@+id/tv_package_tip"
+        android:layout_marginStart="-21dp"
+        android:layout_marginTop="-262dp"
+        android:text="软件当前版本"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_newestver_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_nversion_tip"
+        android:layout_alignStart="@+id/tv_nversion_tip"
+        android:layout_alignLeft="@+id/tv_nversion_tip"
+        android:layout_marginStart="-250dp"
+        android:layout_marginLeft="-250dp"
+        android:layout_marginTop="170dp"
+        android:text="软件最新版本"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_mac_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_ip_tip"
+        android:layout_marginStart="303dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toEndOf="@+id/tv_newestver_text"
+        android:text="本机MAC地址："
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_ip_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_mac_tip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/tv_mac_tip"
+        android:layout_marginBottom="23dp"
+        android:text="本机IP地址："
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_ip_text"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_mac_text"
+        android:layout_alignTop="@+id/tv_ip_tip"
+        android:text="ip "
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_mac_text"
+        android:layout_width="308dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_mac_tip"
+        android:layout_marginLeft="33dp"
+        android:layout_toRightOf="@+id/tv_ip_tip"
+        android:text="mac"
+        android:textColor="@color/Black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_repository_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_package_tip"
+        android:layout_marginStart="-463dp"
+        android:layout_marginTop="-194dp"
+        android:layout_marginBottom="70dp"
+        android:layout_toEndOf="@+id/tv_nversion_tip"
+        android:text="宝德龙云平台"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_package_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tv_repository_text"
+        android:layout_alignBottom="@+id/tv_package_tip"
+        android:layout_marginStart="317dp"
+        android:layout_marginBottom="-60dp"
+        android:text="apk"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_nversion_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_package_text"
+        android:layout_alignBottom="@+id/tv_nversion_tip"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginBottom="-67dp"
+        android:text="V1.0"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/tv_newestver_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_nversion_text"
+        android:layout_alignTop="@+id/tv_newestver_tip"
+        android:layout_marginLeft="-249dp"
+        android:layout_marginTop="54dp"
+        android:text="V1.0"
+        android:textColor="@color/qmui_config_color_white"
+        android:textSize="35sp" />
+
+
+    <!--进度条-->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
+        android:layout_below="@+id/tv_newestver_tip"
+        android:layout_marginLeft="420dp"
+        android:layout_marginTop="139dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar_update"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="400sp"
+            android:layout_height="30sp"
+            android:layout_marginLeft="300dp"
+            android:layout_marginEnd="27dp"
+            android:layout_marginBottom="25dp"
+            android:progressDrawable="@drawable/progressbar_bg" />
+
+        <TextView
+            android:id="@+id/tv_link_result"
+            android:layout_width="wrap_content"
+            android:layout_height="30sp"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="40dp"
+            android:layout_toEndOf="@+id/progressBar_update"
+            android:text="检查更新中..."
+            android:textColor="@color/Black"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

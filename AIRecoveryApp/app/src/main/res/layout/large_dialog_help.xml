@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="1000sp"
+    android:layout_height="750sp"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_shape">
+
+    <TextView
+        android:id="@+id/large_help_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginTop="18dp"
+        android:text="帮助"
+        android:textColor="#000000"
+        android:textSize="45sp"
+        android:textStyle="bold" />
+    <!--分割线-->
+    <ImageView
+        android:id="@+id/iv_large_split"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorAccent" />
+    <!--内容-->
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="580sp">
+
+        <TextView
+            android:id="@+id/large_help_tip1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/large_help_img"
+            android:layout_marginLeft="97dp"
+            android:layout_marginStart="97dp"
+            android:layout_marginTop="28dp"
+            android:text="设备名称"
+            android:textColor="#000"
+            android:textSize="35sp" />
+
+        <TextView
+            android:id="@+id/large_help_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/large_help_tip1"
+            android:layout_marginLeft="61dp"
+            android:layout_marginStart="61dp"
+            android:layout_toEndOf="@+id/large_help_tip1"
+            android:layout_toRightOf="@+id/large_help_tip1"
+            android:text="TextView"
+            android:textColor="#000"
+            android:textSize="35sp" />
+
+        <TextView
+            android:id="@+id/large_help_tip2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/large_help_tip1"
+            android:layout_alignStart="@+id/large_help_tip1"
+            android:layout_below="@+id/large_help_tip1"
+            android:layout_marginTop="66dp"
+            android:textColor="#000"
+            android:textSize="35sp"
+            android:text="使用说明" />
+
+        <TextView
+            android:id="@+id/large_help_usenote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/large_help_tip2"
+            android:layout_alignStart="@+id/large_help_tip2"
+            android:layout_below="@+id/large_help_tip2"
+            android:layout_marginLeft="92dp"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="37dp"
+            android:textColor="#000"
+
+            android:text="TextView"
+            android:textSize="35sp" />
+
+        <ImageView
+            android:id="@+id/large_help_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="102dp"
+            android:layout_marginRight="102dp"
+            android:layout_marginTop="87dp"
+             />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/callback_dialog_tv_dividers"
+            android:layout_width="800dp"
+            android:layout_height="match_parent"
+            android:background="#fff"/>
+
+        <TextView
+            android:id="@+id/large_help_instruction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="关闭"
+            android:textColor="#007AFF"
+            android:textSize="25sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background4"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.LoginActivity">
+
+    <!--设备ID-->
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+        <ImageView
+            android:id="@+id/iv_oval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-80dp"
+            android:src="@drawable/oval" />
+        <TextView
+            android:id="@+id/tv_dev_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="BodyStrong 0"
+            android:textSize="45sp" />
+    </RelativeLayout>
+
+    <!--锻炼肌肉图-->
+    <ImageView
+        android:id="@+id/iv_muscle_image"
+        android:layout_width="580dp"
+        android:layout_height="600dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="66dp"
+        android:layout_marginTop="97dp"
+        android:src="@drawable/muscle_bs0"/>
+
+    <!--产品LOGO-->
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="302dp"
+        android:layout_height="89dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/logolight" />
+
+    <!--设备名称-->
+    <TextView
+        android:id="@+id/tv_dev_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_logo"
+        android:layout_alignLeft="@id/iv_logo"
+        android:layout_marginLeft="-200dp"
+        android:layout_marginBottom="40dp"
+        android:textSize="60sp"
+        android:text="设备名称"/>
+
+    <LinearLayout
+        android:id="@+id/ll_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dev_name"
+        android:layout_alignLeft="@id/tv_dev_name"
+        android:orientation="horizontal">
+        <!--IC卡图标-->
+        <ImageView
+            android:id="@+id/iv_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/card" />
+        <!--提示语-->
+        <TextView
+            android:id="@+id/tv_login_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:text="请使用宝德龙卡\n或感应手环登录"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_note"
+        android:layout_alignLeft="@id/ll_note"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal">
+        <!--时钟图标-->
+        <ImageView
+            android:id="@+id/iv_time"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:src="@drawable/mode_time"/>
+        <!--同步时间倒计时-->
+        <com.bdl.aisports.widget.NumTextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="1:00"
+            android:translationZ="3dp"
+            android:includeFontPadding="false"
+            android:textColor="@android:color/holo_blue_light"
+            android:textSize="103sp"/>
+    </LinearLayout>
+    <!--阴影-->
+    <ImageView
+        android:id="@+id/iv_time_shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_time"
+        android:layout_alignStart="@id/ll_time"
+        android:layout_marginTop="-50dp"
+        android:src="@drawable/shadow2"/>
+</RelativeLayout>

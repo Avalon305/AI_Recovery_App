@@ -1,0 +1,334 @@
+package com.bdl.aisports.service;
+
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.IBinder;
+import android.util.Log;
+
+import com.bdl.aisports.MyApplication;
+import com.bdl.aisports.biz.LoginBiz;
+import com.bdl.aisports.bluetooth.CommonCommand;
+import com.bdl.aisports.bluetooth.CommonMessage;
+import com.bdl.aisports.util.SerialPortUtils;
+import com.google.gson.Gson;
+
+import org.xutils.common.util.LogUtil;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class CardReaderService extends Service {
+    private static final byte HEAD = (byte) 0xAA;  //发卡器协议头（用于校验）
+    private static final byte TILL = (byte) 0xCC;  //发卡器协议尾（用于校验）
+    private static final byte READ = 0x02;         //发卡器协议读卡命令字（用于校验）
+
+    private String TAG = "发卡器service";
+    //注册广播（监听蓝牙广播）
+    private LogReceiver logReceiver = new LogReceiver();
+    private IntentFilter filterLog = new IntentFilter("com.bdl.bluetoothmessage");
+    //状态量
+    private boolean allowRead = false;              //当需要读卡时置为true，不需要读卡时置为false
+    private boolean isResponseGet = false;          //当获得返回数据时置为true，需要继续获取返回数据置为false
+    private boolean allowAnalyze = false;           //当需要分析返回结果时置为true，分析结束置为false
+    /**
+     * 初始化状态量
+     * 使用场景：教练机离线本地查无此人；教练机离线本地数据库查询失败；教练机查无此人；教练机返回空串
+     * 使用效果：初始化读取串口流程
+     * allowRead需要单独初始化，每个场景不同
+     */
+    private void initStatus(){
+        isResponseGet = false;
+        allowAnalyze = false;
+    }
+
+    //内部串口业务
+    //串口设置
+    private SerialPortUtils cardReader = new SerialPortUtils("/dev/ttyO2",115200);
+    private SerialPortUtils cardReader_2 = new SerialPortUtils("/dev/ttyO4",115200);
+    //打开串口,获取串口读写方法（服务启动时执行）
+    private void SerialOpen() {
+        try {
+            cardReader.openSerialPort();                       //打开该串口，获取输入输出流（SerialPortUtils内封装）
+            cardReader.setOnDataReceiveListener(new Recived());//注册该串口监听器
+            cardReader_2.openSerialPort();
+            cardReader_2.setOnDataReceiveListener(new Recived_2());
+        }catch (Exception e){
+            Log.e("发卡器service.串口","openSerialPort: 打开串口异常：" + e.toString());
+        }
+    }
+
+    //service生命周期
+    //第一用户还是第二用户登录指令的变量
+    private volatile int whoLogin = 0;
+    //第一用户还是第二用户登录指令的变量
+    private volatile int whoLogout = 0;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        //当服务启动时开始整个CardReaderService
+        Log.d(TAG,"service已启动");
+        //注册监听蓝牙service广播
+        registerReceiver(logReceiver,filterLog);
+        //当服务启动时初始化串口
+        SerialOpen();
+        //开启TimerTask
+        //分析返回数据子线程
+        try{
+            timer.schedule(task,200,CHECK_RESP_PERIOD);
+        }catch (Exception e){
+            Log.e(TAG + ".onCreate","定时任务启动失败");
+        }
+    }
+    @Override
+    public void onDestroy() {
+        //关闭串口
+        cardReader.closeSerialPort();
+        cardReader_2.closeSerialPort();
+        timer.cancel();
+        task.cancel();
+        timer.purge();
+        super.onDestroy();
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        LogUtil.d("收到了command");
+        String command = intent.getStringExtra("command");
+        //初始化的时候，肯定是不带指令的，所以直接return；
+        if (command == null) return super.onStartCommand(intent, flags, startId);
+        LogUtil.d("command ！= null ");
+        CommonCommand commonCommand = CommonCommand.getEnumByString(command);
+        switch (commonCommand){
+            case SECOND__LOGIN:
+                whoLogin = 2;
+                initStatus();
+                allowRead = true;    //允许读卡
+                break;
+            case FIRST__LOGIN:
+                whoLogin = 1;
+                initStatus();
+                allowRead = true;    //允许读卡
+                break;
+            case SECOND__LOGOUT:
+                whoLogout = 2;
+                logout(whoLogout);
+                initStatus();
+                allowRead = false;
+                break;
+            case FIRST__LOGOUT:
+                whoLogout = 1;
+                logout(whoLogout);
+                initStatus();
+                allowRead = false;
+                break;
+            case ALL__LOGOUT:
+                logout(2);
+                logout(1);
+                initStatus();
+                allowRead = false;
+                break;
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    //返回数据分析相关业务，单独线程
+    //用户特征字符串：姓名 + 手机号后4位  UID
+    private String mDeviceName = "";
+    //分析数据间隔200ms
+    private int CHECK_RESP_PERIOD = 200;
+    //串口返回数据容器
+    private byte[] getResponse;
+    //数据分析定时任务
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            if (allowAnalyze) {
+                if (isResponseGet) {//获取串口返回数据并允许分析数据时进入
+                    allowAnalyze = false;
+                    Log.d(TAG, "run: 1");
+                    AnalyzeData(getResponse);
+                }
+            }
+        }
+    };
+    //分析返回数据
+    private void AnalyzeData(byte[] resp){
+        Log.d(TAG, "AnalyzeData: 2");
+        byte respCmd = resp[1];                //返回命令字
+        int respLen = resp[2];                 //返回包长度
+        byte[] respName = new byte[10];        //返回姓名
+        byte[] respPhone = new byte[4];        //返回电话
+        if (respLen == 14 && respCmd == READ) {
+            for (int i = 3; i < respLen + 3; i++) {
+                if (i < 13) {
+                    respName[i - 3] = resp[i];
+                } else if (i < 17) {
+                    respPhone[i - 13] = resp[i];
+                }
+            }
+            Log.d(TAG, "name: "+Arrays.toString(respName)+"  phone:"+Arrays.toString(respPhone));
+            try {
+                String name = new String(respName, "GBK").replace("\000",""); //GBK解码&删除空字节
+                String phone = new String(respPhone, "ASCII");                                   //ASCII解码
+                mDeviceName = name + phone;//UID                                                              //拼接uid
+                Log.d(TAG, "strname: "+name+"  strphone"+phone);
+                Log.d(TAG, "mdevicename: "+mDeviceName);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String regex = "\\s*+[\u4e00-\u9fa5]{2,3}+\\d{4}";
+            if (mDeviceName.matches(regex)) {//正则表达式校验通过时 进行登陆
+                login();//成功登陆
+            } else {   //不符合继续读取
+                initStatus();
+                isResponseGet = false;
+                allowRead = true;
+            }
+        } else {   //不符合继续读取
+            initStatus();
+            isResponseGet = false;
+            allowRead = true;
+        }
+    }
+
+    //全局用户类相关业务
+    //登录业务
+    private static Gson gsonUtil = new Gson();
+    private void login() {
+        //执行业务
+        int loginResult = LoginBiz.getInstance().loginBiz(mDeviceName,CardReaderService.this.whoLogin);
+        Log.e("Test",""+loginResult);
+        if (loginResult == 0){
+            initStatus();
+            allowRead = false;
+        }
+        MyApplication.getInstance().getUser().setType("serialport");
+        //蓝牙登录成功之后，发出登录结果广播的逻辑。
+        Intent intentLogin = new Intent("com.bdl.bluetoothmessage");
+        intentLogin.putExtra("message",gsonUtil.toJson(new CommonMessage(loginResult,null)));
+        getApplicationContext().sendBroadcast(intentLogin);
+    }
+    //用户离线
+    private void logout(int who){
+        if (MyApplication.getInstance().getUser() != null){
+            if (who == 1 && MyApplication.getInstance().getUser().getType().equals("serialport")){
+                //置空User
+                MyApplication.getInstance().setUser(null);
+                sendBroadcastMsg(CommonMessage.FIRST__LOGOUT);
+            }else if (who == 2 && MyApplication.getInstance().getUser().getHelperuser().getType().equals("serialport")){
+                //置空Helpuser
+                MyApplication.getInstance().getUser().setHelperuser(null);
+                sendBroadcastMsg(CommonMessage.SECOND__LOGOUT);
+            }
+            initStatus();
+        }
+    }
+    //发送广播的快捷方法
+    private void sendBroadcastMsg(int msgType) {
+        //登录成功之后，发出登录结果广播的逻辑。
+        Intent intentLogin = new Intent("com.bdl.bluetoothmessage");
+        intentLogin.putExtra("message",gsonUtil.toJson(new CommonMessage(msgType,null)));
+        getApplicationContext().sendBroadcast(intentLogin);
+    }
+
+    //监听类
+    //收到发卡器返回数据后会进入这个方法
+    //读卡器1
+    class Recived implements SerialPortUtils.OnDataReceiveListener{
+        @Override
+        public void onDataReceive(byte[] buffer, int size) {
+//            if (true){                               //单发卡器使用
+            if (MyApplication.getInstance().getUser() == null) { //双发卡器使用
+                Log.d(TAG, "onDataReceive: 卡片内容：" + Arrays.toString(buffer));
+                Log.d(TAG, "onDataReceive: 内容长度：" + size);
+                Log.d(TAG, "isresponseget：" + isResponseGet + "   allowread:" + allowRead);
+                if (!isResponseGet && allowRead) {//串口未返回数据&允许读取串口时进入
+                    byte[] receiveMsg = new byte[size];
+                    byte receiveHead = 0;
+                    byte receiveTill = 0;
+                    for (int i = 0; i < size; i++) {
+                        receiveMsg[i] = buffer[i];
+                        if (i == 0) {
+                            receiveHead = buffer[i];
+                        }
+                        if (i == size - 1) {
+                            receiveTill = buffer[i];
+                        }
+                    }
+                    if (receiveHead == HEAD && receiveTill == TILL) {//校验协议头与协议尾，符合则允许分析具体报文
+                        Log.d(TAG, "有效内容: " + Arrays.toString(receiveMsg));
+                        getResponse = receiveMsg;
+                        allowRead = false;    //禁止读卡
+                        allowAnalyze = true;  //允许分析数据
+                        isResponseGet = true; //已获取发卡器响应
+                    }
+                }
+            }
+        }
+    }
+    //读卡器2
+    class Recived_2 implements SerialPortUtils.OnDataReceiveListener{
+        @Override
+        public void onDataReceive(byte[] buffer, int size) {
+            if (true){                             //单发卡器使用
+//            Log.d(TAG, "发卡器2收到了"+MyApplication.getInstance().getUser().toString());
+//            if (MyApplication.getInstance().getUser() != null) {//双发卡器使用
+                Log.d(TAG, "onDataReceive: 卡片内容：" + Arrays.toString(buffer));
+                Log.d(TAG, "onDataReceive: 内容长度：" + size);
+                Log.d(TAG, "isresponseget：" + isResponseGet + "   allowread:" + allowRead);
+                if (!isResponseGet && allowRead) {
+                    byte[] receiveMsg = new byte[size];
+                    byte receiveHead = 0;
+                    byte receiveTill = 0;
+                    for (int i = 0; i < size; i++) {
+                        receiveMsg[i] = buffer[i];
+                        if (i == 0) {
+                            receiveHead = buffer[i];
+                        }
+                        if (i == size - 1) {
+                            receiveTill = buffer[i];
+                        }
+                    }
+                    if (receiveHead == HEAD && receiveTill == TILL) {
+                        Log.d(TAG, "有效内容: " + Arrays.toString(receiveMsg));
+                        getResponse = receiveMsg;
+                        allowRead = false;    //禁止读卡
+                        allowAnalyze = true;  //允许分析数据
+                        isResponseGet = true; //已获取发卡器响应
+                    }
+                }
+            }else {
+                Log.d(TAG, "用户不为空");
+            }
+        }
+    }
+    //监听蓝牙登陆广播
+    private class LogReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            CommonMessage loginResp = gsonUtil.fromJson(intent.getStringExtra("message"),CommonMessage.class);
+            //根据来自发卡器的登录广播做出反应 当发卡器已经有用户登录 蓝牙停止扫描等待指令
+            switch (loginResp.getMsgType()){
+                case CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE:
+                case CommonMessage.FIRST__LOGIN_REGISTER_ONLINE:
+                case CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE:
+                case CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE:
+                case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
+                case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
+                    allowRead = false;   //禁止读卡
+                    initStatus();        //初始化读卡流程
+                    break;
+                default:break;
+            }
+        }
+    }
+}

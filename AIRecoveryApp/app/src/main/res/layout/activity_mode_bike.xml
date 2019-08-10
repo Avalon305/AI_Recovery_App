@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@drawable/background2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--标题栏-->
+    <RelativeLayout
+        android:id="@+id/rl_top_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/titlebg">
+        <!--模式-->
+        <TextView
+            android:id="@+id/tv_mb_title"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:paddingLeft="5dp"
+            android:layout_marginLeft="25dp"
+            android:layout_centerVertical="true"
+            android:textSize="40dp"
+            android:text="标准模式" />
+        <TextView
+            android:id="@+id/tv_mb_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_toLeftOf="@+id/tv_mb_person"
+            android:layout_margin="10dp"
+            android:layout_centerVertical="true"
+            android:text="欢迎您,"
+            android:textSize="40dp" />
+        <!--获取用户名来显示文本-->
+        <TextView
+            android:id="@+id/tv_mb_person"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_toLeftOf="@+id/iv_mb_state"
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:text="admin"
+            android:textSize="40dp" />
+        <!--角色图标-->
+        <ImageView
+            android:id="@+id/iv_mb_state"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignEnd="@+id/tv_mb_title"
+            android:layout_marginRight="30dp"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/guanliyuan1" />
+    </RelativeLayout>
+
+    <!--左侧信息栏-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title"
+        android:layout_alignParentLeft="true">
+        <!--帮助图标-->
+        <ImageView
+            android:id="@+id/iv_mb_help"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_questioncircle" />
+        <!--心率-->
+        <ImageView
+            android:id="@+id/iv_mb_heartrate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mb_help"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_heartrate" />
+        <TextView
+            android:id="@+id/tv_mb_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_heartrate"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mb_heartrate"
+            android:text="心率: "
+            android:textSize="40sp" />
+        <!--获取心率值显示此文本-->
+        <TextView
+            android:id="@+id/tv_mb_getrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_heartrate"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_heart"
+            android:text="--"
+            android:textSize="40sp" />
+
+        <!--训练倒计时-->
+        <ImageView
+            android:id="@+id/iv_mb_time"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mb_heartrate"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_hourglass" />
+
+        <!--倒计时-->
+        <TextView
+            android:id="@+id/tv_mb_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_time"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mb_time"
+            android:text="训练倒计时: "
+            android:textSize="40sp" />
+        <!--倒计时文本-->
+        <TextView
+            android:id="@+id/tv_mb_gettime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_time"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_time"
+            android:text="暂无"
+            android:textSize="40sp" />
+
+        <!--耗能-->
+        <ImageView
+            android:id="@+id/iv_mb_energy"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mb_time"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_fire" />
+        <TextView
+            android:id="@+id/tv_mb_energy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_energy"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mb_energy"
+            android:text="耗能: "
+            android:textSize="40sp" />
+        <!--获取千焦值-->
+        <TextView
+            android:id="@+id/tv_mb_getenergy1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_energy"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_energy"
+            android:text="0"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_mb_unit1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_energy"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_getenergy1"
+            android:text="千焦/"
+            android:textSize="40sp" />
+        <!--获取千卡值-->
+        <TextView
+            android:id="@+id/tv_mb_getenergy2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_energy"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_unit1"
+            android:text="0"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_mb_unit2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_energy"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_getenergy2"
+            android:text="千卡"
+            android:textSize="40sp" />
+
+        <!--距离-->
+        <ImageView
+            android:id="@+id/iv_mb_distance"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mb_energy"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_distance" />
+        <TextView
+            android:id="@+id/tv_mb_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_distance"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mb_distance"
+            android:text="距离: "
+            android:textSize="40sp" />
+        <!--获取距离值-->
+        <TextView
+            android:id="@+id/tv_mb_getdistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_distance"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_distance"
+            android:text="0.00"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_mb_unit3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_distance"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_getdistance"
+            android:text="千米"
+            android:textSize="40sp" />
+
+        <!--速度-->
+        <ImageView
+            android:id="@+id/iv_mb_speed"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/iv_mb_distance"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/mode_speed" />
+        <TextView
+            android:id="@+id/tv_mb_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_speed"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_mb_speed"
+            android:text="速度: "
+            android:textSize="40sp" />
+        <!--获取速度值-->
+        <TextView
+            android:id="@+id/tv_mb_getspeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_speed"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_speed"
+            android:text="0.0"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_mb_unit4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/iv_mb_speed"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/tv_mb_getspeed"
+            android:text="千米/小时"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/btn_mb_end"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:layout_below="@+id/tv_mb_getspeed"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/button_selector"
+            android:text="测试状态"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+        <!--暂停-->
+        <Button
+            android:id="@+id/btn_mb_pause"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:layout_alignBottom="@+id/btn_mb_end"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/btn_mb_end"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/button_selector"
+            android:text="暂停"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+        </RelativeLayout>
+
+    <!--右侧折线图-->
+    <RelativeLayout
+        android:layout_width="700dp"
+        android:layout_height="520dp"
+        android:layout_below="@id/rl_top_title"
+        android:layout_alignParentEnd="true">
+        <!--底板-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/backboard3"
+            android:layout_alignParentRight="true"/>
+        <!--单车模式折线图-->
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/mb_chart"
+            android:layout_width="580dp"
+            android:layout_height="280dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="55dp"
+            android:padding="10dp" />
+
+        <!--瓦特值-->
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120dp"
+            android:layout_marginBottom="50dp"
+            android:layout_alignParentBottom="true">
+            <com.bdl.aisports.widget.NumTextView
+                android:id="@+id/tv_mb_watt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="15dp"
+                android:includeFontPadding="false"
+                android:text="1"
+                android:textSize="80dp" />
+            <TextView
+                android:id="@+id/tv_mb_resulttip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_mb_watt"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="功率"
+                android:textSize="30dp" />
+        </RelativeLayout>
+
+        <!--功率图片-->
+        <ImageView
+            android:id="@+id/iv_mb_scope"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_alignStart="@id/ll_mb_power_seekbar"
+            android:layout_alignBottom="@id/ll_mb_power_seekbar"
+            android:layout_marginLeft="-80dp"
+            android:layout_marginBottom="-8dp"
+            android:src="@drawable/speed_refresh_tmp" />
+        <LinearLayout
+            android:id="@+id/ll_mb_power_seekbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="90dp"
+            android:layout_marginRight="80dp">
+            <!--功率提示文本-->
+            <TextView
+                android:id="@+id/tv_mb_power"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="1转/分钟"
+                android:textColor="@color/OrangeRed"
+                android:textSize="32sp" />
+            <!--功率seekbar-->
+            <com.bdl.aisports.widget.MySeekBar
+                android:id="@+id/sb_speed"
+                android:layout_width="250sp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/speed"
+                android:progress="10"
+                android:progressDrawable="@drawable/seekbar_bg"
+                android:maxHeight="46dip"
+                android:minHeight="46dip"
+                android:thumb="@drawable/arrow" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

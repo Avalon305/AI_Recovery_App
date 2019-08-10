@@ -1,0 +1,344 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background2"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:id="@+id/rl_top_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/titlebg">
+        <!--标题-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:paddingLeft="5dp"
+            android:layout_marginLeft="25dp"
+            android:layout_centerVertical="true"
+            android:textSize="40dp"
+            android:text="系统设置"
+            />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="当前设备类型"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_device_name"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+            <Button
+                android:id="@+id/btn_set_device_name"
+                android:enabled="true"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:layout_column="2"
+                android:layout_row="0"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="设置"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="远程升级地址"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_update_address"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+            <Button
+                android:id="@+id/btn_set_update_address"
+                android:enabled="true"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="设置"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_marginLeft="20dp"
+                android:layout_row="2"
+                android:text="时间服务器地址"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_timeserver_address"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+            <Button
+                android:id="@+id/btn_set_timeserver_address"
+                android:enabled="true"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="设置"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="教练机IP地址"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_coach_device_address"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+            <Button
+                android:id="@+id/btn_set_coach_device_address"
+                android:enabled="true"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="设置"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="连接的WiFi"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_wifi"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+            <Button
+                android:id="@+id/btn_set_wifi"
+                android:enabled="true"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="设置"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="电机参数比"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_rate"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+            <Button
+                android:id="@+id/btn_set_rate"
+                android:enabled="true"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="设置"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="本机IP地址"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_ip"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+        </LinearLayout>
+        
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="440dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="软件版本"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sys_version"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="440dp">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/update_sys_setting"
+                android:enabled="true"
+                android:layout_width="300dp"
+                android:layout_height="90dp"
+                android:gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:text="       更新并重启"
+                android:background="@drawable/button_selector"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp"/>
+
+            <ImageView
+                android:id="@+id/img_update_sys_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="50dp"
+                android:src="@drawable/update1" />
+
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/sys_btn_return"
+            android:enabled="true"
+            android:layout_width="150dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="返回"
+            android:background="@drawable/button_selector"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp"/>
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
+

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/background3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--标题栏-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/titlebg">
+        <!--标题-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="25dp"
+            android:layout_centerVertical="true"
+            android:paddingLeft="5dp"
+            android:textSize="40dp"
+            android:text="再见"
+            />
+    </RelativeLayout>
+
+
+    <!--完成训练-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_bye_complete1"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="恭喜您完成了"
+            android:textSize="60sp" />
+        <TextView
+            android:id="@+id/tv_bye_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_bye_complete1"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/green"
+            android:text=""
+            android:textSize="60sp" />
+        <TextView
+            android:id="@+id/tv_bye_complete2"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@+id/tv_bye_complete"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="的训练!"
+            android:textSize="60sp" />
+        <!--奖杯图标-->
+        <ImageView
+            android:id="@+id/iv_bye_complete3"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@+id/tv_bye_complete2"
+            android:src="@drawable/trophy"/>
+        <!--减脂的提示信息-->
+        <TextView
+            android:id="@+id/tv_bye_removeFat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_below="@+id/tv_bye_complete1"
+            android:layout_marginLeft="70dp"
+            android:text="您当前处于"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_bye_removeFat1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_below="@+id/tv_bye_complete1"
+            android:layout_toRightOf="@+id/tv_bye_removeFat"
+            android:text="减脂模式"
+            android:textColor="@color/yellow"
+            android:textSize="40sp" />
+        <TextView
+            android:id="@+id/tv_bye_removeFat2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_below="@+id/tv_bye_complete1"
+            android:layout_toRightOf="@+id/tv_bye_removeFat1"
+            android:text=" , 推荐多进行有氧设备的训练!"
+            android:textSize="40sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_bye_not"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="70dp"
+            android:layout_alignBottom="@+id/tv_bye_not"
+            android:src="@drawable/list" />
+        <!--未完成训练-->
+        <TextView
+            android:id="@+id/tv_bye_not"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="0dp"
+            android:paddingLeft="170dp"
+            android:paddingTop="10dp"
+            android:text="待训练设备如下:"
+            android:textColor="@color/Black"
+            android:textSize="50sp" />
+        <TextView
+            android:id="@+id/tv_bye_not1"
+            android:layout_width="460dp"
+            android:layout_marginLeft="70dp"
+            android:layout_height="5dp"
+            android:layout_below="@+id/tv_bye_not"
+            android:background="#bfbfbf"/>
+        <!--未完成的设备列表-->
+        <ListView
+            android:id="@+id/lv_bye_not"
+            android:divider="@null"
+            android:layout_below="@+id/tv_bye_not1"
+            android:layout_marginLeft="70dp"
+            android:layout_width="455dp"
+            android:layout_height="400dp" />
+        <ImageView
+            android:id="@+id/iv_bye_res"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_toLeftOf="@id/tv_bye_res"
+            android:layout_alignBottom="@+id/tv_bye_res"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="6dp"
+            android:src="@drawable/statistic" />
+        <!--训练结果-->
+        <TextView
+            android:id="@+id/tv_bye_res"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/tv_bye_not"
+            android:layout_marginRight="210dp"
+            android:textColor="@color/Black"
+            android:text="训练结果如下:"
+            android:textSize="50sp" />
+        <TextView
+            android:id="@+id/tv_bye_not2"
+            android:layout_width="410dp"
+            android:layout_height="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignLeft="@+id/iv_bye_res"
+            android:layout_below="@+id/tv_bye_res"
+            android:background="#bfbfbf"/>
+        <com.bdl.aisports.widget.PieChartView
+            android:id="@+id/pie_chart"
+            android:layout_width="700dp"
+            android:layout_height="400dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv_bye_not2"
+            android:paddingBottom="40dp"
+            android:paddingLeft="20dp"
+            app:circleRadius="100dp"
+            app:textSize="20sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--温馨提示-->
+        <TextView
+            android:id="@+id/tv_bye_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="20dp"
+            android:paddingLeft="70dp"
+            android:text="温馨提示：十五秒之后跳转到待机页面！"
+            android:textColor="@color/black_home"
+            android:textSize="30sp" />
+    </RelativeLayout>
+</LinearLayout>

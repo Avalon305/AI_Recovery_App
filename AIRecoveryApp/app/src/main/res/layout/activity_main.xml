@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background2"
+    tools:context=".activity.MainActivity">
+
+    <!--上侧标题栏-->
+    <RelativeLayout
+        android:id="@+id/rl_top_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-6dp"
+        android:background="@drawable/titlebg">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="25dp"
+            android:src="@drawable/location" />
+        <!--页面标题-->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_centerVertical="true"
+            android:textColor="#2b2b2b"
+            android:text="      未设置"
+            android:textSize="40dp" />
+        <!--欢迎语-->
+        <TextView
+            android:id="@+id/tv_welcome_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tv_user_name"
+            android:layout_toStartOf="@+id/tv_user_name"
+            android:textColor="#2b2b2b"
+            android:text="欢迎您,"
+            android:textSize="40dp" />
+        <!--显示用户名（x先生/x女士/x教练）-->
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="18dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/iv_main_state"
+            android:textColor="#2b2b2b"
+            android:text="admin"
+            android:textSize="40dp" />
+
+        <ImageView
+            android:id="@+id/iv_main_state"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="30dp"
+            android:layout_alignEnd="@+id/tv_title"
+            android:layout_centerVertical="true"
+            android:src="@drawable/guanliyuan1" />
+    </RelativeLayout>
+
+    <!--左上方心率显示-->
+    <RelativeLayout
+        android:id="@+id/rl_left_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_top_title"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="50dp">
+        <!--心跳图片-->
+        <ImageView
+            android:id="@+id/iv_heart"
+            android:layout_width="62dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/mode_heartrate" />
+        <!--心率提示文本-->
+        <TextView
+            android:id="@+id/tv_pulse_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iv_heart"
+            android:text="心率: "
+            android:textSize="60sp" />
+        <!--心率数值-->
+        <TextView
+            android:id="@+id/tv_pulse_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_pulse_text"
+            android:text="-"
+            android:textSize="60sp" />
+    </RelativeLayout>
+
+    <!--设备图片-->
+    <ImageView
+        android:id="@+id/iv_dev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp" />
+
+    <!--右上方显示训练时间和暂停时间-->
+    <RelativeLayout
+        android:id="@+id/rl_right_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="100dp">
+        <!--训练时间/休息时间 文本-->
+        <TextView
+            android:id="@+id/tv_training_duration_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="训 练 时 间"
+            android:textSize="60sp" />
+        <!--训练时间/休息时间 数值-->
+        <com.bdl.aisports.widget.NumTextView
+            android:id="@+id/tv_training_duration_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_training_duration_text"
+            android:layout_centerHorizontal="true"
+            android:includeFontPadding="false"
+            android:text="0:00"
+            android:textColor="@android:color/holo_blue_light"
+            android:textSize="95sp" />
+        <!--阴影-->
+        <ImageView
+            android:id="@+id/iv_time_shadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/tv_training_duration_num"
+            android:layout_marginTop="-50dp"
+            android:src="@drawable/shadow"/>
+    </RelativeLayout>
+
+    <!--下方顺反方向力量数值-->
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true">
+        <!--增加顺向力-->
+        <ImageView
+            android:id="@+id/iv_ms_positiveminus"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_alignBottom="@+id/rl_ms_positivenumber"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="15dp"
+            android:rotation="180"
+            android:layout_toLeftOf="@id/rl_ms_positivenumber"
+            android:src="@drawable/mode_plus_selector" />
+        <!--减小顺向力-->
+        <ImageView
+            android:id="@+id/iv_ms_positiveplus"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_toRightOf="@id/rl_ms_positivenumber"
+            android:layout_alignBottom="@+id/rl_ms_positivenumber"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="15dp"
+            android:padding="4dp"
+            android:src="@drawable/mode_minus_selector" />
+
+        <RelativeLayout
+            android:id="@+id/rl_ms_positivenumber"
+            android:layout_above="@+id/tv_ms_positive"
+            android:layout_alignLeft="@id/tv_ms_positive"
+            android:gravity="center_horizontal"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content">
+            <!--顺向力值-->
+            <com.bdl.aisports.widget.NumTextView
+                android:id="@+id/tv_ms_positivenumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="22"
+                android:textSize="120dp" />
+        </RelativeLayout>
+
+        <!--增加反向力值-->
+        <ImageView
+            android:id="@+id/iv_ms_inversusminus"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_toLeftOf="@id/rl_ms_inversusnumber"
+            android:layout_alignBottom="@+id/rl_ms_inversusnumber"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="15dp"
+            android:rotation="180"
+            android:src="@drawable/mode_plus_selector" />
+        <!--减小反向力值-->
+        <ImageView
+            android:id="@+id/iv_ms_inversusplus"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_toRightOf="@id/rl_ms_inversusnumber"
+            android:layout_alignBottom="@+id/rl_ms_inversusnumber"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="15dp"
+            android:padding="4dp"
+            android:src="@drawable/mode_minus_selector" />
+        <RelativeLayout
+            android:id="@+id/rl_ms_inversusnumber"
+            android:layout_above="@+id/tv_ms_inversus"
+            android:layout_alignLeft="@id/tv_ms_inversus"
+            android:gravity="center_horizontal"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content">
+            <!--反向力值-->
+            <com.bdl.aisports.widget.NumTextView
+                android:id="@+id/tv_ms_inversusnumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:textSize="120dp"
+                android:text="22" />
+        </RelativeLayout>
+
+        <!--顺反向力提示文本-->
+        <TextView
+            android:id="@+id/tv_ms_positive"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="250dp"
+            android:textStyle="normal"
+            android:textSize="33dp"
+            android:text="顺向力" />
+        <TextView
+            android:id="@+id/tv_ms_inversus"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="250dp"
+            android:textStyle="normal"
+            android:textSize="33dp"
+            android:text="反向力" />
+    </RelativeLayout>
+
+    <!--左侧按钮布局-->
+    <LinearLayout
+        android:id="@+id/rl_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_left_top"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+        <!--开始训练按钮-->
+        <Button
+            android:id="@+id/btn_start"
+            android:enabled="true"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="开始训练"
+            android:background="@drawable/button_selector"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp"/>
+        <!--退出训练按钮-->
+        <Button
+            android:id="@+id/btn_quit"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="退出训练"
+            android:background="@drawable/button_selector"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp"/>
+        <!--连接教练手环按钮-->
+        <Button
+            android:id="@+id/connect_coach_bluetooth"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="测试状态"
+            android:background="@drawable/button_selector"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+</RelativeLayout>

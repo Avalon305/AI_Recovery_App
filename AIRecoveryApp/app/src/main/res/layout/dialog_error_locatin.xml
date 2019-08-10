@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--定位错误 模态框-->
+
+    <!--标题-->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:text="错误"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="100sp" />
+    <!--分割线-->
+    <ImageView
+        android:id="@+id/split_line"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_below="@+id/tv_title"
+        android:background="@color/colorAccent"/>
+    <!--提示语1-->
+    <TextView
+        android:id="@+id/tv_note_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/split_line"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="50dp"
+        android:text="定位出现错误！"
+        android:textSize="50sp"/>
+    <!--提示语2-->
+    <TextView
+        android:id="@+id/tv_note_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_note_1"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="30dp"
+        android:text="请重新定位"
+        android:textSize="50sp"/>
+    <!--重新定位按钮-->
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/btn_relocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="80dp"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="10dp"
+        android:text="重新定位"
+        app:qmui_backgroundColor="#EAEAEA"
+        android:textColor="#000000"
+        android:textSize="50sp" />
+
+</RelativeLayout>

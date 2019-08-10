@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#d81b60</color>
+    <color name="bg_color">#e6e6e7</color>
+    <color name="title_color">#e6e6e7</color>
+    <color name="DeepSkyBlue">#3373dd</color>
+    <color name="OrangeRed">#FF4500</color>
+    <color name="Black">#000000</color>
+    <color name="green">#228B22</color>
+    <color name="white">#ffffff</color>
+    <color name="gray_home">#909090</color>
+    <color name="homecolor1">#1a5cc0 </color>
+    <color name="color_red">#FF5722</color>
+    <color name="black_home">#484848</color>
+    <color name="my_blue">#1B88EE</color>
+    <color name="yellow">#FFB90F</color>
+    <color name="tintRed">#FF6347</color>
+    <color name="purple">#D02090</color>
+</resources>
