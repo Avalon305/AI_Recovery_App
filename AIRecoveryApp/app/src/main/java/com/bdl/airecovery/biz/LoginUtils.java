@@ -88,7 +88,7 @@ public class LoginUtils {
 
     /**
      * 1.设置当前对象，区分好是第一用户还是第二用户
-     * 2.针对此人与其个人设置执行插入/修改操作
+     * 2.针对此人与其医护设置执行插入/修改操作
      * 3.需要注意的是第二用户，一定要是教练角色，如果不是教练角色嘛，要把第二用户置空。
      * @param message
      */
@@ -100,13 +100,13 @@ public class LoginUtils {
         //个人信息
         User user = null;
         if (message.getLoginResponse().getExisitSetting() == true){
-            LogUtil.e("有个人设置");
+            LogUtil.e("有医护设置");
             user = new User(message);
         }else {
-            LogUtil.e("无个人设置");
+            LogUtil.e("无医护设置");
             user = new User();
         }
-        Device device = new Device();//个人设置
+        Device device = new Device();//医护设置
         List<Personal> personalList  = new ArrayList<>();
         for (Personal personal : MyApplication.getInstance().getCurrentDevice().getPersonalList()){
             Personal temp = new Personal();
@@ -133,9 +133,9 @@ public class LoginUtils {
             2.2 第二用户
                 2.2.1 查有此人，且必须为教练角色，设置为返回值，不是教练什么都不做。
                 2.1.2 查无此人，不能设置默认值。
-         3.设置当前用户和当前设备的有限信息（顺反+个人设置）
+         3.设置当前用户和当前设备的有限信息（顺反+医护设置）
          */
-        //如果此人的个人设置在教练机中存在，则存入本机。
+        //如果此人的医护设置在教练机中存在，则存入本机。
         if (message.getLoginResponse().getExisitSetting() == true){
             //循环类型
             device.setActivityType(message.getLoginResponse().getActivityTypeValue());
@@ -147,9 +147,9 @@ public class LoginUtils {
             int reverse = (int)message.getLoginResponse().getReverseForce();
             device.setReverseForce(String.valueOf(reverse));
             LogUtil.e("同步完成反向力" + String.valueOf(reverse));
-            //个人设置集合
+            //医护设置集合
             for (Personal personal:personalList){
-                LogUtil.e("开始同步个人设置集合");
+                LogUtil.e("开始同步医护设置集合");
                 if(personal.getName().equals("前方限制")){
                     personal.setValue(String.valueOf(message.getLoginResponse().getForwardLimit()));
                     LogUtil.e("前方限制设置成功" + String.valueOf(message.getLoginResponse().getForwardLimit()));

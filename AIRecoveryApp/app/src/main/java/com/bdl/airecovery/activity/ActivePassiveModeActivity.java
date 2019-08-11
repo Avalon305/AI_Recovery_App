@@ -812,7 +812,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                         iv_map_state.setImageDrawable(getResources().getDrawable((R.drawable.shou)));
                     }
                 } else if (MyApplication.getInstance().getUser().getRole().equals("coach")) {
-                    btn_map_end.setText("个人设置"); //更新为“个人设置”按钮
+                    btn_map_end.setText("医护设置"); //更新为“医护设置”按钮
                     iv_map_state.setImageDrawable(getResources().getDrawable((R.drawable.guanliyuan1)));
                     //person.append("【教练用户】"); //追加“【教练用户】”文本
                 } else {
@@ -862,10 +862,10 @@ public class ActivePassiveModeActivity extends BaseActivity {
             startService(intent);
             Log.d("StandardModeActivity", "request to logout");
         }
-        //如果是个人设置
-        else if (btn_map_end.getText() == "个人设置") {
-            //跳转个人设置界面
-            Intent intent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+        //如果是医护设置
+        else if (btn_map_end.getText() == "医护设置") {
+            //跳转医护设置界面
+            Intent intent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
             startActivity(intent); //启动
             ActivePassiveModeActivity.this.finish(); //结束当前Activity
         }
@@ -1190,9 +1190,9 @@ public class ActivePassiveModeActivity extends BaseActivity {
                     getrate.setText(intent.getStringExtra("heartrate"));
                 } else if (intentAction.equals("log")) {
                     if (intent.getStringExtra("log").equals("twologicard") || intent.getStringExtra("log").equals("twologiblue")) {
-                        //如果连接成功，跳转个人设置界面
+                        //如果连接成功，跳转医护设置界面
                         Log.e("StandardModeActivity", "login successfully");
-                        Intent activityintent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                        Intent activityintent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                         startActivity(activityintent); //启动
                         ActivePassiveModeActivity.this.finish(); //结束当前Activity
                     } else if (intent.getStringExtra("log").equals("twologocard") || intent.getStringExtra("log").equals("twologoblue")) {
@@ -1241,9 +1241,9 @@ public class ActivePassiveModeActivity extends BaseActivity {
                 case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
                 case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    //如果连接成功，跳转个人设置界面
+                    //如果连接成功，跳转医护设置界面
                     Log.e("MainActivity", "login successfully");
-                    Intent activityintent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                    Intent activityintent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                     startActivity(activityintent); //启动
                     ActivePassiveModeActivity.this.finish(); //结束当前Activity
                     break;

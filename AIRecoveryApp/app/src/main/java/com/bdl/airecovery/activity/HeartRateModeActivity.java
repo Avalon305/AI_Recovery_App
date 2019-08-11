@@ -115,7 +115,7 @@ public class HeartRateModeActivity extends BaseActivity {
     private int localCountDown;             //本机倒计时（单位：秒）
     private Handler handler;                //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
     private Boolean isAlert = false;        //标识是否弹5s倒计时模态框
-    private List<Personal> personalList;    //个人设置表
+    private List<Personal> personalList;    //医护设置表
     private SendReqOfCntTimeUtil sendReqOfCntTimeUtil; //发送同步时间请求的工具
     private Upload upload = new Upload();
     private double weight;
@@ -570,7 +570,7 @@ public class HeartRateModeActivity extends BaseActivity {
                         //person.append("【调试模式】"); //追加“【调试模式】”文本
                     }
                 } else if (MyApplication.getInstance().getUser().getRole().equals("coach")) {
-                    btn_mh_coach.setText("个人设置"); //更新为“个人设置”按钮
+                    btn_mh_coach.setText("医护设置"); //更新为“医护设置”按钮
                     iv_mh_state.setImageDrawable(getResources().getDrawable((R.drawable.guanliyuan1)));
                     //person.append("【教练用户】"); //追加“【教练用户】”文本
                 } else {
@@ -770,8 +770,8 @@ public class HeartRateModeActivity extends BaseActivity {
                 } else if (intentAction.equals("log")) {
                     if (intent.getStringExtra("log").equals("twologicard") || intent.getStringExtra("log").equals("twologiblue")) {
                         Log.e("HeartRateModeActivity", "login successfully");
-                        //如果连接成功，跳转个人设置界面
-                        Intent activityintent = new Intent(HeartRateModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                        //如果连接成功，跳转医护设置界面
+                        Intent activityintent = new Intent(HeartRateModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                         startActivity(activityintent); //启动
                         finish(); //结束当前Activity
                     } else if (intent.getStringExtra("log").equals("twologocard") || intent.getStringExtra("log").equals("twologoblue")) {
@@ -933,10 +933,10 @@ public class HeartRateModeActivity extends BaseActivity {
             intent.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
             startService(intent);
         }
-        //如果是个人设置
-        if (btn_mh_coach.getText() == "个人设置") {
-            //跳转个人设置界面
-            Intent intent = new Intent(HeartRateModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+        //如果是医护设置
+        if (btn_mh_coach.getText() == "医护设置") {
+            //跳转医护设置界面
+            Intent intent = new Intent(HeartRateModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
             startActivity(intent); //启动
             finish(); //结束当前Activity
         }
@@ -1241,9 +1241,9 @@ public class HeartRateModeActivity extends BaseActivity {
                 case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
                 case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    //如果连接成功，跳转个人设置界面
+                    //如果连接成功，跳转医护设置界面
                     Log.e("MainActivity", "login successfully");
-                    Intent activityintent = new Intent(HeartRateModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                    Intent activityintent = new Intent(HeartRateModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                     startActivity(activityintent); //启动
                     HeartRateModeActivity.this.finish(); //结束当前Activity
                     break;

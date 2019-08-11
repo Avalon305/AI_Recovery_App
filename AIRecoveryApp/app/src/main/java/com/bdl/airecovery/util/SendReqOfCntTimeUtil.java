@@ -67,7 +67,7 @@ public class SendReqOfCntTimeUtil {
                 //包装Message
                 BdlProto.Message message = CountDownProtoUtil.packCurrentTimeRequest(seq++, request);
                 try {
-                    //发送更新个人设置信息，一旦收到响应会在CountDownSocketListener中触发相应的条件分支
+                    //发送更新医护设置信息，一旦收到响应会在CountDownSocketListener中触发相应的条件分支
                     //Log.d("同步倒计时","发送同步当前时间的请求,序列号："+(seq-1));
                     CountDownSocketClient.getInstance().sendMsg(message);
                 } catch (ConnectException e) {

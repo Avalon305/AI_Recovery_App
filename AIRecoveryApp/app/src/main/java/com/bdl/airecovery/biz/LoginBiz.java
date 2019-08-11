@@ -157,7 +157,7 @@ public class LoginBiz {
                     //如果第一用户为空，则初始化第一用户
                     if (MyApplication.getInstance().getUser() == null){
                         MyApplication.getInstance().setUser((User)obj);
-                        //更新个人设置
+                        //更新医护设置
                         Gson gson = new Gson();
                         List<PersonalInfo> resPerson = new ArrayList<>();
                         try {

@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="个人设置" />
+                android:text="医护设置" />
             <Button
                 android:id="@+id/test_SelfUpdatingActivity"
                 android:layout_width="wrap_content"

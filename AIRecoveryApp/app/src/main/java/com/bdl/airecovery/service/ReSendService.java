@@ -65,7 +65,7 @@ public class ReSendService extends Service {
                     try {
                         switch (tempStorage.getType()) {
                             case 1:
-                                Log.d("重传service", "准备发送个人设置");
+                                Log.d("重传service", "准备发送医护设置");
                                 reSetPersonalSettinglist(tempStorage);
                                 Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
 
@@ -187,7 +187,7 @@ public class ReSendService extends Service {
     }
 
     /**
-     * 调用重设个人设置接口
+     * 调用重设医护设置接口
      * @param tempStorage
      */
     private void reSetPersonalSettinglist(TempStorage tempStorage) throws ConnectException {
@@ -222,7 +222,7 @@ public class ReSendService extends Service {
         BdlProto.Message message = DataProtoUtil.packPersonalSetRequest(personalSettingSeq++,request);
         Log.d("重传service","发送的请求："+message.toString());
         //发送Message
-        Log.d("重传service","正在发送个人设置");
+        Log.d("重传service","正在发送医护设置");
         DataSocketClient.getInstance().sendMsg(message);
     }
 

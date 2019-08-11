@@ -36,7 +36,7 @@ public class User {
     private int activityId;
     //课程ID
     private int courseId;
-    //是否存在个人设置
+    //是否存在医护设置
     private boolean exisitSetting;
 
     public User() {
@@ -71,7 +71,7 @@ public class User {
         this.activityRecordId = (int)message.getLoginResponse().getActivityRecordId();
         //课程ID
         this.courseId = (int)message.getLoginResponse().getCourseId();
-        //是否存在个人设置
+        //是否存在医护设置
         this.exisitSetting = message.getLoginResponse().getExisitSetting();
     }
 

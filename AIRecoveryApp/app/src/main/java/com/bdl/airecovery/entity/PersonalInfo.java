@@ -20,7 +20,7 @@ public class PersonalInfo {
     private String deviceType; //设备类型
 
     @Column(name = "devicePersonalList")
-    private String devicePersonalList; //个人设置的设备参数（JSON串）
+    private String devicePersonalList; //医护设置的设备参数（JSON串）
 
     @Column(name = "infoPersonalList")
     private String infoPersonalList; //个人信息的参数（JSON串）

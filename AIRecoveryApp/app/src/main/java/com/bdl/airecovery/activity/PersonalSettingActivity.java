@@ -44,14 +44,14 @@ import com.bdl.airecovery.service.StaticMotorService;
 public class PersonalSettingActivity extends BaseActivity {
 
     /**
-     * 个人设置界面
+     * 医护设置界面
      * 主要业务：
      *      根据系统设置的设备类型，查询当前设备图片、当前设备可调节的部位
      *      根据当前用户，查询当前用户名、当前设备的参数
      *      根据当前设备可调节的部位（不同设备，可调节部位的数量不同），在左侧显示相应的按钮，并监听
      *      根据左侧点击相应的调节按钮，当前按钮高亮显示，同时在右侧实时显示提示文本、参数值与拖动条数值
      *      监听“设置模式”按钮，点击弹出单选菜单模态框，可选择当前训练的模式
-     *      监听“保存个人设置”按钮，点击会将当前设备的个人设置参数传给教练机保存
+     *      监听“保存医护设置”按钮，点击会将当前设备的医护设置参数传给教练机保存
      *      监听“返回”按钮
      */
 
@@ -66,7 +66,7 @@ public class PersonalSettingActivity extends BaseActivity {
     private String curMode;                     //当前训练模式
     private int curModeIndex = 0;               //选择模式的索引值（默认为0，即“标准模式”）
     private Boolean isOpenFatLossMode = false;  //是否开启减脂模式
-    private Boolean isSave = true;              //标识用户是否保存个人设置（一旦对 参数/模式 进行修改，则为false）
+    private Boolean isSave = true;              //标识用户是否保存医护设置（一旦对 参数/模式 进行修改，则为false）
     String[] modeItems = new String[]{          //设置菜单选项内容（有5种训练模式可设置）（通过curModeIndex选择，默认为0，即“标准模式”）
             "标准模式",
             "适应性模式",
@@ -75,7 +75,7 @@ public class PersonalSettingActivity extends BaseActivity {
             "增肌模式",
             "主被动模式",
             "被动模式"};
-    //发送保存个人设置请求需要打包的参数
+    //发送保存医护设置请求需要打包的参数
     private int deviceTypeValue;            //设备类型
     private int activityTypeValue;          //循环类型
     private int seatHeight;                 //座位高度
@@ -126,7 +126,7 @@ public class PersonalSettingActivity extends BaseActivity {
     @ViewInject(R.id.btn_setting_mode)
     private Button btn_setting_mode;       //“设置模式”按钮
     @ViewInject(R.id.btn_save)
-    private Button btn_save;               //“保存个人设置”按钮
+    private Button btn_save;               //“保存医护设置”按钮
     @ViewInject(R.id.btn_back)
     private Button btn_back;               //“返回”按钮
     //CheckBox
@@ -134,7 +134,7 @@ public class PersonalSettingActivity extends BaseActivity {
     private CheckBox cb_isopen_fatlossmode;         //减脂模式：“开启/关闭”按钮
     //SeekBar
     @ViewInject(R.id.seekBar)
-    private SeekBar seekBar;                        //用于个人设置中调节各选项的拖动条
+    private SeekBar seekBar;                        //用于医护设置中调节各选项的拖动条
 
 
     Helperuser helperuser;
@@ -215,7 +215,7 @@ public class PersonalSettingActivity extends BaseActivity {
                                     intent.putExtra("type", MotorType);
                                     intent.putExtra("command", "SETPOSITION");
                                     startService(intent);
-                                    Log.d("个人设置", "发送参数给静态电机[ Position=" + SeekBarCurProgress + "MotorIndex=" + MotorIndex + "]");
+                                    Log.d("医护设置", "发送参数给静态电机[ Position=" + SeekBarCurProgress + "MotorIndex=" + MotorIndex + "]");
                                     break;
                                 case "前方限制":
                                 case "后方限制":
@@ -282,7 +282,7 @@ public class PersonalSettingActivity extends BaseActivity {
                         intent.putExtra("index", MotorIndex);
                         intent.putExtra("command", "SETPOSITION");
                         startService(intent);
-                        Log.d("个人设置", "发送参数给静态电机[ Position=" + curParam + "MotorIndex=" + MotorIndex + "]");
+                        Log.d("医护设置", "发送参数给静态电机[ Position=" + curParam + "MotorIndex=" + MotorIndex + "]");
                         break;
                     case "前方限制":
                     case "后方限制":
@@ -306,7 +306,7 @@ public class PersonalSettingActivity extends BaseActivity {
         if (MyApplication.getInstance().getCurrentDevice() == null) {
             return;
         }
-        //获取个人设置表
+        //获取医护设置表
         if (MyApplication.getInstance().getCurrentDevice().getPersonalList() == null) {
             return;
         }
@@ -473,7 +473,7 @@ public class PersonalSettingActivity extends BaseActivity {
     }
 
     /**
-     * “保存个人设置”按钮的单击事件
+     * “保存医护设置”按钮的单击事件
      * 保存业务有：
      * 1.更新实体类User与实体类CurrentDevice（已实时更新）
      * 2.保存数据到本地PersonalInfo表
@@ -483,7 +483,7 @@ public class PersonalSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_save)
     private void btn_save_onClick(View v) {
-        //如果标识为假，表明有修改过个人设置且未保存，此时点击保存按钮可以保存
+        //如果标识为假，表明有修改过医护设置且未保存，此时点击保存按钮可以保存
         if (!isSave) {
             int hasFrontBackLimit = 0; //判断是否既有前方限制，又有后方限制
             //1.获取需要打包的数据
@@ -496,7 +496,7 @@ public class PersonalSettingActivity extends BaseActivity {
                 activityTypeValue = MyApplication.getInstance().getCurrentDevice().getActivityType();
                 //1.3.获取训练模式
                 //trainModeValue = curModeIndex
-                //1.4.获取个人设置参数
+                //1.4.获取医护设置参数
                 if (MyApplication.getInstance().getCurrentDevice().getPersonalList() != null && MyApplication.getInstance().getCurrentDevice().getPersonalList().size() > 0) {
                     for (Personal curPersonal : MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
                         switch (curPersonal.getName()) {
@@ -591,7 +591,7 @@ public class PersonalSettingActivity extends BaseActivity {
             }
 
 
-            //5.打包个人设置
+            //5.打包医护设置
             PersonalSettingDTO personalSettingDTO = new PersonalSettingDTO();
             if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
                 personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
@@ -607,7 +607,7 @@ public class PersonalSettingActivity extends BaseActivity {
                 personalSettingDTO.setOpenFatLossMode(isOpenFatLossMode);
             }
             //6.存暂存表
-            Log.d("暂存业务", "保存个人设置数据至暂存表：" + personalSettingDTO.toString());
+            Log.d("暂存业务", "保存医护设置数据至暂存表：" + personalSettingDTO.toString());
             TempStorage tempStorage = new TempStorage();
             Gson gson = new Gson();
             tempStorage.setData(gson.toJson(personalSettingDTO)); //重传数据（转换为JSON串）
@@ -616,16 +616,16 @@ public class PersonalSettingActivity extends BaseActivity {
                 db.saveBindingId(tempStorage);
             } catch (DbException e) {
                 e.printStackTrace();
-                Log.d("暂存业务", "个人设置暂存失败");
+                Log.d("暂存业务", "医护设置暂存失败");
             }
 
 
             //更新标识
             isSave = true;
-            //7.弹出“保存个人设置成功”模态框
+            //7.弹出“保存医护设置成功”模态框
             final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
             commonDialog.setTitle("温馨提示");
-            commonDialog.setMessage("个人设置信息保存成功");
+            commonDialog.setMessage("医护设置信息保存成功");
             commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     commonDialog.dismiss();
@@ -695,16 +695,16 @@ public class PersonalSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_back)
     private void btn_back_onClick(View v) {
-        //如果标识为真，表明已经保存或未修改个人设置，此时可以返回主界面
+        //如果标识为真，表明已经保存或未修改医护设置，此时可以返回主界面
         if (isSave) {
             Intent intent = new Intent(PersonalSettingActivity.this, MainActivity.class); //新建一个跳转到主界面Activity的显式意图
             startActivity(intent); //启动
             PersonalSettingActivity.this.finish(); //结束当前Activity
         } else {
-            //弹出“您的个人设置已修改，请先保存个人设置”模态框
+            //弹出“您的医护设置已修改，请先保存医护设置”模态框
             final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
             commonDialog.setTitle("温馨提示");
-            commonDialog.setMessage("您的个人设置信息尚未保存");
+            commonDialog.setMessage("您的医护设置信息尚未保存");
             commonDialog.setPositiveBtnText("我知道了");
             commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

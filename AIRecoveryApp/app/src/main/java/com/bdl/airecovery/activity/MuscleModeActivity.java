@@ -115,7 +115,7 @@ public class MuscleModeActivity extends BaseActivity{
     private Handler handler_dialog;         //用于模态框ui线程中获取倒计时线程创建的Message对象
     private Handler ballHandler;            //用于在UI线程中获取小球线程创建的Message对象
     private Boolean isAlert = false;        //标识是否弹5s倒计时模态框
-    private List<Personal> personalList;    //个人设置表
+    private List<Personal> personalList;    //医护设置表
     private SendReqOfCntTimeUtil sendReqOfCntTimeUtil; //发送同步时间请求的工具
     private float lastPowerX; //上一次PowerX【小球动画相关】
     private float curPowerX; //当前PowerX【小球动画相关】
@@ -574,8 +574,8 @@ public class MuscleModeActivity extends BaseActivity{
                             ||intent.getStringExtra("log").equals(LoginResp.REMOTETWOLOGIBLUE.getStr())
                             ||intent.getStringExtra("log").equals(LoginResp.REMOTETWOLOGICARD.getStr())) {
                         Log.e("MuscleModeActivity","login successfully");
-                        //如果连接成功，跳转个人设置界面
-                        Intent activityintent = new Intent(MuscleModeActivity.this,PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                        //如果连接成功，跳转医护设置界面
+                        Intent activityintent = new Intent(MuscleModeActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                         startActivity(activityintent); //启动
                         finish(); //结束当前Activity
                     }
@@ -777,7 +777,7 @@ public class MuscleModeActivity extends BaseActivity{
                         //person.append("【调试模式】"); //追加“【调试模式】”文本
                     }
                 } else if (MyApplication.getInstance().getUser().getRole().equals("coach")){
-                    btn_mm_coach.setText("个人设置"); //更新为“个人设置”按钮
+                    btn_mm_coach.setText("医护设置"); //更新为“医护设置”按钮
                     iv_mm_state.setImageDrawable(getResources().getDrawable((R.drawable.guanliyuan1)));
                     //person.append("【教练用户】"); //追加“【教练用户】”文本
                 }else {
@@ -916,10 +916,10 @@ public class MuscleModeActivity extends BaseActivity{
             startService(intent);
 
         }
-        //如果是个人设置
-        if(btn_mm_coach.getText() == "个人设置"){
-            //跳转个人设置界面
-            Intent intent = new Intent(MuscleModeActivity.this,PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+        //如果是医护设置
+        if(btn_mm_coach.getText() == "医护设置"){
+            //跳转医护设置界面
+            Intent intent = new Intent(MuscleModeActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
             startActivity(intent); //启动
             finish(); //结束当前Activity
         }
@@ -1204,9 +1204,9 @@ public class MuscleModeActivity extends BaseActivity{
                 case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
                 case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    //如果连接成功，跳转个人设置界面
+                    //如果连接成功，跳转医护设置界面
                     Log.e("MainActivity","login successfully");
-                    Intent activityintent = new Intent(MuscleModeActivity.this,PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                    Intent activityintent = new Intent(MuscleModeActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                     startActivity(activityintent); //启动
                     MuscleModeActivity.this.finish(); //结束当前Activity
                     break;

@@ -199,7 +199,7 @@ public class BluetoothService extends Service {
                     BluetoothService.this.status = Status.NORMAL;
                     return;
                 }
-                //针对第一用户的 ：有个人设置（在线，离线） 无个人设置（在线，离线） 的情况 设置为蓝牙登陆
+                //针对第一用户的 ：有医护设置（在线，离线） 无医护设置（在线，离线） 的情况 设置为蓝牙登陆
                 if (loginResult == CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE ||
                         loginResult == CommonMessage.FIRST__LOGIN_REGISTER_ONLINE ||
                               loginResult == CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE ||

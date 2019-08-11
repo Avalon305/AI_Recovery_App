@@ -1,16 +1,16 @@
 package com.bdl.airecovery.entity;
 
 /**
- * 个人设置
+ * 医护设置
  */
 public class Personal {
-    //个人设置的名称，比如座椅高度
+    //医护设置的名称，比如座椅高度
     private String name;
-    //个人设置的值
+    //医护设置的值
     private String value;
-    //某条个人设置关联的电机
+    //某条医护设置关联的电机
     private String machine;
-    //调节个人设置发送的指令
+    //调节医护设置发送的指令
     private String cmd;
     //最小值
     private String min;

@@ -56,10 +56,10 @@ public class MainActivity extends BaseActivity {
      *      根据蓝牙手环接收心率
      *      校准时间（训练时间/休息时间）
      *      根据当前用户的权限（会员/教练）：
-     *          如果是教练刷卡/手环登录，显示“个人设置”按钮，不显示“连接教练手环”按钮；
-     *          如果是会员刷卡登录，不显示“个人设置”按钮，显示“连接教练手环”按钮，教练可刷卡/手环登录；
-     *          如果是会员刷手环登录，不显示“个人设置”按钮，不显示“连接教练手环”按钮，教练可刷卡登录。
-     *      监听“开始训练”、“退出训练”、“个人设置”、“连接教练手环”按钮
+     *          如果是教练刷卡/手环登录，显示“医护设置”按钮，不显示“连接教练手环”按钮；
+     *          如果是会员刷卡登录，不显示“医护设置”按钮，显示“连接教练手环”按钮，教练可刷卡/手环登录；
+     *          如果是会员刷手环登录，不显示“医护设置”按钮，不显示“连接教练手环”按钮，教练可刷卡登录。
+     *      监听“开始训练”、“退出训练”、“医护设置”、“连接教练手环”按钮
      *      监听顺反向力的“+”和“-”按钮
      */
 
@@ -299,7 +299,7 @@ public class MainActivity extends BaseActivity {
             //判断角色是否是教练，如果是教练设置按钮和状态图
             if (MyApplication.getInstance().getUser().getRole().equals("coach")){
                 //第一用户是教练自己训练的场景
-                connect_coach_bluetooth.setText("个人设置"); //更新为“个人设置”按钮
+                connect_coach_bluetooth.setText("医护设置"); //更新为“医护设置”按钮
                 iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.guanliyuan1));
             }else{
                 //不是教练，一定是用户
@@ -487,10 +487,10 @@ public class MainActivity extends BaseActivity {
             startService(intent);
             Log.d("MainActivity","request to logout");
         }
-        //如果是个人设置
-        else if(connect_coach_bluetooth.getText().equals("个人设置")){
-            //跳转个人设置界面
-            Intent intent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+        //如果是医护设置
+        else if(connect_coach_bluetooth.getText().equals("医护设置")){
+            //跳转医护设置界面
+            Intent intent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
             startActivity(intent); //启动
             MainActivity.this.finish(); //结束当前Activity
         }
@@ -979,9 +979,9 @@ public class MainActivity extends BaseActivity {
                     if (intent.getStringExtra("log").equals(LoginResp.LOCALTWOLOGICARD.getStr())||intent.getStringExtra("log").equals(LoginResp.LOCALTWOLOGIBLUE.getStr())
                             ||intent.getStringExtra("log").equals(LoginResp.REMOTETWOLOGIBLUE.getStr())
                             ||intent.getStringExtra("log").equals(LoginResp.REMOTETWOLOGICARD.getStr())) {
-                        //如果连接成功，跳转个人设置界面
+                        //如果连接成功，跳转医护设置界面
                         Log.e("MainActivity","login successfully");
-                        Intent activityintent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                        Intent activityintent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                         startActivity(activityintent); //启动
                         MainActivity.this.finish(); //结束当前Activity
                     }
@@ -1036,9 +1036,9 @@ public class MainActivity extends BaseActivity {
                 case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
                 case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    //如果连接成功，跳转个人设置界面
+                    //如果连接成功，跳转医护设置界面
                     Log.e("MainActivity","login successfully");
-                    Intent activityintent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到个人设置界面Activity的显式意图
+                    Intent activityintent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
                     startActivity(activityintent); //启动
                     MainActivity.this.finish(); //结束当前Activity
                     break;

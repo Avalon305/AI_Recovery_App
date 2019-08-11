@@ -37,8 +37,8 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 //				if (CardReaderService.isIsCardLog()){
 //					CardReaderService.setNoSuchPerson(true);
 //				}
-//				logger.info("DataSocket客户端收到登陆结果响应:"+"无此人的个人设置，傻逼陈其钊！");
-//				//Log.e("channelRead.LoginResp","无此人的个人设置，傻逼陈其钊！");
+//				logger.info("DataSocket客户端收到登陆结果响应:"+"无此人的医护设置，傻逼陈其钊！");
+//				//Log.e("channelRead.LoginResp","无此人的医护设置，傻逼陈其钊！");
 //			}else{
 //				//TODO 在这里处理获取到的登陆信息
 //				BdlProto.LoginResponse resp =message.getLoginResponse();
@@ -72,12 +72,12 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 			}
 		}
 		if (message.hasPersonalSetResponse()){
-			//logger.info("DataSocket客户端收到更新个人设置的响应："+message);
-			//TODO 在这里处理更新个人设置后的业务
+			//logger.info("DataSocket客户端收到更新医护设置的响应："+message);
+			//TODO 在这里处理更新医护设置后的业务
 			BdlProto.PersonalSetResponse resp = message.getPersonalSetResponse();
 			if (message.getPersonalSetResponse().getSuccess() == true){
 				//Log.d("重传service-set",gsonUtil.toJson(resp).toString());
-				logger.info("DataSocket客户端收到更新个人设置的响应："+gsonUtil.toJson(resp).toString());
+				logger.info("DataSocket客户端收到更新医护设置的响应："+gsonUtil.toJson(resp).toString());
 				if (dbManager!=null) {
 					dbManager.deleteById(TempStorage.class,Integer.parseInt(message.getPersonalSetResponse().getDataId()));
 				}

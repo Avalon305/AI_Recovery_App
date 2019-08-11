@@ -8,7 +8,7 @@ import org.xutils.db.annotation.Table;
  */
 @Table(name = "tempStorage")
 public class TempStorage {
-    //暂定两种：重设个人设置，发送运动结果
+    //暂定两种：重设医护设置，发送运动结果
     final static int ReSetPersonalSettinglist = 1;
     final static int SendTrainResult = 2;
 

@@ -34,7 +34,7 @@ public class Device {
 
     private int minLimit; //设备的最小限位位置
 
-    private List<Personal> personalList; //个人设置集合
+    private List<Personal> personalList; //医护设置集合
 
     private List<TestItem> testItemList; //连测定位项目集合
 
