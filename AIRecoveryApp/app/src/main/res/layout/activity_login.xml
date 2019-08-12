@@ -103,7 +103,7 @@
             android:layout_marginLeft="40dp"
             android:src="@drawable/mode_time"/>
         <!--同步时间倒计时-->
-        <com.bdl.aisports.widget.NumTextView
+        <com.bdl.airecovery.widget.NumTextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -127,7 +127,7 @@
             android:text="训 练 时 间"
             android:textSize="60sp" />
         <!--训练时间/休息时间 数值-->
-        <com.bdl.aisports.widget.NumTextView
+        <com.bdl.airecovery.widget.NumTextView
             android:id="@+id/tv_training_duration_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -185,7 +185,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content">
             <!--顺向力值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_ms_positivenumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -224,7 +224,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content">
             <!--反向力值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_ms_inversusnumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

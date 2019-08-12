@@ -22,9 +22,10 @@
             android:layout_height="60dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_margin="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
             android:paddingLeft="5dp"
-            android:text="个人设置页面"
+            android:text="医护设置"
             android:textSize="40sp" />
         <!--欢迎语-->
         <TextView
@@ -244,7 +245,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/tv_tips_right">
             <!--当前调整部分的数值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

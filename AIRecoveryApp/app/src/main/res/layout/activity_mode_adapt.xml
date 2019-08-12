@@ -206,7 +206,7 @@
             android:layout_marginTop="-15dp"
             android:src="@drawable/backboard3"/>
         <!--小球弹跳的视图-->
-        <com.bdl.aisports.widget.MyBallView
+        <com.bdl.airecovery.widget.MyBallView
             android:id="@+id/bv_ma_ball"
             android:layout_width="600sp"
             android:layout_height="400sp"
@@ -230,7 +230,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content">
             <!--顺向力值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_ma_positivenumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -248,7 +248,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content">
             <!--反向力值-->
-            <com.bdl.aisports.widget.NumTextView
+            <com.bdl.airecovery.widget.NumTextView
                 android:id="@+id/tv_ma_inversusnumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
