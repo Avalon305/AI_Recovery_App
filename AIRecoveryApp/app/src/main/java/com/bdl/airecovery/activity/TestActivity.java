@@ -24,29 +24,14 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     @ViewInject(R.id.test_ShutDown)
     private Button test_ShutDown;
 
-    @ViewInject(R.id.test_AdaptModeActivity)
-    private Button test_AdaptModeActivity;
-
-    @ViewInject(R.id.test_BikeModeActivity)
-    private Button test_BikeModeActivity;
-
     @ViewInject(R.id.test_ByeActivity)
     private Button test_ByeActivity;
-
-    @ViewInject(R.id.test_EqualSpeedModeActivity)
-    private Button test_EqualSpeedModeActivity;
-
-    @ViewInject(R.id.test_HeartRateModeActivity)
-    private Button test_HeartRateModeActivity;
 
     @ViewInject(R.id.test_LocatinActivity)
     private Button test_LocatinActivity;
 
     @ViewInject(R.id.test_LoginActivity)
     private Button test_LoginActivity;
-
-    @ViewInject(R.id.test_MuscleModeActivity)
-    private Button test_MuscleModeActivity;
 
     @ViewInject(R.id.test_MainActivity)
     private Button test_MainActivity;
@@ -104,14 +89,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        test_AdaptModeActivity.setOnClickListener(this);
-        test_BikeModeActivity.setOnClickListener(this);
         test_ByeActivity.setOnClickListener(this);
-        test_EqualSpeedModeActivity.setOnClickListener(this);
-        test_HeartRateModeActivity.setOnClickListener(this);
         test_LocatinActivity.setOnClickListener(this);
         test_LoginActivity.setOnClickListener(this);
-        test_MuscleModeActivity.setOnClickListener(this);
         test_PersonalSettingActivity.setOnClickListener(this);
         test_SelfUpdatingActivity.setOnClickListener(this);
         test_StandardModeActivity.setOnClickListener(this);
@@ -135,22 +115,12 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        if (view == test_AdaptModeActivity) {
-            startActivity(new Intent(TestActivity.this, AdaptModeActivity.class));
-        } else if (view == test_BikeModeActivity) {
-            startActivity(new Intent(TestActivity.this, BikeModeActivity.class));
-        } else if (view == test_ByeActivity) {
+        if (view == test_ByeActivity) {
             startActivity(new Intent(TestActivity.this, ByeActivity.class));
-        } else if (view == test_EqualSpeedModeActivity) {
-            startActivity(new Intent(TestActivity.this, EqualSpeedModeActivity.class));
-        } else if (view == test_HeartRateModeActivity) {
-            startActivity(new Intent(TestActivity.this, HeartRateModeActivity.class));
         } else if (view == test_LocatinActivity) {
             startActivity(new Intent(TestActivity.this, LocationActivity.class));
         } else if (view == test_LoginActivity) {
             startActivity(new Intent(TestActivity.this, LoginActivity.class));
-        } else if (view == test_MuscleModeActivity) {
-            startActivity(new Intent(TestActivity.this, MuscleModeActivity.class));
         } else if (view == test_PersonalSettingActivity) {
             startActivity(new Intent(TestActivity.this, PersonalSettingActivity.class));
         } else if (view == test_SelfUpdatingActivity) {

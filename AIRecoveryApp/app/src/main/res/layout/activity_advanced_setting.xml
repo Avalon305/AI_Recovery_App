@@ -55,7 +55,7 @@
                 android:textColor="#000000"
                 android:textSize="38sp" />
             <Button
-                android:id="@+id/btn_adset_quick_login_switch"
+                android:id="@+id/btn_adset_quick_login"
                 android:enabled="true"
                 android:layout_width="200dp"
                 android:layout_height="75dp"

@@ -16,7 +16,7 @@ public class NettyShowCase {
     CountDownSocketClient是与时间服务器通信的类，DataSocketClient是与教练机通信的
      */
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         //发送心跳请求示例
         //.setDeviceId(UUID.randomUUID().toString()) 所有的报文中，设备ID这一属性不是必须的，若要设置应保证每台设备唯一且不会变化，暂时保留这个字段没有用到。
         BdlProto.KeepaliveRequest request = BdlProto.KeepaliveRequest.newBuilder().setDeviceType(BdlProto.DeviceType.E13)
@@ -33,5 +33,5 @@ public class NettyShowCase {
             //TODO 处理网络连接失败的情况
             e.printStackTrace();
         }
-    }
+    }*/
 }

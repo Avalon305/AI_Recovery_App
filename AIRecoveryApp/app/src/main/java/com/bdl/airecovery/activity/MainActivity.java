@@ -32,7 +32,6 @@ import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.MotorService;
 import com.bdl.airecovery.service.StaticMotorService;
 import com.bdl.airecovery.util.MessageUtils;
-import com.bdl.airecovery.util.SendReqOfCntTimeUtil;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.bdl.airecovery.service.CardReaderService;
@@ -88,7 +87,6 @@ public class MainActivity extends BaseActivity {
     private locationReceiver LocationReceiver = new locationReceiver();       //广播监听类
     private IntentFilter filterHR = new IntentFilter();                       //广播过滤器
     private Thread getCurrentTimeThread;    //获取同步/校准倒计时
-    private SendReqOfCntTimeUtil sendReqOfCntTimeUtil; //发送同步时间请求的工具
     private LargeDialog dialog_ready;
     private LargeDialog dialog_locating;
     private boolean isDialogReadyDisplay = false;
@@ -145,7 +143,6 @@ public class MainActivity extends BaseActivity {
         initMotor();
         queryDevInfo();     //查询设备信息
         queryUserInfo();    //查询用户信息,设置用户名
-        syncCurrentTime(); //同步当前时间
         //注册广播
         filterHR.addAction("heartrate");
         filterHR.addAction("log");
@@ -228,22 +225,6 @@ public class MainActivity extends BaseActivity {
             getCurrentTimeThread.interrupt(); //中断线程
             getCurrentTimeThread = null;
         }
-        //停止Timer TimerTask
-        if(sendReqOfCntTimeUtil.timer != null && sendReqOfCntTimeUtil.timerTask != null) {
-            sendReqOfCntTimeUtil.timerTask.cancel();
-            sendReqOfCntTimeUtil.timer.cancel();
-            //Log.d("同步倒计时","MainActivity：停止TimerTask");
-        }
-    }
-
-    /**
-     * 同步当前时间
-     */
-    private void syncCurrentTime() {
-        //同步时间服务器业务
-        sendReqOfCntTimeUtil = new SendReqOfCntTimeUtil();
-        sendReqOfCntTimeUtil.SendRequestOfCurrentTime();
-        //Log.d("LoginActivity","请求同步当前时间");
     }
 
     /**
@@ -758,42 +739,21 @@ public class MainActivity extends BaseActivity {
      */
     private void LaunchModeActivity() {//TODO:处理顺反向力
         Intent intent = null;
-        if (MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("椭圆跑步机") || MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("健身车")) {
-            intent = new Intent(MainActivity.this,BikeModeActivity.class);
-        }
-        else{
-            if (MyApplication.getInstance().getUser() != null) {
-                switch (MyApplication.getInstance().getUser().getTrainMode()) {
-                    case "标准模式":
-                        //标准模式Activity
-                        intent = new Intent(MainActivity.this,StandardModeActivity.class);
-                        break;
-                    case "适应性模式":
-                        //适应性模式Activity
-                        intent = new Intent(MainActivity.this,AdaptModeActivity.class);
-                        break;
-                    case "等速模式":
-                        //等速模式Activity
-                        intent = new Intent(MainActivity.this,EqualSpeedModeActivity.class);
-                        break;
-                    case "心率模式":
-                        //心率模式Activity
-                        intent = new Intent(MainActivity.this,HeartRateModeActivity.class);
-                        break;
-                    case "增肌模式":
-                        //增肌模式Activity
-                        intent = new Intent(MainActivity.this,MuscleModeActivity.class);
-                        break;
-                    case "被动模式":
-                        //被动模式Activity
-                        intent = new Intent(MainActivity.this,PassiveModeActivity.class);
-                        break;
-                    case "主被动模式":
-                        //主被动模式Activity
-                        intent = new Intent(MainActivity.this,ActivePassiveModeActivity.class);
-                        break;
-                    default: break;
-                }
+        if (MyApplication.getInstance().getUser() != null) {
+            switch (MyApplication.getInstance().getUser().getTrainMode()) {
+                case "康复模式":
+                    //康复模式Activity
+                    intent = new Intent(MainActivity.this,StandardModeActivity.class);
+                    break;
+                case "被动模式":
+                    //被动模式Activity
+                    intent = new Intent(MainActivity.this,PassiveModeActivity.class);
+                    break;
+                case "主被动模式":
+                    //主被动模式Activity
+                    intent = new Intent(MainActivity.this,ActivePassiveModeActivity.class);
+                    break;
+                default: break;
             }
         }
         //启动

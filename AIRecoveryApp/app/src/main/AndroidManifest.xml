@@ -58,25 +58,6 @@
             android:name=".activity.SystemSettingActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".activity.AdaptModeActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.BikeModeActivity"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.EqualSpeedModeActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.HeartRateModeActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.MuscleModeActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
-        <activity
             android:name=".activity.StandardModeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />

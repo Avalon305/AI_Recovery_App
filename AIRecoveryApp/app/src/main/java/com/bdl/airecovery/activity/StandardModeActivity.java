@@ -36,12 +36,10 @@ import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LargeDialogHelp;
 import com.bdl.airecovery.dialog.MediumDialog;
-import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
-import com.bdl.airecovery.util.SendReqOfCntTimeUtil;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
@@ -71,7 +69,7 @@ public class StandardModeActivity extends BaseActivity {
     private int rearLimitedPosition; //后方限制
     private int deviceType; //设备类型
     private boolean allowRecordNum = true; //允许计数
-    double rate = MyApplication.getCurrentRate();
+    //double rate = MyApplication.getCurrentRate();
     private eStopBroadcastReceiver eStopReceiver; //急停广播
     int motorDirection = MyApplication.getInstance().motorDirection;
     private Handler countHandler = new Handler() { //次数handler
@@ -94,15 +92,8 @@ public class StandardModeActivity extends BaseActivity {
      * 类成员
      */
     private int flag_dialog;                //警告模态框弹出标志位
-    private Thread localCountDownThread;    //本机倒计时线程
-    private int localCountDown = 60;        //本机倒计时（单位：秒）
-    private int localCountDownType = 0;     //本机倒计时类型（0运动，1休息）
-    private Handler handler;                //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-    private Handler handler_dialog;         //用于模态框ui线程中获取倒计时线程创建的Message对象
-    private Boolean isAlert = false;        //标识是否弹5s倒计时模态框
     private locationReceiver LocationReceiver = new locationReceiver();       //广播监听类
     private IntentFilter filterHR = new IntentFilter();                       //广播过滤器
-    private SendReqOfCntTimeUtil sendReqOfCntTimeUtil; //发送同步时间请求的工具
     private Thread seekBarThread;           //电机速度与位移的SeekBar线程
     private float lastPosition, curPosition; //上一次电机位置、当前电机位置
     private float lastSpeed = -1, curSpeed; //上一次电机速度，当前电机速度
@@ -167,7 +158,6 @@ public class StandardModeActivity extends BaseActivity {
         queryDeviceParam();  //查询设备参数
         queryUserInfo();     //查询用户信息
         iv_ms_help_onClick();//帮助图片的点击事件（使用xUtils框架会崩溃）
-        syncCurrentTime(); //同步当前时间
 
         chooseDeviceType(); //选择设备类型
         //注册蓝牙用监听器
@@ -621,11 +611,6 @@ public class StandardModeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //判空
-        if (localCountDownThread == null) {
-            CreatelocalCountDownTheard(); //创建本机倒计时线程
-            localCountDownThread.start(); //启动本机倒计时线程
-        }
         if (seekBarThread == null) {
             SeekBarSetting(); //速度、运动范围的SeekBar设置
             seekBarThread.start();
@@ -650,17 +635,6 @@ public class StandardModeActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        //判空
-        if (localCountDownThread != null) {
-            localCountDownThread.interrupt(); //中断线程
-            localCountDownThread = null;
-        }
-        //停止Timer TimerTask
-        if (sendReqOfCntTimeUtil.timer != null && sendReqOfCntTimeUtil.timerTask != null) {
-            sendReqOfCntTimeUtil.timerTask.cancel();
-            sendReqOfCntTimeUtil.timer.cancel();
-            //Log.d("StandardModeActivity","停止TimerTask");
-        }
         if (seekBarThread != null) {
             seekBarThread.interrupt();
             seekBarThread = null;
@@ -682,16 +656,6 @@ public class StandardModeActivity extends BaseActivity {
     }
 
     /**
-     * 同步当前时间
-     */
-    private void syncCurrentTime() {
-        //同步时间服务器业务
-        sendReqOfCntTimeUtil = new SendReqOfCntTimeUtil();
-        sendReqOfCntTimeUtil.SendRequestOfCurrentTime();
-        //Log.d("同步倒计时","StandardModeActivity：请求同步当前时间");
-    }
-
-    /**
      * 查询当前设备参数
      */
     private void queryDeviceParam() {
@@ -704,24 +668,24 @@ public class StandardModeActivity extends BaseActivity {
                 //传入电机的值
                 switch (deviceType) {
                     case 1: //拉设备
-                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
-                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
+                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
+                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                         Log.e("顺向力+反向力", String.valueOf(positiveTorqueLimited )+ String.valueOf(negativeTorqueLimited));
                         break;
                     case 2: //推设备
-                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
-                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
+                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
+                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
                         Log.e("顺向力+反向力", String.valueOf(positiveTorqueLimited )+ String.valueOf(negativeTorqueLimited));
                         break;
                     case 3:
                         switch (motorDirection) {
                             case 1:
-                                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
-                                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
+                                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
+                                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
                                 break;
                             case 2:
-                                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
-                                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
+                                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
+                                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                                 break;
                         }
                         break;
@@ -880,22 +844,22 @@ public class StandardModeActivity extends BaseActivity {
     public void changeTorque() {
         switch (deviceType) {
             case 1: //拉设备
-                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
-                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
+                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
+                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                 break;
             case 2: //推设备
-                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
-                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
+                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
+                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                 break;
             case 3:
                 switch (motorDirection) {
                     case 1:
-                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
-                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
+                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
+                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                         break;
                     case 2:
-                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 * rate);
-                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 * rate);
+                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
+                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                         break;
                 }
         }
@@ -1086,114 +1050,6 @@ public class StandardModeActivity extends BaseActivity {
 
         //找到CommonDialog内容控件
         medium_dialog_msg = mediumDialog.findViewById(R.id.medium_dialog_time);
-    }
-
-    /**
-     * 创建本机倒计时线程（如果时间显示器宕机，需要用到该倒计时）
-     */
-    private void CreatelocalCountDownTheard() {
-        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //获取倒计时秒数
-                int arg1 = msg.arg1;
-                if (msg.what == 0) {
-                    //如果当前时间为训练时间
-                    tv_ms_time.setText("训练倒计时：");
-                    gettime.setTextColor(gettime.getResources().getColor(R.color.DeepSkyBlue)); //深天蓝色
-                }
-                if (msg.what == 1) {
-                    //如果当前时间为休息时间
-                    tv_ms_time.setText("休息倒计时：");
-                    gettime.setTextColor(gettime.getResources().getColor(R.color.OrangeRed)); //橘红色
-                }
-                //如果倒计时秒数小于等于5秒，弹模态框
-                if (!isAlert && arg1 <= 5 && msg.what == 0) {
-                    Last5sAlertDialog();
-                    isAlert = true;
-                }
-                if (isAlert) {
-                    medium_dialog_msg.setText("0:0" + arg1);
-                }
-                //设置文本内容（有两种特殊情况，单独设置合适的文本格式）
-                int minutes = arg1 / 60;
-                int remainSeconds = arg1 % 60;
-                if (remainSeconds < 10) {
-                    gettime.setText(minutes + ":0" + remainSeconds);
-                } else {
-                    gettime.setText(minutes + ":" + remainSeconds);
-                }
-            }
-        };
-        localCountDownThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //训练时间60s倒计时
-                localCountDown = 60;
-                while (!localCountDownThread.isInterrupted() && localCountDown > 0) {
-                    if (MyApplication.getCurrentTime().getType() != -1) {
-                        //校准本机倒计时秒数
-                        localCountDown = MyApplication.getCurrentTime().getSeconds(); //获取秒数
-                        localCountDownType = MyApplication.getCurrentTime().getType(); //获取时间类型
-                        //Log.d("同步倒计时：","StandardModeActivity：校准当前时间成功，当前时间："+MyApplication.getCurrentTime().toString());
-                        //Log.d("同步倒计时","StandardModeActivity：localCountDown " + String.valueOf(localCountDown));
-                        MyApplication.setCurrentTime(new CurrentTime(-1, -1)); //将全局变量currentTime恢复为(-1,-1)，即一旦有值，取后销毁，实现另一种方式的传递。
-                        //Log.d("同步倒计时","StandardModeActivity：校准当前时间成功，恢复currentTime，当前currentTime："+MyApplication.getCurrentTime().toString());
-
-                    }
-                    //获取第一次的倒计时作为当前训练时长，上传至训练结果
-                    if (upload.getTrainTime_() == 0) {
-                        upload.setTrainTime_(localCountDown);
-                    }
-                    //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
-                    Message message = handler.obtainMessage();
-                    message.what = localCountDownType; //what属性指定为当前时间的类型（0为训练时间，1为休息时间）
-                    message.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
-                    handler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
-
-                    //线程睡眠1s
-                    try {
-                        Thread.sleep(1000);
-                        localCountDown--;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-
-                }
-
-                //设置训练结果
-                //1.获取当前次数
-                upload.setFinishCount_(Integer.parseInt(getnumber.getText().toString()));
-                upload.setCalorie_(countEnergy(Integer.parseInt(getnumber.getText().toString()),Integer.parseInt(positivenumber.getText().toString())));
-                //2.获取训练时长
-                //已经在第一次校准时间处获取
-                //3.最终顺向力
-                upload.setForwardForce_(Integer.parseInt(positivenumber.getText().toString()));
-                //4.最终反向力
-                upload.setReverseForce_(Integer.parseInt(inversusnumber.getText().toString()));
-                MyApplication.setUpload(upload);
-
-                //倒计时结束，跳转再见界面
-                //新建一个跳转到再见界面Activity的显式意图
-                if (mediumDialog != null && mediumDialog.isShowing()) {
-                    mediumDialog.dismiss();
-                }
-                if (commonDialog != null && commonDialog.isShowing()) {
-                    commonDialog.dismiss();
-                }
-                if (helpDialog != null && helpDialog.isShowing()) {
-                    helpDialog.dismiss();
-                }
-                Intent intent = new Intent(StandardModeActivity.this, ByeActivity.class);
-                //启动
-                //startActivity(intent); //TODO 注释后不会跳转到再见界面
-                //结束当前Activity
-                //StandardModeActivity.this.finish(); //TODO 注释后不会跳转到再见界面
-            }
-        });
     }
 
     /**

@@ -253,10 +253,10 @@ public class MyApplication extends MultiDexApplication {
             setting.setDeviceName("腿部推蹬机(力量循环)");
             setting.setVersion("1.0");
             setting.setUpdateAddress("192.168.1.102");
-            setting.setTimeServerAddress("192.168.1.100");
             setting.setCoachDeviceAddress("192.168.1.102");
             setting.setUUID(UUID.randomUUID().toString());
-            setting.setRate("1.0");
+            setting.setCanQuickLogin(true);
+            setting.setCanStrengthTest(true);
             db.save(setting);
         }
     }
@@ -364,7 +364,7 @@ public class MyApplication extends MultiDexApplication {
     /**
      * 获得电机比率
      */
-    public static double getCurrentRate() {
+    /*public static double getCurrentRate() {
         Setting setting = null;
         try {
             setting = MyApplication.getInstance().getDbManager().selector(Setting.class).findFirst();
@@ -372,7 +372,7 @@ public class MyApplication extends MultiDexApplication {
             e.printStackTrace();
         }
         return Double.parseDouble(setting.getRate());
-    }
+    }*/
 
     /**
      * 自定义字体

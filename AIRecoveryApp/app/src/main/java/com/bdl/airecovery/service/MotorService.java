@@ -25,7 +25,6 @@ public class MotorService extends Service {
     private static final String TAG = "MotorClientService";
     private static Intent initIntent = new Intent("locate"); //运动前初始化的广播
     private static Intent locationIntent = new Intent("location"); //联测定位的广播
-    double rate = MyApplication.getCurrentRate();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -200,14 +199,14 @@ public class MotorService extends Service {
                         switch (deviceType) {
                             case 1: //拉设备
                                 //初始化顺反向力
-                                setParameter((int) ((double)positiveTorqueLimited * rate), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
-                                setParameter((int) ((double)negativeTorqueLimited * rate), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
+                                setParameter((int) ((double)positiveTorqueLimited ), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                                setParameter((int) ((double)negativeTorqueLimited ), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                                 setInitialBounce(negativeTorqueLimited + MotorConstant.DIF_BETWEEN_NEG_TORQUE_AND_BOUNCE);
                                 setKeepArmTorque(positiveTorqueLimited);
                                 break;
                             case 2: //推设备
-                                setParameter((int) ((double)positiveTorqueLimited * rate), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
-                                setParameter((int) ((double)negativeTorqueLimited * rate), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
+                                setParameter((int) ((double)positiveTorqueLimited ), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                                setParameter((int) ((double)negativeTorqueLimited ), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                                 break;
                         }
                         //发送初始化成功的广播

@@ -54,9 +54,6 @@ public class SystemSettingActivity extends BaseActivity {
     @ViewInject(R.id.sys_update_address) //远程升级地址TextView
     private TextView tvUpdateAddress;
 
-    @ViewInject(R.id.sys_timeserver_address) //时间服务器TextView
-    private TextView tvTimeserver;
-
     @ViewInject(R.id.sys_coach_device_address) //教练机地址TextView
     private TextView tvCoachDeviceAddress;
 
@@ -66,26 +63,17 @@ public class SystemSettingActivity extends BaseActivity {
     @ViewInject(R.id.sys_ip) //ip地址
     private TextView tvIp;
 
-    @ViewInject(R.id.sys_rate) //电机参数比
-    private TextView tvRate;
-
     @ViewInject(R.id.btn_set_device_name)  //修改设备类型按钮
     private QMUIRoundButton setDeviceName;
 
     @ViewInject(R.id.btn_set_update_address) //修改远程升级地址
     private QMUIRoundButton setUpdateAddress;
 
-    @ViewInject(R.id.btn_set_timeserver_address) //修改时间服务器地址
-    private QMUIRoundButton setTimeserver;
-
     @ViewInject(R.id.btn_set_coach_device_address) //修改教练机ip地址
     private QMUIRoundButton setCoachDeviceAddress;
 
     @ViewInject(R.id.btn_set_wifi) //修改WiFi连接按钮
     private QMUIRoundButton setWifi;
-
-    @ViewInject(R.id.btn_set_rate)
-    private QMUIRoundButton setRate;
 
     @ViewInject(R.id.update_sys_setting) //确认修改按钮
     private QMUIRoundButton btnConfirm;
@@ -146,25 +134,19 @@ public class SystemSettingActivity extends BaseActivity {
                 setting = new Setting();
                 setting.setDeviceName(null);
                 setting.setUpdateAddress(null);
-                setting.setTimeServerAddress(null);
                 setting.setCoachDeviceAddress(null);
                 setting.setVersion(null);
-                setting.setRate(null);
+                setting.setCanQuickLogin(null);
+                setting.setCanStrengthTest(null);
             }
             //处理数据库中查询到的数据
             String deviceName = setting.getDeviceName();
             String updateAddress = setting.getUpdateAddress();
-            String timeServerAddress = setting.getTimeServerAddress();
             String setCoachDeviceAddressDeviceAddress = setting.getCoachDeviceAddress();
-            String version = setting.getVersion();
-            String rate = setting.getRate();
             //设置TextView的Text
             setTextView(tvDeviceName, deviceName);
             setTextView(tvUpdateAddress, updateAddress);
-            setTextView(tvTimeserver, timeServerAddress);
             setTextView(tvCoachDeviceAddress, setCoachDeviceAddressDeviceAddress);
-            //setTextView(tvVersion, version);
-            setTextView(tvRate, rate);
         }
     }
 
@@ -307,51 +289,6 @@ public class SystemSettingActivity extends BaseActivity {
     }
 
     /**
-     * 修改时间服务器地址
-     *
-     * @param view
-     */
-    @Event(R.id.btn_set_timeserver_address)
-    private void setTimeserverClick(View view) {
-        String info = "请输入时间服务器地址";
-        //创建对话框对象的时候对对话框进行监听
-        final InputDialog dialog = new InputDialog(SystemSettingActivity.this, info, R.style.CustomDialog,
-                new InputDialog.DataBackListener() {
-                    @Override
-                    public void getData(String data) {
-                        String result = data;
-                        tvTimeserver.setText(result);
-                    }
-                });
-        dialog.setTitle("设置时间服务器地址");
-        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-        params.y = 100;
-        dialog.getWindow().setGravity(Gravity.TOP);
-        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        dialog.show();
-    }
-
-    /**
      * 修改教练机IP地址
      *
      * @param view
@@ -403,56 +340,6 @@ public class SystemSettingActivity extends BaseActivity {
     @Event(R.id.btn_set_wifi)
     private void setWifiClick(View view) {
         startWifiListActivity(); //跳转到WifiListActivity
-    }
-
-    /**
-     * 修改电机比率
-     * @param view
-     */
-    @Event(R.id.btn_set_rate)
-    private void setRate(View view) {
-        final String[] rate = {"0.8", "0.9", "1.0", "1.1", "1.2", "1.5"};
-        List<String> menuItemsList = new ArrayList<String>();
-        for(int i = 0; i < rate.length; i++) {
-            menuItemsList.add(rate[i]);
-        }
-
-        final MenuDialog menuDialog = new MenuDialog(SystemSettingActivity.this);
-        menuDialog.setTitle("选择电机比率");
-        menuDialog.setMenuItems(menuItemsList);
-        menuDialog.setSelectedIndex(getCurrentDeviceIndex());
-        //ListView子项点击事件监听
-        menuDialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //更新当前选择项的索引
-                tvRate.setText(rate[i]);
-                menuDialog.dismiss();
-            }
-        });
-        
-        //模态框隐藏导航栏
-        menuDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        menuDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-                        //View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                menuDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        menuDialog.show();
     }
 
     /**
@@ -566,10 +453,10 @@ public class SystemSettingActivity extends BaseActivity {
     private Setting getCurrentSettings(Setting setting) {
         setting.setDeviceName(getRealData(tvDeviceName));
         setting.setUpdateAddress(getRealData(tvUpdateAddress));
-        setting.setTimeServerAddress(getRealData(tvTimeserver));
+        //setting.setTimeServerAddress(getRealData(tvTimeserver));
         setting.setCoachDeviceAddress(getRealData(tvCoachDeviceAddress));
         //setting.setVersion(getRealData(tvVersion));
-        setting.setRate(getRealData(tvRate));
+        //setting.setRate(getRealData(tvRate));
         return setting;
     }
 

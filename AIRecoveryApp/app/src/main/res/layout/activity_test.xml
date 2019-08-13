@@ -12,41 +12,16 @@
             android:layout_height="match_parent" >
 
             <Button
-                android:id="@+id/test_AdaptModeActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="适应模式" />
-            <Button
-                android:id="@+id/test_BikeModeActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="单车模式" />
-            <Button
                 android:id="@+id/test_ByeActivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="再见页面" />
-            <Button
-                android:id="@+id/test_EqualSpeedModeActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="等速模式" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-            <Button
-                android:id="@+id/test_HeartRateModeActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="心率模式" />
-
             <Button
                 android:id="@+id/test_LocatinActivity"
                 android:layout_width="wrap_content"
@@ -59,12 +34,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="主页面" />
-            <Button
-                android:id="@+id/test_MuscleModeActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="增肌模式" />
         </TableRow>
 
         <TableRow
@@ -87,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="标准模式" />
+                android:text="康复模式" />
             <Button
                 android:id="@+id/test_SystemsetActivity"
                 android:layout_width="wrap_content"

@@ -110,42 +110,6 @@
             <TextView
                 android:layout_width="440dp"
                 android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="20dp"
-                android:layout_row="2"
-                android:text="时间服务器地址"
-                android:textSize="38sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_timeserver_address"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-            <Button
-                android:id="@+id/btn_set_timeserver_address"
-                android:enabled="true"
-                android:layout_width="200dp"
-                android:layout_height="75dp"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"
-                android:text="设置"
-                android:background="@drawable/button_selector"
-                android:textColor="#2b2b2b"
-                android:textSize="30sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="440dp"
-                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="教练机IP地址"
                 android:textSize="38sp"
@@ -193,40 +157,6 @@
                 android:textSize="38sp" />
             <Button
                 android:id="@+id/btn_set_wifi"
-                android:enabled="true"
-                android:layout_width="200dp"
-                android:layout_height="75dp"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"
-                android:text="设置"
-                android:background="@drawable/button_selector"
-                android:textColor="#2b2b2b"
-                android:textSize="30sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="440dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="电机参数比"
-                android:textSize="38sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_rate"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-            <Button
-                android:id="@+id/btn_set_rate"
                 android:enabled="true"
                 android:layout_width="200dp"
                 android:layout_height="75dp"

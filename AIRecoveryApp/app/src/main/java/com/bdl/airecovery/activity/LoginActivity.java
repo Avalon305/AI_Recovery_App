@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
@@ -29,10 +27,8 @@ import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.CommonDialog;
-import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
-import com.bdl.airecovery.util.SendReqOfCntTimeUtil;
 import com.google.gson.Gson;
 
 import java.util.Timer;
@@ -46,22 +42,15 @@ public class LoginActivity extends BaseActivity {
      * 待机登录界面
      * 主要业务：
      *      1. 查询设备信息
-     *      2. 本地倒计时
-     *      3. 同步时间服务器倒计时
-     *      4. 监听广播（蓝牙/发卡器）
+     *      2. 监听广播（蓝牙/发卡器）
      */
 
     /**
      * 类成员
      */
-    private Thread localCountDownThread;                //本机倒计时线程
-    private int localCountDown = 60;                    //本机倒计时（单位：秒）
-    private int localCountDownType = 0;                 //本机倒计时类型（0运动，1休息）
-    private Handler handler;                            //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
     private int clickCount = 0;                         //ID 点击计数器
     private Thread clearClickCountThread;               //清空点击计数器线程
     private CommonDialog commonDialog;                  //ShowTips弹模态框
-    private SendReqOfCntTimeUtil sendReqOfCntTimeUtil;  //发送同步时间请求的工具
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
 
     private eStopBroadcastReceiver eStopReceiver; //急停广播
@@ -108,7 +97,6 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         initImmersiveMode(); //隐藏状态栏与导航栏
         queryDevInfo(); //查询设备信息
-        syncCurrentTime(); //同步当前时间
 
 
         //重回页面重新登录
@@ -131,11 +119,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //判空
-        if(localCountDownThread == null) {
-            CreatelocalCountDownTheard(); //创建本机倒计时线程
-            localCountDownThread.start(); //启动本机倒计时线程
-        }
         IntentFilter filter = new IntentFilter();
         filter.addAction("E-STOP");
         eStopReceiver = new eStopBroadcastReceiver();
@@ -165,21 +148,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        //判空
-        if(localCountDownThread != null) {
-            try {
-                localCountDownThread.interrupt(); //中断线程
-                localCountDownThread = null;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        //停止发送同步时间请求的Timer TimerTask
-        if(sendReqOfCntTimeUtil.timer != null && sendReqOfCntTimeUtil.timerTask != null) {
-            sendReqOfCntTimeUtil.timerTask.cancel();
-            sendReqOfCntTimeUtil.timer.cancel();
-
-        }
     }
 
     @Override
@@ -196,15 +164,6 @@ public class LoginActivity extends BaseActivity {
             }
         }
         unregisterReceiver(eStopReceiver);
-    }
-
-    /**
-     * 同步当前时间
-     */
-    private void syncCurrentTime() {
-        //同步时间服务器业务
-        sendReqOfCntTimeUtil = new SendReqOfCntTimeUtil();
-        sendReqOfCntTimeUtil.SendRequestOfCurrentTime();
     }
 
     /**
@@ -376,85 +335,6 @@ public class LoginActivity extends BaseActivity {
         Intent skipIntent = new Intent(LoginActivity.this,MainActivity.class); //新建一个跳转到主界面Activity的显式意图
         startActivity(skipIntent); //启动
         LoginActivity.this.finish(); //结束当前Activity
-    }
-
-    /**
-     * 创建本机倒计时线程（如果时间显示器宕机，需要用到该倒计时）
-     */
-    private void CreatelocalCountDownTheard() {
-        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //获取倒计时秒数
-                int arg1 = msg.arg1;
-                //设置文本颜色（区分训练时间与休息时间）
-                if(msg.what == 0) {
-                    //如果当前时间为训练时间
-                    tv_time.setTextColor(tv_time.getResources().getColor(R.color.DeepSkyBlue)); //深天蓝色
-                }
-                if(msg.what == 1) {
-                    //如果当前时间为休息时间
-                    tv_time.setTextColor(tv_time.getResources().getColor(R.color.OrangeRed)); //橘红色
-                }
-
-                //设置文本内容（有两种特殊情况，单独设置合适的文本格式）
-                int minutes = arg1 / 60;
-                int remainSeconds = arg1 % 60;
-                if(remainSeconds < 10) {
-                    tv_time.setText(minutes + ":0" + remainSeconds);
-                } else {
-                    tv_time.setText(minutes + ":" + remainSeconds);
-                }
-            }
-        };
-        //如果是健身车/跑步机，特殊处理，训练时间240秒
-        if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("健身车") || MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("椭圆跑步机")) {
-            localCountDown = 240;
-        } else {
-            localCountDown = 60;
-        }
-        localCountDownThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(localCountDownThread != null) {
-                    while(!localCountDownThread.isInterrupted() && localCountDown > 0) {
-                        if(MyApplication.getCurrentTime().getType() != -1) {
-                            //校准本机倒计时秒数
-                            localCountDown = MyApplication.getCurrentTime().getSeconds(); //获取秒数
-                            localCountDownType = MyApplication.getCurrentTime().getType(); //获取时间类型
-                            MyApplication.setCurrentTime(new CurrentTime(-1,-1)); //将全局变量currentTime恢复为(-1,-1)，即一旦有值，取后销毁，实现另一种方式的传递。
-                        }
-                        //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
-                        Message message = handler.obtainMessage();
-                        message.what = localCountDownType; //what属性指定为当前时间的类型（0为训练时间，1为休息时间）
-                        message.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
-                        handler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
-                        //线程睡眠1s
-                        try {
-                            Thread.sleep(1000);
-                            localCountDown--;
-                        } catch(InterruptedException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                    }
-                    //如果之前是运动时间
-                    if(localCountDownType == 0) {
-                        localCountDownType = 1; //更换为休息时间
-                        localCountDown = 30;
-                    } else {
-                        localCountDownType = 0; //更换为运动时间
-                        if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("健身车") || MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("椭圆跑步机")) {
-                            localCountDown = 240;
-                        } else {
-                            localCountDown = 60;
-                        }
-                    }
-                }
-            }
-        });
     }
 
     /**
