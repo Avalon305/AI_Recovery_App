@@ -271,7 +271,7 @@
             android:layout_marginTop="35dp"
             android:background="@drawable/oval_path"
             android:layout_centerHorizontal="true" />
-zz
+
     </RelativeLayout>
 
 </RelativeLayout>
