@@ -22,7 +22,7 @@
             android:layout_marginLeft="25dp"
             android:paddingLeft="5dp"
             android:layout_centerVertical="true"
-            android:text="标准模式"
+            android:text="康复模式"
             android:textSize="40dp" />
         <TextView
             android:id="@+id/tv_ms_welcome"
@@ -107,6 +107,16 @@
             android:layout_alignTop="@+id/iv_ms_heartrate"
             android:textSize="40sp"
             android:text="--" />
+        <!--心率分析-->
+        <TextView
+            android:id="@+id/tv_heart_analyze"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_ms_getrate"
+            android:layout_alignBottom="@+id/tv_ms_getrate"
+            android:layout_marginLeft="20dp"
+            android:textSize="40sp"
+            android:text="心率区间" />
 
         <!--次数-->
         <ImageView

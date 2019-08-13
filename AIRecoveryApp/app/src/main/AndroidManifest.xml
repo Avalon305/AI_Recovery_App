@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <!--蓝牙权限-->
+    <!-- 蓝牙权限 -->
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
@@ -21,118 +21,102 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name="com.bdl.airecovery.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/icon_1"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.bdl.airecovery.activity.TestActivity">
+        <activity android:name=".activity.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.bdl.airecovery.LauncherActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".LauncherActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.LoginActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.ByeActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.ByeActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.LocationActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.LocationActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.SystemSettingActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.SystemSettingActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.AdaptModeActivity"
+            android:name=".activity.AdaptModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.BikeModeActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.BikeModeActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.EqualSpeedModeActivity"
+            android:name=".activity.EqualSpeedModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.HeartRateModeActivity"
+            android:name=".activity.HeartRateModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.MuscleModeActivity"
+            android:name=".activity.MuscleModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.StandardModeActivity"
+            android:name=".activity.StandardModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.PersonalSettingActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.PersonalSettingActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.SelfUpdatingActivity"
-            android:screenOrientation="landscape"></activity>
-
+            android:name=".activity.SelfUpdatingActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.WifiListActivity"
+            android:name=".activity.WifiListActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.Android123"></activity>
-
+            android:theme="@style/Theme.Android123" />
         <activity
-            android:name="com.bdl.airecovery.activity.PassiveModeActivity"
+            android:name=".activity.PassiveModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.ScramActivity"
+            android:name=".activity.ScramActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.ActivePassiveModeActivity"
+            android:name=".activity.ActivePassiveModeActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
-
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.bdl.airecovery.activity.StrengthTestActivity"
+            android:name=".activity.StrengthTestActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
 
-        <!--service-->
-        <service android:name="com.bdl.airecovery.service.ReSendService"></service>
-        <service android:name="com.bdl.airecovery.service.StaticMotorService"></service>
+        <!-- service -->
+        <service android:name=".service.ReSendService" />
+        <service android:name=".service.StaticMotorService" />
         <service
-            android:name="com.bdl.airecovery.service.CardReaderService"
-            android:exported="false"></service>
-        <service android:name="com.bdl.airecovery.service.MotorService"></service>
-        <service android:name="com.bdl.airecovery.service.BluetoothService" />
+            android:name=".service.CardReaderService"
+            android:exported="false" />
+        <service android:name=".service.MotorService" />
+        <service android:name=".service.BluetoothService" />
+
+        <activity android:name=".activity.AdvancedSettingActivity"></activity>
     </application>
 
 </manifest>

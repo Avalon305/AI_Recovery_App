@@ -1,10 +1,12 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/background2"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <RelativeLayout
         android:id="@+id/rl_top_title"
@@ -22,7 +24,7 @@
             android:layout_marginLeft="25dp"
             android:layout_centerVertical="true"
             android:textSize="40dp"
-            android:text="系统设置"
+            android:text="高级设置"
             />
     </RelativeLayout>
 
@@ -32,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/rl_top_title"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,28 +44,26 @@
                 android:layout_width="440dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="当前设备类型"
+                android:text="快速登陆"
                 android:textSize="38sp"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/sys_device_name"
+                android:id="@+id/tv_adset_quick_login_switch"
                 android:layout_width="600dp"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="当前状态：关闭"
                 android:textColor="#000000"
                 android:textSize="38sp" />
             <Button
-                android:id="@+id/btn_set_device_name"
+                android:id="@+id/btn_adset_quick_login_switch"
                 android:enabled="true"
                 android:layout_width="200dp"
                 android:layout_height="75dp"
-                android:layout_column="2"
-                android:layout_row="0"
                 android:gravity="center"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingBottom="10dp"
-                android:text="设置"
+                android:text="开启"
                 android:background="@drawable/button_selector"
                 android:textColor="#2b2b2b"
                 android:textSize="30sp"/>
@@ -77,18 +78,18 @@
                 android:layout_width="440dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="远程升级地址"
+                android:text="肌力测试"
                 android:textSize="38sp"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/sys_update_address"
+                android:id="@+id/tv_adset_strength_test"
                 android:layout_width="600dp"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="当前状态：关闭"
                 android:textColor="#000000"
                 android:textSize="38sp" />
             <Button
-                android:id="@+id/btn_set_update_address"
+                android:id="@+id/btn_adset_strength_test"
                 android:enabled="true"
                 android:layout_width="200dp"
                 android:layout_height="75dp"
@@ -96,43 +97,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingBottom="10dp"
-                android:text="设置"
-                android:background="@drawable/button_selector"
-                android:textColor="#2b2b2b"
-                android:textSize="30sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="440dp"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_marginLeft="20dp"
-                android:layout_row="2"
-                android:text="时间服务器地址"
-                android:textSize="38sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_timeserver_address"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-            <Button
-                android:id="@+id/btn_set_timeserver_address"
-                android:enabled="true"
-                android:layout_width="200dp"
-                android:layout_height="75dp"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"
-                android:text="设置"
+                android:text="开启"
                 android:background="@drawable/button_selector"
                 android:textColor="#2b2b2b"
                 android:textSize="30sp"/>
@@ -147,18 +112,17 @@
                 android:layout_width="440dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="教练机IP地址"
+                android:text="标定界面"
                 android:textSize="38sp"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/sys_coach_device_address"
                 android:layout_width="600dp"
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="#000000"
                 android:textSize="38sp" />
             <Button
-                android:id="@+id/btn_set_coach_device_address"
+                android:id="@+id/btn_adset_rate"
                 android:enabled="true"
                 android:layout_width="200dp"
                 android:layout_height="75dp"
@@ -166,75 +130,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingBottom="10dp"
-                android:text="设置"
-                android:background="@drawable/button_selector"
-                android:textColor="#2b2b2b"
-                android:textSize="30sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="440dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="连接的WiFi"
-                android:textSize="38sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_wifi"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-            <Button
-                android:id="@+id/btn_set_wifi"
-                android:enabled="true"
-                android:layout_width="200dp"
-                android:layout_height="75dp"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"
-                android:text="设置"
-                android:background="@drawable/button_selector"
-                android:textColor="#2b2b2b"
-                android:textSize="30sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="440dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="电机参数比"
-                android:textSize="38sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_rate"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-            <Button
-                android:id="@+id/btn_set_rate"
-                android:enabled="true"
-                android:layout_width="200dp"
-                android:layout_height="75dp"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"
-                android:text="设置"
+                android:text="进入"
                 android:background="@drawable/button_selector"
                 android:textColor="#2b2b2b"
                 android:textSize="30sp"/>
@@ -251,54 +147,18 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="高级设置"
+                android:text="软件版本"
                 android:textSize="38sp"
                 android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_adset"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-            <Button
-                android:id="@+id/btn_adset"
-                android:enabled="true"
-                android:layout_width="200dp"
-                android:layout_height="75dp"
-                android:gravity="center"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"
-                android:text="设置"
-                android:background="@drawable/button_selector"
-                android:textColor="#2b2b2b"
-                android:textSize="30sp"/>
-        </LinearLayout>
-        
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <TextView
-                android:layout_width="440dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="本机IP地址"
-                android:textSize="38sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sys_ip"
-                android:layout_width="600dp"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="38sp" />
-        </LinearLayout>
 
+            <TextView
+                android:id="@+id/tv_adset_version"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="38sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -349,8 +209,4 @@
             android:textSize="30sp"/>
 
     </LinearLayout>
-
-
-
 </RelativeLayout>
-

@@ -385,8 +385,12 @@ public class LocationActivity extends BaseActivity {
     private void sysClick(View v) {
         //sysset.setText(" 系统设置");
         b = 1;
+
+        //直接跳转系统设置，不需要密码
+        startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
+
         //创建对话框对象的时候对对话框进行监听
-        String info = "请输入密码";
+        /*String info = "请输入密码";
         final int[] cnt = {0};
         final boolean[] flag = {false};
         final SmallPwdDialog dialog = new SmallPwdDialog(LocationActivity.this, info, R.style.CustomDialog,
@@ -408,21 +412,9 @@ public class LocationActivity extends BaseActivity {
                         }
                         cnt[0]++;
                     }
-                });
-        //“确定”按钮 监听，点击跳转到待机界面
-        /*dialog.setOnPositiveClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //新建一个跳转到待机界面Activity的显式意图
-                dialog.dismiss();
-                *//*if(flag[0]) {
-                    startActivity(new Intent(LocationActivity.this,SystemSettingActivity.class));
-                    dialog.dismiss(); //关闭对话框
-                    finish();
-                }else {
-                    //dialog.dismiss();
-                }*//*
-            }
-        });*/
+                });*/
+
+        /*
         dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
         params.y = 100;
@@ -447,72 +439,7 @@ public class LocationActivity extends BaseActivity {
             }
         });
         dialog.show();
-        initImmersiveMode(); //隐藏虚拟按键和状态栏
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(LocationActivity.this);
-        //加载密码视图
-        View viewalert = View.inflate(LocationActivity.this, R.layout.dialog_password, null);
-        builder
-                .setView(viewalert);
-        final AlertDialog dialog = builder.create();
-        //模态框隐藏导航栏
-        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialogshape);   //设置dialog的形状
-        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        dialog.show();
-        //取得密码文本
-        final EditText password = viewalert.findViewById(R.id.et_password_text);
-        //取得错误信息的提示文本
-        final TextView falseInf = viewalert.findViewById(R.id.tv_password_false);
-        //取得确定按钮
-        QMUIRoundButton confirm = viewalert.findViewById(R.id.btn_password_confirm);
-        //密码判断逻辑
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String pwd = password.getText().toString();       //取得用户输入的密码
-                String testAdmin = MyApplication.ADMIN_PASSWORD;  //管理密码
-                if (pwd .equals(testAdmin) ){
-                    //如果密码正确则跳转到系统给设置页面
-                    startActivity(new Intent(LocationActivity.this,SystemSettingActivity.class));
-                    dialog.dismiss(); //关闭对话框
-                    finish();
-                }else {
-                    //否则，提示密码错误
-                    // Toast.makeText(LocationActivity.this,"密码错误，请重试！",0).show();
-                    falseInf.setText("密码错误，请重试！");
-                    falseInf.setTextColor(getResources().getColor(R.color.qmui_config_color_red));
-                }
-
-            }
-        });
-        //取得屏幕尺寸、设置模态框宽高
-        WindowManager windowManager = getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
-        lp.width = (int) (size.x * 0.5);
-        lp.height = (int)(size.y * 0.5);
-        window.setAttributes(lp);*/
+        initImmersiveMode(); //隐藏虚拟按键和状态栏*/
     }
 
     @Event(R.id.btn_test)

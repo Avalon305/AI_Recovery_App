@@ -25,6 +25,7 @@ import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.InputDialog;
 import com.bdl.airecovery.dialog.MenuDialog;
+import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.util.WifiUtils;
@@ -65,11 +66,7 @@ public class SystemSettingActivity extends BaseActivity {
     @ViewInject(R.id.sys_ip) //ip地址
     private TextView tvIp;
 
-
-    @ViewInject(R.id.sys_version) //软件版本号
-    private TextView tvVersion;
-
-    @ViewInject(R.id.sys_rate)
+    @ViewInject(R.id.sys_rate) //电机参数比
     private TextView tvRate;
 
     @ViewInject(R.id.btn_set_device_name)  //修改设备类型按钮
@@ -98,6 +95,9 @@ public class SystemSettingActivity extends BaseActivity {
 
     @ViewInject(R.id.sys_btn_return) //返回按钮
     private QMUIRoundButton btnReturn;
+
+    @ViewInject(R.id.btn_adset) //进入高级设置页面
+    private QMUIRoundButton btnAdset;
 
     Setting setting = null; //接收数据库数据的Setting对象
     String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
@@ -163,7 +163,7 @@ public class SystemSettingActivity extends BaseActivity {
             setTextView(tvUpdateAddress, updateAddress);
             setTextView(tvTimeserver, timeServerAddress);
             setTextView(tvCoachDeviceAddress, setCoachDeviceAddressDeviceAddress);
-            setTextView(tvVersion, version);
+            //setTextView(tvVersion, version);
             setTextView(tvRate, rate);
         }
     }
@@ -503,6 +503,61 @@ public class SystemSettingActivity extends BaseActivity {
     }
 
     /**
+     * 进入高级设置按钮
+     */
+    @Event(R.id.btn_adset)
+    private void gotoAdvancedSetting(View view) {
+        //创建对话框对象的时候对对话框进行监听
+        String info = "请输入密码";
+        final int[] cnt = {0};
+        final boolean[] flag = {false};
+        final SmallPwdDialog dialog = new SmallPwdDialog(SystemSettingActivity.this, info, R.style.CustomDialog,
+                new SmallPwdDialog.DataBackListener() {
+                    @Override
+                    public void getData(String data) {
+                        String result = data;
+                        if (result.equals(MyApplication.ADMIN_PASSWORD)) {
+                            flag[0] = true;
+                        } else {
+                            flag[0] = false;
+                        }
+                        if (flag[0]) {
+                            startActivity(new Intent(SystemSettingActivity.this, AdvancedSettingActivity.class));
+                        } else if (cnt[0] != 0) {
+                            Toast.makeText(SystemSettingActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
+                        }
+                        cnt[0]++;
+                    }
+                });
+
+        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.y = 100;
+        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        dialog.show();
+        initImmersiveMode(); //隐藏虚拟按键和状态栏
+    }
+
+    /**
      * 获得当前页面的setting信息
      *
      * @param setting
@@ -513,7 +568,7 @@ public class SystemSettingActivity extends BaseActivity {
         setting.setUpdateAddress(getRealData(tvUpdateAddress));
         setting.setTimeServerAddress(getRealData(tvTimeserver));
         setting.setCoachDeviceAddress(getRealData(tvCoachDeviceAddress));
-        setting.setVersion(getRealData(tvVersion));
+        //setting.setVersion(getRealData(tvVersion));
         setting.setRate(getRealData(tvRate));
         return setting;
     }

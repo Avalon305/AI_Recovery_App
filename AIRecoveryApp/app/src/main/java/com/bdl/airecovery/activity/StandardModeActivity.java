@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
@@ -127,6 +129,8 @@ public class StandardModeActivity extends BaseActivity {
     private TextView inversusnumber; //反向力值
     @ViewInject(R.id.tv_ms_time)
     private TextView tv_ms_time;
+    @ViewInject(R.id.tv_heart_analyze)
+    private TextView tv_heart_analyze; //心率分析
     private TextView medium_dialog_msg;     //最后5秒模态框 时间文本
     //ImageView
     @ViewInject(R.id.iv_ms_positiveplus)
@@ -171,6 +175,42 @@ public class StandardModeActivity extends BaseActivity {
         IntentFilter intentFilter = new IntentFilter("com.bdl.bluetoothmessage");
         registerReceiver(bluetoothReceiver, intentFilter);
 
+    }
+
+    /**
+     * 心率分析
+     * @param currHeartRate
+     * @return 分析结果
+     */
+    private Pair heartRateAnalysis(int currHeartRate) {
+        if (MyApplication.getInstance().getUser() == null) {
+            return null;
+        }
+        //最大心率
+        int maxRate = MyApplication.getInstance().getUser().getHeartRatemMax();
+        //心率分析
+        if (currHeartRate >= maxRate*0.7) {
+            if (currHeartRate >= (int) maxRate*0.8) {
+                if (currHeartRate >= (int) maxRate*0.9) {
+                    //90%~100%
+                    return new Pair<>("极限心率", "#df6d80");
+                } else {
+                    //80%~90%
+                    return new Pair<>("无氧心率", "#f1c369");
+                }
+            } else {
+                //70%~80%
+                return new Pair<>("有氧心率", "#faf97c");
+            }
+        } else {
+            if (currHeartRate >= (int) maxRate*0.6) {
+                //60%~70%
+                return new Pair<>("燃脂心率", "#bde293");
+            } else {
+                //50%~60%
+                return new Pair<>("热身心率", "#7fd3f8");
+            }
+        }
     }
 
     /**
@@ -1287,7 +1327,13 @@ public class StandardModeActivity extends BaseActivity {
                 //获得心率
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    getrate.setText(commonMessage.getAttachment());
+                    getrate.setText(commonMessage.getAttachment()); //心率数值
+                    //心率分析
+                    Pair<String, String> res = heartRateAnalysis(Integer.parseInt(commonMessage.getAttachment()));
+                    if (res != null) {
+                        tv_heart_analyze.setText(res.first);
+                        tv_heart_analyze.setTextColor(Color.parseColor(res.second));
+                    }
                     break;
                 default:
                     LogUtil.e("未知广播，收到message：" + commonMessage.getMsgType());
