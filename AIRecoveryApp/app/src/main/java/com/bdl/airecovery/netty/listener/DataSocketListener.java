@@ -37,8 +37,6 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 //				if (CardReaderService.isIsCardLog()){
 //					CardReaderService.setNoSuchPerson(true);
 //				}
-//				logger.info("DataSocket客户端收到登陆结果响应:"+"无此人的医护设置，傻逼陈其钊！");
-//				//Log.e("channelRead.LoginResp","无此人的医护设置，傻逼陈其钊！");
 //			}else{
 //				//TODO 在这里处理获取到的登陆信息
 //				BdlProto.LoginResponse resp =message.getLoginResponse();
