@@ -337,7 +337,7 @@ public class LoginBiz {
         //生成请求
         BdlProto.LoginRequest request =
                 BdlProto.LoginRequest.newBuilder().setDeviceType(CommonUtils.getDeviceType())
-                        .setUid(name).setActivityType(CommonUtils.getActivityType()).build();
+                        .setUid(name).build();
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         final BdlProto.Message message = DataProtoUtil.packLoginRequest(Seq.get(),request);
         LogUtil.i("Message : " + message);

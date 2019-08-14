@@ -1,0 +1,217 @@
+syntax = "proto3";
+
+
+
+option optimize_for = SPEED;
+option java_package = "com.bdl.airecovery.proto";
+option java_outer_classname = "BdlProto";
+//通讯类型
+enum HeadType {
+    Keepalive_Request = 0; //心跳请求ping;
+    Keepalive_Response = 1; //心跳请求pong
+    Login_Request = 2; //登陆请求
+    Login_Response = 3; //登录响应
+    Upload_Request = 4; //结果上传请求
+    Upload_Response = 5; //结果上传响应
+    PersonalSet_Request = 6; //个人设置请求
+    PersonalSet_Response = 7; //个人设置响应
+    MuscleStrength_Request = 8;//肌力测试上传请求
+	MuscleStrength_Response = 9;//肌力测试上传响应
+	ErrorInfo_Request = 10; //错误上传请求
+	ErrorInfo_Response = 11; //错误上传响应 
+}
+ 
+
+// 训练模式
+enum TrainMode{
+   RehabilitationModel = 0;//康复模式
+   ActiveModel = 1; //主动模式
+   PassiveModel = 2; //被动模式
+}
+ 
+// 设备类型
+enum DeviceType {
+    P00 = 0; //坐式划船机
+    P01 = 1; //坐式推胸机
+    P02 = 2;//腿部推蹬机
+    P03 = 3;//腹肌训练机
+    P04 = 4;//三头肌训练机
+    P05 = 5;//腿部外弯机
+    P06 = 6;//腿部内弯机
+    P07 = 7;//蝴蝶机
+    P08 = 8;//反向蝴蝶机
+    P09 = 9;//坐式背部伸展机
+ 
+}
+
+
+// 用户运动模式
+enum SportMode{
+   CountingMode = 0; //计数模式
+   TimerMode = 1; //计时模式
+}
+
+
+// 心跳请求
+message KeepaliveRequest{
+    string deviceId = 1; //设备ID
+    DeviceType deviceType = 2; //设备类型
+    string clientTime = 3; //客户端时间戳
+}
+
+// 心跳响应
+message KeepaliveResponse{
+    string deviceId = 1; //设备ID
+    DeviceType deviceType = 2; //设备类型
+    string clientTime = 3; //客户端时间戳
+    string serverTime = 4; //服务端时间戳
+}
+
+// 登陆请求
+message LoginRequest{
+    string uid = 1; //用户ID
+	string bind_id = 2; //手环id
+	DeviceType deviceType = 3;//设备类型
+   
+}
+
+// 登录响应，C#需要判断是否存在个人设置,并返回个人设置和处方设置
+message LoginResponse{
+    string uid = 1; //用户ID
+    repeated DeviceType deviceTypeArr = 2; //待训练的设备列表
+    SportMode sportMode = 3; //用户运动模式，计时模式或计数模式
+    bool exisitSetting = 4; //是否存在个人设置
+    TrainMode trainMode = 5; //训练模式:主被动，康复模式
+    int32 seatHeight = 7; //座椅高度
+    int32 backDistance = 8; //靠背距离
+	int32 footboardDistance = 9;//踏板距离
+	double leverAngle = 10;//杠杆角度
+	int32 forwardLimit = 11; //前方限制
+    int32 backLimit = 12; //后方限制
+	double consequentForce = 13; //顺向力
+    double reverseForce = 14; //反向力
+	double power = 15; //功率
+	int32 dpStatus = 16;//'1做了 0没做'
+	int32 dpMoveway = 17;//'移乘方式'
+	string dpMemo = 18;//注意点、指示
+	int32 dpTimecount = 19;//目标运动时间
+	int32 dpTargetNum = 20;//目标运动个数
+	int32 speed_rank = 21;//运动速度等级
+    string sysVersion = 22;//系统版本
+
+}
+
+// 结果上传请求
+message UploadRequest{
+    string uid = 1; //用户ID
+    DeviceType deviceType=2;//设备类型
+    SportMode sportMode = 3; //用户运动模式，计时模式或计数模式
+    TrainMode trainMode = 4; //训练模式
+    double consequentForce = 5; //顺向力
+    double reverseForce = 6; //反向力
+    double power = 7; //功率
+	int32 speedRank = 8;//运动速度
+	int32 finishNum = 9;//完成运动个数：计数模式完成个数
+	int32 finishTime = 10;//完成运动时间：计时模式运动时间
+	double distance = 11; //距离 千米，两位小数
+	double energy = 12;//训练总耗能 单位卡路里
+	string heart_rate_list = 13;//心率集合：运动过程实时心率集合，数据之间*分割'
+    int32 dpId = 14;//设备处方id
+	string bindId =15;//手环id
+}
+
+// 结果上传响应
+message UploadResponse{
+    string uid = 1;//用户ID
+    DeviceType deviceType = 2;//设备类型
+    SportMode sportMode = 3; //用户运动模式，计时模式或计数模式
+    bool finished = 4;//是否训练结束
+    bool success = 5;//上传结果
+}
+
+//个人设置请求
+message PersonalSetRequest{
+    string uid = 1; //用户ID
+	string bind_id = 2; //手环id
+    DeviceType deviceType = 3;//设备类型
+	TrainMode trainMode = 4; //训练模式	
+    int32 seatHeight = 7; //座椅高度
+    int32 backDistance = 8; //靠背距离
+	int32 footboardDistance = 9;//踏板距离
+	double leverAngle = 10;//杠杆角度
+	int32 forwardLimit = 11; //前方限制
+    int32 backLimit = 12; //后方限制
+	double consequentForce = 13; //顺向力
+    double reverseForce = 14; //反向力
+	double power = 15; //功率
+
+}
+
+//个人设置响应
+message PersonalSetResponse{
+    DeviceType deviceType = 1;//设备类型
+    TrainMode trainMode = 2; //训练模式	
+    string uid = 3;//用户ID
+    bool success = 4;//响应结果
+}
+
+//上传肌力测试请求
+message MuscleStrengthRequest{
+    string uid = 1; //用户ID
+	string muscleTestValue = 2;//肌力测试值
+    string muscleCreatTime = 3; //肌力测试值创建时间
+}
+
+message MuscleStrengthResponse{
+	string uid = 1;//用户ID
+    bool success = 2;//响应结果
+}
+
+message ErrorInfoRequest{
+    string uid = 1; //用户ID
+	DeviceType deviceType = 2;//设备类型
+	TrainMode trainMode = 3; //训练模式	
+	SportMode sportMode = 4; //用户运动模式，计时模式或计数模式
+	string error = 5 ;//错误信息,主要是电机发生的错误
+	string errorStartTime = 6;//错误发生时间
+}
+
+message ErrorInfoResponse{
+    string uid = 1; //用户ID
+	DeviceType deviceType = 2;//设备类型
+	TrainMode trainMode = 3; //训练模式	
+	SportMode sportMode = 4; //用户运动模式，计时模式或计数模式
+	bool success = 5;//响应结果
+}
+
+message Message{
+    HeadType type = 1;//消息类型
+    int32 sequence = 2;//消息序列号
+    KeepaliveRequest keepaliveRequest = 3;
+    KeepaliveResponse keepaliveResponse = 4;
+    LoginRequest loginRequest = 5;
+    LoginResponse loginResponse = 6;
+    UploadRequest uploadRequest = 7;
+    UploadResponse uploadResponse = 8;
+	PersonalSetRequest personalSetRequest = 9;
+	PersonalSetResponse personalSetResponse = 10;
+	MuscleStrengthRequest  muscleStrengthRequest = 11;
+	MuscleStrengthResponse  muscleStrengthResponse = 12;
+	ErrorInfoRequest errorInfoRequest = 13;
+	ErrorInfoResponse errorInfoResponse = 14;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

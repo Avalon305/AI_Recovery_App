@@ -113,23 +113,23 @@ public class ReSendService extends Service {
         BdlProto.UploadRequest uploadRequest = BdlProto.UploadRequest.newBuilder()
                 .setUid(sendMsg.getUid_())
                 .setTrainModeValue(sendMsg.getTrainModeValue_())
-                .setCourseId(sendMsg.getCourseId_())
-                .setActivityId(sendMsg.getActivityId_())
-                .setActivityRecordId(sendMsg.getActivityRecordId_())
+//                .setCourseId(sendMsg.getCourseId_())
+//                .setActivityId(sendMsg.getActivityId_())
+//                .setActivityRecordId(sendMsg.getActivityRecordId_())
                 .setDeviceTypeValue(sendMsg.getDeviceTypeValue_())
-                .setActivityTypeValue(sendMsg.getActivityTypeValue_())
-                .setDefatModeEnable(sendMsg.isDefatModeEnable_())
+//                .setActivityTypeValue(sendMsg.getActivityTypeValue_())
+//                .setDefatModeEnable(sendMsg.isDefatModeEnable_())
                 .setReverseForce(sendMsg.getReverseForce_())
-                .setForwardForce(sendMsg.getForwardForce_())
+//                .setForwardForce(sendMsg.getForwardForce_())
                 .setPower(sendMsg.getPower_())
-                .setFinishCount(sendMsg.getFinishCount_())
-                .setFinalDistance(sendMsg.getFinalDistance_())
-                .setCalorie(sendMsg.getCalorie_())
-                .setTrainTime(sendMsg.getTrainTime_())
-                .setHeartRateAvg(sendMsg.getHeartRateAvg_())
-                .setHeartRateMax(sendMsg.getHeartRateMax_())
-                .setHeartRateMin(sendMsg.getHeartRateMin_())
-                .setDataId(String.valueOf(tempStorage.getId()))
+//                .setFinishCount(sendMsg.getFinishCount_())
+//                .setFinalDistance(sendMsg.getFinalDistance_())
+//                .setCalorie(sendMsg.getCalorie_())
+//                .setTrainTime(sendMsg.getTrainTime_())
+//                .setHeartRateAvg(sendMsg.getHeartRateAvg_())
+//                .setHeartRateMax(sendMsg.getHeartRateMax_())
+//                .setHeartRateMin(sendMsg.getHeartRateMin_())
+//                .setDataId(String.valueOf(tempStorage.getId()))
                 .build();//前两行从蓝牙service获取，后两行从activity获取
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         if (trainResultSeq == Integer.MAX_VALUE) {
@@ -202,16 +202,16 @@ public class ReSendService extends Service {
         BdlProto.PersonalSetRequest request = BdlProto.PersonalSetRequest.newBuilder()
                 .setUid(sendMsg.getUid()) //用户ID
                 .setDeviceTypeValue(sendMsg.getDeviceTypeValue()) //设备类型
-                .setActivityTypeValue(sendMsg.getActivityTypeValue()) //循环类型
+//                .setActivityTypeValue(sendMsg.getActivityTypeValue()) //循环类型
                 .setSeatHeight(sendMsg.getSeatHeight()) //座位高度
                 .setBackDistance(sendMsg.getBackDistance()) //靠背距离
-                .setLeverLength(sendMsg.getLeverLength()) //杠杆长度
+//                .setLeverLength(sendMsg.getLeverLength()) //杠杆长度
                 .setLeverAngle(sendMsg.getLeverAngle()) //杠杆角度
                 .setForwardLimit(sendMsg.getFrontLimit()) //前方限制
                 .setBackLimit(sendMsg.getBackLimit()) //后方限制
                 .setTrainModeValue(sendMsg.getTrainModeValue()) //训练模式
-                .setDefatModeEnable(sendMsg.isOpenFatLossMode()) //是否开启减脂模式
-                .setDataId(String.valueOf(tempStorage.getId()))
+//                .setDefatModeEnable(sendMsg.isOpenFatLossMode()) //是否开启减脂模式
+//                .setDataId(String.valueOf(tempStorage.getId()))
                 .build();
 
         //打包方法的第一个参数seq是消息序列号，每个请求递增，当达到 Integer.MAX_VALUE时重新计数，调用时自行处理

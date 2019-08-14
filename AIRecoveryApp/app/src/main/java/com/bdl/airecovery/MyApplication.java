@@ -12,7 +12,6 @@ import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.entity.login.User;
-import com.bdl.airecovery.log.Log4JConfiger;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.service.MotorService;
@@ -101,7 +100,7 @@ public class MyApplication extends MultiDexApplication {
         x.Ext.init(this);
         x.Ext.setDebug(BuildConfig.DEBUG); // 是否输出debug日志, 开启debug会影响性能.
 
-        Log4JConfiger.configure();//配置日志框架
+       // Log4JConfiger.configure();//配置日志框架
         readJson();//读取json文件到list
 
         try {
