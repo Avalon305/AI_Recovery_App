@@ -21,8 +21,8 @@ public class CountDownProtoUtil {
      * @param request
      * @return
      */
-    public static BdlProto.Message packCurrentTimeRequest(int seq, BdlProto.CurrentTimeRequest request) {
-        return BdlProto.Message.newBuilder().setSequence(seq).setCurrentTimeRequest(request)
-                .setType(BdlProto.HeadType.CurrentTime_Request).build();
-    }
+//    public static BdlProto.Message packCurrentTimeRequest(int seq, BdlProto.CurrentTimeRequest request) {
+//        return BdlProto.Message.newBuilder().setSequence(seq).setCurrentTimeRequest(request)
+//                .setType(BdlProto.HeadType.CurrentTime_Request).build();
+//    }
 }

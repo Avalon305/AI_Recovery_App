@@ -142,23 +142,23 @@ public class DataSocketClient {
 	public static void main(String[] args){
 		//示例同CountDownSocketClient的main函数
 		//获取请求
-		BasicConfigurator.configure();
-		BdlProto.LoginRequest request =
-				BdlProto.LoginRequest.newBuilder().setDeviceType(BdlProto.DeviceType.E13)
-						.setUid("YK-488A").setActivityType(BdlProto.ActivityType.forNumber(1)).build();
-
-		System.out.println("request : " + request.toString());
-
-		//包装Message
-		BdlProto.Message message = DataProtoUtil.packLoginRequest(1,request);
-
-		System.out.println("message : " + message.toString());
-
-		try {
-			DataSocketClient.getInstance().sendMsg(message);
-		} catch (ConnectException e) {
-			e.printStackTrace();
-			System.out.println("连不上教练机");
-		}
+//		BasicConfigurator.configure();
+//		BdlProto.LoginRequest request =
+//				BdlProto.LoginRequest.newBuilder().setDeviceType(BdlProto.DeviceType.E13)
+//						.setUid("YK-488A").setActivityType(BdlProto.ActivityType.forNumber(1)).build();
+//
+//		System.out.println("request : " + request.toString());
+//
+//		//包装Message
+//		BdlProto.Message message = DataProtoUtil.packLoginRequest(1,request);
+//
+//		System.out.println("message : " + message.toString());
+//
+//		try {
+//			DataSocketClient.getInstance().sendMsg(message);
+//		} catch (ConnectException e) {
+//			e.printStackTrace();
+//			System.out.println("连不上教练机");
+//		}
 	}
 }

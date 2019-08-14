@@ -38,4 +38,15 @@ public class DataProtoUtil {
         return BdlProto.Message.newBuilder().setSequence(seq).setUploadRequest(request)
                 .setType(BdlProto.HeadType.Upload_Request).build();
     }
+    /**
+     *  @author zfc
+     *  @time
+     *  @describe 打包肌力测试上传请求
+     */
+    public static BdlProto.Message packMuscleStrengthRequest(int seq,BdlProto.MuscleStrengthRequest request){
+        return  BdlProto.Message.newBuilder().setSequence(seq)
+                                              .setMuscleStrengthRequest(request)
+                                              .setType(BdlProto.HeadType.ErrorInfo_Request)
+                                              .build();
+    }
 }
