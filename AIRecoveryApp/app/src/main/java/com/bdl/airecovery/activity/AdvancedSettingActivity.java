@@ -57,6 +57,8 @@ public class AdvancedSettingActivity extends BaseActivity {
     private TextView btnQuickLogin;
     @ViewInject(R.id.btn_adset_strength_test) //肌力测试开关
     private TextView btnStrengthTest;
+    @ViewInject(R.id.tv_medical_pwd)
+    private TextView tvMedicalPwd;
     @ViewInject(R.id.img_update_sys_setting)
     private ImageView imgUpdate;
     @ViewInject(R.id.sys_btn_return) //返回按钮
@@ -64,7 +66,7 @@ public class AdvancedSettingActivity extends BaseActivity {
 
     Setting setting = null; //接收数据库数据的Setting对象
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
-
+    Boolean isModify = false; //是否修改
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +113,7 @@ public class AdvancedSettingActivity extends BaseActivity {
                 setting.setVersion(null);
                 setting.setCanQuickLogin(null);
                 setting.setCanStrengthTest(null);
+                setting.setMedicalSettingPassword("admin"); //默认密码
             }
             //处理数据库中查询到的数据
             //版本
@@ -123,11 +126,14 @@ public class AdvancedSettingActivity extends BaseActivity {
             String canStrengthTest = setting.getCanStrengthTest() == true ? "开启":"关闭";
             setTextView(tvStrengthTest, "当前状态：" + canStrengthTest);
             btnStrengthTest.setText(canStrengthTest);
+            //医护设置密码
+            setTextView(tvMedicalPwd, setting.getMedicalSettingPassword());
         }
     }
 
     @Event(R.id.btn_adset_quick_login)
     private void setCanQuickLogin(View view) {
+        isModify = true;
         Button btn = (Button) view;
         if (btn.getText().equals("开启")) {
             btn.setText("关闭");
@@ -142,6 +148,7 @@ public class AdvancedSettingActivity extends BaseActivity {
 
     @Event(R.id.btn_adset_strength_test)
     private void setCanStrengthTest(View view) {
+        isModify = true;
         Button btn = (Button) view;
         if (btn.getText().equals("开启")) {
             btn.setText("关闭");
@@ -152,6 +159,47 @@ public class AdvancedSettingActivity extends BaseActivity {
             setTextView(tvStrengthTest, "当前状态：开启");
             setting.setCanStrengthTest(true);
         }
+    }
+
+    @Event(R.id.btn_medical_pwd)
+    private void setMedicalPwd(View v) {
+        isModify = true;
+        //创建对话框对象的时候对对话框进行监听
+        String info = "请输入新密码";
+        final InputDialog dialog = new InputDialog(AdvancedSettingActivity.this, info, R.style.CustomDialog,
+                new InputDialog.DataBackListener() {
+                    @Override
+                    public void getData(String data) {
+                        String result = data;
+                        tvMedicalPwd.setText(result);
+                    }
+                });
+        dialog.setTitle("医护设置 修改密码");
+        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.y = 100;
+        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        dialog.show();
+        initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
 
 
@@ -176,9 +224,7 @@ public class AdvancedSettingActivity extends BaseActivity {
      */
     @Event(R.id.sys_btn_return)
     private void setReturnClick(View view) {
-        Setting newSetting = new Setting();
-        newSetting = getCurrentSettings(newSetting);
-        if (!newSetting.equals(setting)) { //比较当前页面数据和数据库中数据
+        if (isModify) { //比较当前页面数据和数据库中数据
             final CommonDialog commonDialog = new CommonDialog(AdvancedSettingActivity.this);
             commonDialog.setTitle("温馨提示");
             commonDialog.setMessage("当前数据未保存，确定返回？");
@@ -212,6 +258,7 @@ public class AdvancedSettingActivity extends BaseActivity {
         setting.setVersion(getRealData(tvVersion));
         setting.setCanQuickLogin(btnQuickLogin.getText().equals("开启"));
         setting.setCanStrengthTest(btnStrengthTest.getText().equals("开启"));
+        setting.setMedicalSettingPassword(tvMedicalPwd.getText().toString());
         return setting;
     }
 

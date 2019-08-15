@@ -75,8 +75,8 @@
             android:id="@+id/iv_map_help"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="70dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="60dp"
             android:src="@drawable/mode_questioncircle" />
         <!--心率-->
         <ImageView
@@ -137,15 +137,15 @@
             android:text="0" />
 
         <!--训练倒计时-->
-        <ImageView
+        <!--<ImageView
             android:id="@+id/iv_map_time"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignStart="@id/iv_map_number"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/iv_map_number"
-            android:src="@drawable/mode_hourglass"/>
-        <TextView
+            android:src="@drawable/mode_hourglass"/>-->
+        <!--<TextView
             android:id="@+id/tv_map_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,9 +153,9 @@
             android:layout_marginLeft="10dp"
             android:layout_alignTop="@+id/iv_map_time"
             android:textSize="40sp"
-            android:text="训练倒计时: " />
+            android:text="训练倒计时: " />-->
         <!--倒计时文本-->
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_map_gettime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
             android:layout_marginLeft="10dp"
             android:layout_alignTop="@+id/iv_map_time"
             android:textSize="40sp"
-            android:text="暂无" />
+            android:text="暂无" />-->
     </RelativeLayout>
 
 
@@ -270,7 +270,7 @@
         android:layout_marginTop="-40dp"
         android:layout_marginLeft="20dp">
         <Button
-            android:id="@+id/btn_map_end"
+            android:id="@+id/btn_setting"
             android:layout_width="200dp"
             android:layout_height="90dp"
             android:gravity="center"
@@ -278,7 +278,7 @@
             android:paddingRight="20dp"
             android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
-            android:text="测试状态"
+            android:text="医护设置"
             android:textColor="#2b2b2b"
             android:textSize="30sp" />
         <!--暂停-->

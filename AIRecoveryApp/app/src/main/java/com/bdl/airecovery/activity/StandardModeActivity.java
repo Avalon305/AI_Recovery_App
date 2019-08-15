@@ -4,6 +4,7 @@ package com.bdl.airecovery.activity;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -11,17 +12,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.content.Intent;
+import android.widget.Toast;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
@@ -36,14 +40,20 @@ import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LargeDialogHelp;
 import com.bdl.airecovery.dialog.MediumDialog;
+import com.bdl.airecovery.dialog.SmallPwdDialog;
+import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
+import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -51,6 +61,7 @@ import org.xutils.view.annotation.ViewInject;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.bdl.airecovery.contoller.Writer.setInitialBounce;
 import static com.bdl.airecovery.contoller.Writer.setKeepArmTorque;
 import static com.bdl.airecovery.contoller.Writer.setParameter;
@@ -112,14 +123,10 @@ public class StandardModeActivity extends BaseActivity {
     private TextView getrate;        //心率
     @ViewInject(R.id.tv_ms_getnumber)
     private TextView getnumber;     //次数
-    @ViewInject(R.id.tv_ms_gettime)
-    private TextView gettime;        //倒计时
     @ViewInject(R.id.tv_ms_positivenumber)
     private TextView positivenumber; //顺向力值
     @ViewInject(R.id.tv_ms_inversusnumber)
     private TextView inversusnumber; //反向力值
-    @ViewInject(R.id.tv_ms_time)
-    private TextView tv_ms_time;
     @ViewInject(R.id.tv_heart_analyze)
     private TextView tv_heart_analyze; //心率分析
     private TextView medium_dialog_msg;     //最后5秒模态框 时间文本
@@ -136,11 +143,9 @@ public class StandardModeActivity extends BaseActivity {
     private ImageView iv_ms_help;     //“帮助”图片按钮
     @ViewInject(R.id.iv_ms_state)
     private ImageView iv_ms_state;//登陆头像
+    @ViewInject(R.id.iv_heartrate_help)
+    private ImageView iv_heartrate_help; //心率区间 帮助按钮
     //Button
-    @ViewInject(R.id.btn_ms_end)
-    private Button btn_ms_end;     //“教练协助/停止协助”按钮
-    @ViewInject(R.id.btn_ms_pause)
-    private Button btn_ms_pause;   //“暂停”按钮
     //MySeekBar
     @ViewInject(R.id.sp_ms_speed)
     private com.bdl.airecovery.widget.MySeekBar sp_speed;//速度seekbar
@@ -158,6 +163,7 @@ public class StandardModeActivity extends BaseActivity {
         queryDeviceParam();  //查询设备参数
         queryUserInfo();     //查询用户信息
         iv_ms_help_onClick();//帮助图片的点击事件（使用xUtils框架会崩溃）
+        iv_heartrate_help_onClick(); //心率区间 帮助按钮点击事件
 
         chooseDeviceType(); //选择设备类型
         //注册蓝牙用监听器
@@ -554,6 +560,62 @@ public class StandardModeActivity extends BaseActivity {
 //        timer.schedule(timerTask, 0, 50);
 //    }
 
+    private QMUIPopup mNormalPopup;
+    /**
+     * 心率区间 帮助按钮
+     */
+    private void iv_heartrate_help_onClick() {
+        iv_heartrate_help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initNormalPopupIfNeed();
+                mNormalPopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
+                mNormalPopup.setPreferredDirection(QMUIPopup.DIRECTION_BOTTOM);
+                mNormalPopup.show(view);
+            }
+        });
+    }
+
+    private void initNormalPopupIfNeed() {
+        if (mNormalPopup == null) {
+            mNormalPopup = new QMUIPopup(this, QMUIPopup.DIRECTION_NONE);
+            TextView textView = new TextView(this);
+            textView.setLayoutParams(mNormalPopup.generateLayoutParam(
+                    QMUIDisplayHelper.dp2px(this, 500),
+                    WRAP_CONTENT
+            ));
+            if (tv_heart_analyze.getText().equals("热身心率")) {
+                textView.setText("在此心率区间运动10至15分钟可实现完美热身效果，进而有利于进行后续强度更大的运动，此外也有助于在健身结束进行放松。");
+            } else if (tv_heart_analyze.getText().equals("燃脂心率")) {
+                textView.setText("进行厌氧运动可增强耐力并使身体能够应付更大强度的运动，这一强度的运动可燃烧脂肪，但需要持续较长时间。");
+            } else if (tv_heart_analyze.getText().equals("有氧心率")) {
+                textView.setText("在此心率区间，心血管耐力将得到增强，在较长一段时间内保持此心率水平可消耗热量，燃烧碳水化合物和脂肪。");
+            } else if (tv_heart_analyze.getText().equals("无氧心率")) {
+                textView.setText("在此心率区间，短暂的高强度运动可提升耐力水平并练出肌肉，在高强度运动的间隙进行适当的休息可帮助达到期望的效果。");
+            } else if (tv_heart_analyze.getText().equals("极限心率")) {
+                textView.setText("不建议康复患者达到此心率区间，此运动强度非常高。");
+            } else {
+                textView.setText("未检测到当前心率");
+                textView.setLayoutParams(mNormalPopup.generateLayoutParam(
+                        QMUIDisplayHelper.dp2px(this, 200),
+                        WRAP_CONTENT
+                ));
+            }
+            textView.setLineSpacing(QMUIDisplayHelper.dp2px(this, 4), 1.0f);
+            int padding = QMUIDisplayHelper.dp2px(this, 20);
+            textView.setPadding(padding, padding, padding, padding);
+            textView.setTextColor(Color.parseColor("#000000"));
+            textView.setTextSize(20);
+            mNormalPopup.setContentView(textView);
+            mNormalPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+
+                }
+            });
+        }
+    }
+
     LargeDialogHelp helpDialog;
 
     /**
@@ -699,32 +761,11 @@ public class StandardModeActivity extends BaseActivity {
      * 获取用户信息
      */
     private void queryUserInfo() {
-        if (MyApplication.getInstance().getUser() != null) { //判空
-            //用户名
-            person.setText(MyApplication.getInstance().getUser().getUsername());
-            //如果用户是学员，则执行如下逻辑
-            if (MyApplication.getInstance().getUser().getRole() != null) {
-                if (MyApplication.getInstance().getUser().getRole().equals("trainee")) {
-                    //如果为空，说明无教练连接蓝牙
-                    if (MyApplication.getInstance().getUser().getHelperuser() == null || MyApplication.getInstance().getUser().getHelperuser().getUsername().equals("")) {
-                        btn_ms_end.setText("教练协助"); //更新为“教练协助”按钮
-                        iv_ms_state.setImageDrawable(getResources().getDrawable((R.drawable.yonghu1)));
-
-                    } else { //否则，不为空串，说明有教练连接蓝牙
-                        btn_ms_end.setText("停止协助"); //更新为“停止协助”按钮
-                        iv_ms_state.setImageDrawable(getResources().getDrawable((R.drawable.shou)));
-
-                    }
-                } else if (MyApplication.getInstance().getUser().getRole().equals("coach")) {
-                    btn_ms_end.setText("医护设置"); //更新为“医护设置”按钮
-                    iv_ms_state.setImageDrawable(getResources().getDrawable((R.drawable.guanliyuan1)));
-                } else {
-                    iv_ms_state.setImageDrawable(getResources().getDrawable((R.drawable.banshou1)));
-
-                }
-            }
-            weight = MyApplication.getInstance().getUser().getWeight();
+        if (MyApplication.getInstance().getUser() == null) {
+            return;
         }
+        person.setText(MyApplication.getInstance().getUser().getUsername()); //用户名
+        weight = MyApplication.getInstance().getUser().getWeight(); //体重
     }
 
     //扫描教练的定时任务
@@ -739,39 +780,68 @@ public class StandardModeActivity extends BaseActivity {
         }
     };
 
+    DbManager dbManager = MyApplication.getInstance().getDbManager();
+    Setting setting;
     /**
-     * “教练协助/停止协助”按钮
-     * 如果是调试模式，显示“停止协助”，点击会将HelpUser置为空串，然后跳转到主界面
-     * 如果不是调制模式，显示“教练协助”，点击事件与主界面一致（连接教练蓝牙）
+     * 医护设置 进入按钮
+     * 需要密码，在高级设置界面设置
+     * 默认admin
      */
-    @Event(R.id.btn_ms_end)
-    private void endClick(View v) {
-        //如果是教练协助
-        if (btn_ms_end.getText() == "教练协助") {
-            btn_ms_end.setText("教练协助...");
-            Intent intent2 = new Intent(StandardModeActivity.this, CardReaderService.class);
-            intent2.putExtra("command", CommonCommand.SECOND__LOGIN.value());
-            startService(intent2);
-            timerLog.schedule(taskLog, 0, 2000);
-            Log.d("StandardModeActivity", "request to login");
+    @Event(R.id.btn_setting)
+    private void btnSettingOnClick(View v) {
+        try {
+            setting = dbManager.selector(Setting.class).findFirst();
+        } catch (DbException e) {
+            e.printStackTrace();
         }
-        //如果是停止协助
-        else if (btn_ms_end.getText() == "停止协助") {
-            Intent intent2 = new Intent(StandardModeActivity.this, CardReaderService.class);
-            intent2.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
-            startService(intent2);
-            Intent intent = new Intent(StandardModeActivity.this, BluetoothService.class);
-            intent.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
-            startService(intent);
-            Log.d("StandardModeActivity", "request to logout");
-        }
-        //如果是医护设置
-        else if (btn_ms_end.getText() == "医护设置") {
-            //跳转医护设置界面
-            Intent intent = new Intent(StandardModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
-            startActivity(intent); //启动
-            StandardModeActivity.this.finish(); //结束当前Activity
-        }
+        //创建对话框对象的时候对对话框进行监听
+        String info = "请输入密码";
+        final int[] cnt = {0};
+        final boolean[] flag = {false};
+        final SmallPwdDialog dialog = new SmallPwdDialog(StandardModeActivity.this, info, R.style.CustomDialog,
+                new SmallPwdDialog.DataBackListener() {
+                    @Override
+                    public void getData(String data) {
+                        String result = data;
+                        if (result.equals(setting.getMedicalSettingPassword())) {
+                            flag[0] = true;
+                        } else {
+                            flag[0] = false;
+                        }
+                        if (flag[0]) {
+                            startActivity(new Intent(StandardModeActivity.this, PersonalSettingActivity.class));
+                        } else if (cnt[0] != 0) {
+                            Toast.makeText(StandardModeActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
+                        }
+                        cnt[0]++;
+                    }
+                });
+
+        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.y = 100;
+        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        dialog.show();
+        initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
 
     CommonDialog commonDialog;

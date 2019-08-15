@@ -28,6 +28,7 @@ import com.bdl.airecovery.dialog.MenuDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Setting;
+import com.bdl.airecovery.netty.DataSocketClient;
 import com.bdl.airecovery.util.WifiUtils;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
@@ -63,6 +64,9 @@ public class SystemSettingActivity extends BaseActivity {
     @ViewInject(R.id.sys_ip) //ip地址
     private TextView tvIp;
 
+    @ViewInject(R.id.tv_connect_status)
+    private TextView tvConnectStatus; //C#端连接状态
+
     @ViewInject(R.id.btn_set_device_name)  //修改设备类型按钮
     private QMUIRoundButton setDeviceName;
 
@@ -90,6 +94,8 @@ public class SystemSettingActivity extends BaseActivity {
     Setting setting = null; //接收数据库数据的Setting对象
     String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
+    Timer updateStatusTimer = new Timer(); //更新C#端连接状态
+    Boolean isModify = false; //是否修改
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +109,26 @@ public class SystemSettingActivity extends BaseActivity {
         super.onResume();
         initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
+
+    //更新与C#端连接状态的定时任务
+    TimerTask updateStatusTask = new TimerTask(){
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //动态获取当前与C#端连接状态
+                    String status;
+                    if (DataSocketClient.getInstance() == null) {
+                        status = "未联通";
+                    } else {
+                        status = DataSocketClient.getInstance().status ? "联通" : "未联通";
+                    }
+                    setTextView(tvConnectStatus, status);
+                }
+            });
+        }
+    };
 
     /**
      * 查询数据库的异步任务
@@ -161,6 +187,9 @@ public class SystemSettingActivity extends BaseActivity {
         //动态获取ip地址
         String ipAddress = WifiUtils.getIP(SystemSettingActivity.this);
         setTextView(tvIp, ipAddress);
+
+        //动态更新当前与C#端连接状态
+        updateStatusTimer.schedule(updateStatusTask, 0, 2);
     }
 
     /**
@@ -201,6 +230,7 @@ public class SystemSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_set_device_name)
     private void setDeviceNameClick(View view) {
+        isModify = true;
         List<String> menuItemsList = new ArrayList<String>();
         for(int i = 0; i < deviceNameArray.length; i++) {
             menuItemsList.add(deviceNameArray[i]);
@@ -250,6 +280,7 @@ public class SystemSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_set_update_address)
     private void setUpdateAddressClick(View view) {
+        isModify = true;
         //创建对话框对象的时候对对话框进行监听
         String info = "请输入远程升级地址";
         final InputDialog dialog = new InputDialog(SystemSettingActivity.this, info, R.style.CustomDialog,
@@ -295,6 +326,7 @@ public class SystemSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_set_coach_device_address)
     private void setCoachDeviceAddressClick(View view) {
+        isModify = true;
         String info = "请输入教练机IP地址";
         //创建对话框对象的时候对对话框进行监听
         final InputDialog dialog = new InputDialog(SystemSettingActivity.this, info, R.style.CustomDialog,
@@ -363,9 +395,7 @@ public class SystemSettingActivity extends BaseActivity {
      */
     @Event(R.id.sys_btn_return)
     private void setReturnClick(View view) {
-        Setting newSetting = new Setting();
-        newSetting = getCurrentSettings(newSetting);
-        if (!newSetting.equals(setting)) { //比较当前页面数据和数据库中数据
+        if (isModify) { //比较当前页面数据和数据库中数据
             final CommonDialog commonDialog = new CommonDialog(SystemSettingActivity.this);
             commonDialog.setTitle("温馨提示");
             commonDialog.setMessage("当前数据未保存，确定返回？");
@@ -453,10 +483,7 @@ public class SystemSettingActivity extends BaseActivity {
     private Setting getCurrentSettings(Setting setting) {
         setting.setDeviceName(getRealData(tvDeviceName));
         setting.setUpdateAddress(getRealData(tvUpdateAddress));
-        //setting.setTimeServerAddress(getRealData(tvTimeserver));
         setting.setCoachDeviceAddress(getRealData(tvCoachDeviceAddress));
-        //setting.setVersion(getRealData(tvVersion));
-        //setting.setRate(getRealData(tvRate));
         return setting;
     }
 
