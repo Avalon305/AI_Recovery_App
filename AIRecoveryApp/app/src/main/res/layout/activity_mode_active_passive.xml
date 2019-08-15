@@ -270,7 +270,7 @@
         android:layout_marginTop="-40dp"
         android:layout_marginLeft="20dp">
         <Button
-            android:id="@+id/btn_map_end"
+            android:id="@+id/btn_setting"
             android:layout_width="200dp"
             android:layout_height="90dp"
             android:gravity="center"
@@ -278,7 +278,7 @@
             android:paddingRight="20dp"
             android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
-            android:text="测试状态"
+            android:text="医护设置"
             android:textColor="#2b2b2b"
             android:textSize="30sp" />
         <!--暂停-->
