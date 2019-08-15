@@ -108,11 +108,20 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
             <TextView
-                android:layout_width="440dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="教练机IP地址"
                 android:textSize="38sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_connect_status"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="未联通"
+                android:textSize="38sp"
+                android:textColor="@color/color_red"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/sys_coach_device_address"

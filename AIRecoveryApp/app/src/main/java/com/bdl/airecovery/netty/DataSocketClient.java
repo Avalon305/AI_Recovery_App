@@ -37,6 +37,7 @@ public class DataSocketClient {
 	private final int port;
 	private ChannelFuture cf;
 	private EventLoopGroup group;
+	public Boolean status = false;
 
 	{
 		try {
@@ -89,8 +90,10 @@ public class DataSocketClient {
 		try {
 			this.cf = b.connect(host, port).sync();
 			//logger.debug("远程服务器已经连接, 可以进行数据交换..");
+			status = true;
 		} catch (Exception e) {
 			//logger.error("远程服务器连接失败", e);
+			status = false;
 			throw new ConnectException("远程服务器连接失败");
 		}
 

@@ -4,6 +4,7 @@ package com.bdl.airecovery.activity;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Pair;
@@ -20,8 +22,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.content.Intent;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
@@ -41,6 +43,8 @@ import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import org.xutils.common.util.LogUtil;
@@ -51,6 +55,7 @@ import org.xutils.view.annotation.ViewInject;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.bdl.airecovery.contoller.Writer.setInitialBounce;
 import static com.bdl.airecovery.contoller.Writer.setKeepArmTorque;
 import static com.bdl.airecovery.contoller.Writer.setParameter;
@@ -136,6 +141,8 @@ public class StandardModeActivity extends BaseActivity {
     private ImageView iv_ms_help;     //“帮助”图片按钮
     @ViewInject(R.id.iv_ms_state)
     private ImageView iv_ms_state;//登陆头像
+    @ViewInject(R.id.iv_heartrate_help)
+    private ImageView iv_heartrate_help; //心率区间 帮助按钮
     //Button
     @ViewInject(R.id.btn_ms_end)
     private Button btn_ms_end;     //“教练协助/停止协助”按钮
@@ -158,6 +165,7 @@ public class StandardModeActivity extends BaseActivity {
         queryDeviceParam();  //查询设备参数
         queryUserInfo();     //查询用户信息
         iv_ms_help_onClick();//帮助图片的点击事件（使用xUtils框架会崩溃）
+        iv_heartrate_help_onClick(); //心率区间 帮助按钮点击事件
 
         chooseDeviceType(); //选择设备类型
         //注册蓝牙用监听器
@@ -553,6 +561,62 @@ public class StandardModeActivity extends BaseActivity {
 //        };
 //        timer.schedule(timerTask, 0, 50);
 //    }
+
+    private QMUIPopup mNormalPopup;
+    /**
+     * 心率区间 帮助按钮
+     */
+    private void iv_heartrate_help_onClick() {
+        iv_heartrate_help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initNormalPopupIfNeed();
+                mNormalPopup.setAnimStyle(QMUIPopup.ANIM_GROW_FROM_CENTER);
+                mNormalPopup.setPreferredDirection(QMUIPopup.DIRECTION_BOTTOM);
+                mNormalPopup.show(view);
+            }
+        });
+    }
+
+    private void initNormalPopupIfNeed() {
+        if (mNormalPopup == null) {
+            mNormalPopup = new QMUIPopup(this, QMUIPopup.DIRECTION_NONE);
+            TextView textView = new TextView(this);
+            textView.setLayoutParams(mNormalPopup.generateLayoutParam(
+                    QMUIDisplayHelper.dp2px(this, 500),
+                    WRAP_CONTENT
+            ));
+            if (tv_heart_analyze.getText().equals("热身心率")) {
+                textView.setText("在此心率区间运动10至15分钟可实现完美热身效果，进而有利于进行后续强度更大的运动，此外也有助于在健身结束进行放松。");
+            } else if (tv_heart_analyze.getText().equals("燃脂心率")) {
+                textView.setText("进行厌氧运动可增强耐力并使身体能够应付更大强度的运动，这一强度的运动可燃烧脂肪，但需要持续较长时间。");
+            } else if (tv_heart_analyze.getText().equals("有氧心率")) {
+                textView.setText("在此心率区间，心血管耐力将得到增强，在较长一段时间内保持此心率水平可消耗热量，燃烧碳水化合物和脂肪。");
+            } else if (tv_heart_analyze.getText().equals("无氧心率")) {
+                textView.setText("在此心率区间，短暂的高强度运动可提升耐力水平并练出肌肉，在高强度运动的间隙进行适当的休息可帮助达到期望的效果。");
+            } else if (tv_heart_analyze.getText().equals("极限心率")) {
+                textView.setText("不建议康复患者达到此心率区间，此运动强度非常高。");
+            } else {
+                textView.setText("未检测到当前心率");
+                textView.setLayoutParams(mNormalPopup.generateLayoutParam(
+                        QMUIDisplayHelper.dp2px(this, 200),
+                        WRAP_CONTENT
+                ));
+            }
+            textView.setLineSpacing(QMUIDisplayHelper.dp2px(this, 4), 1.0f);
+            int padding = QMUIDisplayHelper.dp2px(this, 20);
+            textView.setPadding(padding, padding, padding, padding);
+            textView.setTextColor(Color.parseColor("#000000"));
+            textView.setTextSize(20);
+            mNormalPopup.setContentView(textView);
+            mNormalPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+
+                }
+            });
+        }
+    }
 
     LargeDialogHelp helpDialog;
 

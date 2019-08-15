@@ -100,7 +100,7 @@
         <!--获取心率值显示此文本-->
         <TextView
             android:id="@+id/tv_ms_getrate"
-            android:layout_width="wrap_content"
+            android:layout_width="68dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/tv_ms_heart"
             android:layout_marginLeft="10dp"
@@ -114,9 +114,20 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/tv_ms_getrate"
             android:layout_alignBottom="@+id/tv_ms_getrate"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="5dp"
             android:textSize="40sp"
             android:text="心率区间" />
+
+        <!--帮助图标-->
+        <ImageView
+            android:id="@+id/iv_heartrate_help"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@id/tv_heart_analyze"
+            android:layout_alignBottom="@id/tv_heart_analyze"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="35dp"
+            android:src="@drawable/mode_questioncircle" />
 
         <!--次数-->
         <ImageView

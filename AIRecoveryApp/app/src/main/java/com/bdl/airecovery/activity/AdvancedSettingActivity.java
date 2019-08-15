@@ -64,7 +64,7 @@ public class AdvancedSettingActivity extends BaseActivity {
 
     Setting setting = null; //接收数据库数据的Setting对象
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
-
+    Boolean isModify = false; //是否修改
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +128,7 @@ public class AdvancedSettingActivity extends BaseActivity {
 
     @Event(R.id.btn_adset_quick_login)
     private void setCanQuickLogin(View view) {
+        isModify = true;
         Button btn = (Button) view;
         if (btn.getText().equals("开启")) {
             btn.setText("关闭");
@@ -142,6 +143,7 @@ public class AdvancedSettingActivity extends BaseActivity {
 
     @Event(R.id.btn_adset_strength_test)
     private void setCanStrengthTest(View view) {
+        isModify = true;
         Button btn = (Button) view;
         if (btn.getText().equals("开启")) {
             btn.setText("关闭");
@@ -176,9 +178,7 @@ public class AdvancedSettingActivity extends BaseActivity {
      */
     @Event(R.id.sys_btn_return)
     private void setReturnClick(View view) {
-        Setting newSetting = new Setting();
-        newSetting = getCurrentSettings(newSetting);
-        if (!newSetting.equals(setting)) { //比较当前页面数据和数据库中数据
+        if (isModify) { //比较当前页面数据和数据库中数据
             final CommonDialog commonDialog = new CommonDialog(AdvancedSettingActivity.this);
             commonDialog.setTitle("温馨提示");
             commonDialog.setMessage("当前数据未保存，确定返回？");
