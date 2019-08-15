@@ -3,10 +3,7 @@ package com.bdl.airecovery.netty;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.netty.listener.DataSocketListener;
-import com.bdl.airecovery.proto.BdlProto;
-import com.bdl.airecovery.proto.DataProtoUtil;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.xutils.ex.DbException;
 
