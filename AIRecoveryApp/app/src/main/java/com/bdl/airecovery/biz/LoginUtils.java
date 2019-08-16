@@ -23,24 +23,19 @@ public class LoginUtils {
      * @return
      */
     public static String getTrainMode(BdlProto.TrainMode trainMode){
-//        if (trainMode.equals(BdlProto.TrainMode.STANDARD_MODE)){
-//            return "标准模式";
-//        }else if (trainMode.equals(BdlProto.TrainMode.ADAPTER_MODE)){
-//            return "适应性模式";
-//        }else if (trainMode.equals(BdlProto.TrainMode.CONST_SPEED_MODE)){
-//            return "等速模式";
-//        }else if (trainMode.equals(BdlProto.TrainMode.HEART_RATE_MODE)){
-//            return "心率模式";
-//        }else if (trainMode.equals(BdlProto.TrainMode.ADD_MUSCLES_MODE)){
-//            return "增肌模式";
-//        }else if (trainMode.equals(BdlProto.TrainMode.ACTIVE_MODE)){
-//            return "主被动模式";
-//        }else if (trainMode.equals(BdlProto.TrainMode.PASSIVE_MODE)){
-//            return "被动模式";
-//        }else {
-//            return "未知模式";
-   //    }
-        return null;
+
+         if (trainMode.equals(BdlProto.TrainMode.ActiveModel)){
+            return "主被动模式";
+        }else if (trainMode.equals(BdlProto.TrainMode.PassiveModel)){
+            return "被动模式";
+         }
+         else if(trainMode.equals(BdlProto.TrainMode.RehabilitationModel)){
+             return "康复模式";
+         }
+        else {
+             return "未知模式";
+         }
+
     }
     /**
      * 根据当前设备类型转化为proto设备类型枚举对象

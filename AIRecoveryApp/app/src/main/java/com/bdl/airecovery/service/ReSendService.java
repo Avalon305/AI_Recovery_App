@@ -32,6 +32,7 @@ import java.util.TimerTask;
 public class ReSendService extends Service {
     private int personalSettingSeq = 1;         //消息序列号
     private int trainResultSeq = 1;             //消息序列号
+    private int ErrorInfoSeq=1;                //消息序列号
 
     //service对象启动即单例，后台返回也不会重复创建。
     DbManager dbManager = MyApplication.getInstance().getDbManager();
@@ -179,6 +180,27 @@ public class ReSendService extends Service {
         Log.d("重传service","正在发送医护设置");
         DataSocketClient.getInstance().sendMsg(message);
     }
+
+//    private  void SendErrorInfo() throws ConnectException{
+//
+//        BdlProto.ErrorInfoRequest request = BdlProto.ErrorInfoRequest.newBuilder()
+//                .setUid()
+//                .setDeviceTypeValue()
+//                .setTrainModeValue()
+//                .setTrainModeValue()
+//                .setError()
+//                .setErrorStartTime()
+//                .build();
+//
+//        if(ErrorInfoSeq == Integer.MAX_VALUE) {
+//            ErrorInfoSeq = 1;
+//        }
+//        BdlProto.Message message =DataProtoUtil.packErrorInfoRequest(ErrorInfoSeq++,request);
+//        Log.d("重传service","发送的请求："+message.toString());
+//        //发送Message
+//        Log.d("重传service","肌力测试");
+//        DataSocketClient.getInstance().sendMsg(message);
+//    }
 
     public ReSendService() {
 

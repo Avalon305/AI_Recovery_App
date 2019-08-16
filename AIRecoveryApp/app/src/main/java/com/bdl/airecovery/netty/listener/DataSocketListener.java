@@ -32,7 +32,7 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 		//Log.e("BtService","channelRead");
 		if (message.hasLoginResponse()) {
 
-			//logger.info("DataSocket客户端收到登陆结果响应:"+message.toString());
+			logger.info("DataSocket客户端收到登陆结果响应:"+message.toString());
 //			if (message.getLoginResponse().getExisitSetting()==false) {
 //				if (CardReaderService.isIsCardLog()){
 //					CardReaderService.setNoSuchPerson(true);

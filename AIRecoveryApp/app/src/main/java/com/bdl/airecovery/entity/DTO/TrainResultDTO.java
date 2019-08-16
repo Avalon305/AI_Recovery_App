@@ -3,8 +3,8 @@ package com.bdl.airecovery.entity.DTO;
 public class TrainResultDTO {
     String uid_ = "";                 //用户ID
     int deviceTypeValue_ = 0;              //设备名
-    int sportModeValue_=0;               //涌动模式
-    int trainModeValue_ = 0;          //训练模式名称
+    int sportModeValue_=0;               //运动模式
+    int trainModeValue_ = 0;          //训练模式
     double forwardForce_ = 0D;        //顺向力
     double reverseForce_ = 0D;        //反向力
     double  power_ = 0D;              //最终功率
