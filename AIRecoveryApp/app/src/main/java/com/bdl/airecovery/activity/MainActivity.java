@@ -12,6 +12,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.appEnum.LoginResp;
@@ -27,7 +29,9 @@ import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.LargeDialog;
+import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.CurrentTime;
+import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.MotorService;
 import com.bdl.airecovery.service.StaticMotorService;
@@ -36,7 +40,9 @@ import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.bdl.airecovery.service.CardReaderService;
 
+import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -74,10 +80,6 @@ public class MainActivity extends BaseActivity {
     /**
      * 类成员
      */
-    private Thread localCountDownThread;    //本机倒计时线程
-    private Thread DelayThread;             //延迟执行线程
-    private int localCountDown = 60;        //本机倒计时（单位：秒）
-    private int localCountDownType = 0;     //本机倒计时类型（1运动，0休息）
     private String ready_time_text;         //模态框倒计时（单位：秒）
     private Handler handler;                //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
     private Handler handler_dialog;         //用于模态框ui线程中获取倒计时线程创建的Message对象
@@ -86,7 +88,6 @@ public class MainActivity extends BaseActivity {
     private int flag_dialog;                //警告模态框弹出标志位
     private locationReceiver LocationReceiver = new locationReceiver();       //广播监听类
     private IntentFilter filterHR = new IntentFilter();                       //广播过滤器
-    private Thread getCurrentTimeThread;    //获取同步/校准倒计时
     private LargeDialog dialog_ready;
     private LargeDialog dialog_locating;
     private boolean isDialogReadyDisplay = false;
@@ -101,10 +102,6 @@ public class MainActivity extends BaseActivity {
     private TextView  tv_title;                 //界面左上角模式标题（文本格式：设置模式 - Xxx训练）
     @ViewInject(R.id.tv_user_name)
     private TextView tv_user_name;              //用户名（文本格式：x先生）
-    @ViewInject(R.id.tv_training_duration_text)
-    private TextView tv_training_duration_text; //训练时间/休息时间 文本（文本格式：X X 时 间）
-    @ViewInject(R.id.tv_training_duration_num)
-    private TextView tv_training_duration_num;  //训练时间/休息时间 数值（数值格式：X:XX）
     @ViewInject(R.id.tv_ms_positivenumber)
     private TextView tv_ms_positivenumber;      //顺向力数值
     @ViewInject(R.id.tv_ms_inversusnumber)
@@ -128,13 +125,6 @@ public class MainActivity extends BaseActivity {
     private ImageView iv_ms_inversusminus;      //反向力的“-”按钮
     @ViewInject(R.id.iv_main_state)
     private ImageView iv_main_state;        //登陆状态
-    //Button
-    @ViewInject(R.id.btn_start)
-    private Button btn_start;                   //“开始训练”按钮
-    @ViewInject(R.id.btn_quit)
-    private Button btn_quit;                    //“退出训练”按钮
-    @ViewInject(R.id.connect_coach_bluetooth)
-    private Button connect_coach_bluetooth;     //“教练协助”按钮
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,11 +183,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //判空，确保线程不会重复创建
-        if(localCountDownThread == null) {
-            CreatelocalCountDownTheard(); //创建本机倒计时线程
-            localCountDownThread.start(); //启动本机倒计时线程
-        }
         //注册急停广播
         IntentFilter filter = new IntentFilter();
         filter.addAction("E-STOP");
@@ -212,19 +197,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(DelayThread != null) {
-            DelayThread.interrupt(); //中断线程
-            DelayThread = null;
-        }
-        if(localCountDownThread != null) {
-            localCountDownThread.interrupt(); //中断线程
-            localCountDownThread = null;
-        }
-        //同步/校准倒计时线程
-        if(getCurrentTimeThread != null) {
-            getCurrentTimeThread.interrupt(); //中断线程
-            getCurrentTimeThread = null;
-        }
     }
 
     /**
@@ -277,26 +249,10 @@ public class MainActivity extends BaseActivity {
             tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
             //界面左上角模式标题
             tv_title.setText("      " + MyApplication.getInstance().getUser().getTrainMode());
-            //判断角色是否是教练，如果是教练设置按钮和状态图
-            if (MyApplication.getInstance().getUser().getRole().equals("coach")){
-                //第一用户是教练自己训练的场景
-                connect_coach_bluetooth.setText("医护设置"); //更新为“医护设置”按钮
-                iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.guanliyuan1));
-            }else{
-                //不是教练，一定是用户
-                connect_coach_bluetooth.setText("教练协助");
-                iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.yonghu1));
-                //对于用户登陆的场景，特殊考虑，是否存在第二用户，如果存在，一定是教练在协助，则显示协助的信息
-                if(MyApplication.getInstance().getUser().getHelperuser() != null){
-                    connect_coach_bluetooth.setText("停止协助"); //更新为“停止协助”按钮
-                    iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.shou));
-                }
-            }
         }else{
             //否则就是测试页面直接跳转到主页面，应该显示扳手图标，开发者名字，测试状态按钮
             tv_user_name.setText("开发者");
             iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.banshou1));
-            connect_coach_bluetooth.setText("调试状态");
         }
     }
 
@@ -306,111 +262,8 @@ public class MainActivity extends BaseActivity {
     private void setBtn_start_onClick(View v) {
         dialog_locating = new LargeDialog(MainActivity.this);
         LaunchHandlerLocating();
-        if (MyApplication.getInstance().getUser()!=null && MyApplication.getInstance().getUser().getHelperuser()!=null) {
-            Message message1 = handler_dialoglocating.obtainMessage();//当教练协助时，直接进入训练
-            handler_dialoglocating.sendMessage(message1);
-        } else {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            if (localCountDownType == 1)//休息时间
-            {
-                //显示倒计时模态框
-                dialog_ready = new LargeDialog(MainActivity.this);
-                dialog_ready.setTitle("提示");
-                //获取主界面当前倒计时所剩时间并显示于模态框内
-                String ready_time_text = String.valueOf(localCountDown);
-//                String ready_time = tv_training_duration_num.getText().toString();
-//                ready_time_text = ready_time.substring(ready_time.length() - 2, ready_time.length());
-                dialog_ready.setMessage("准备开始训练！\n" +
-                        "训练将在" + ready_time_text + "秒后自动启动...");
-                dialog_ready.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-                dialog_ready.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                                //布局位于状态栏下方
-                                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                                //全屏
-                                //View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                //隐藏导航栏
-                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                        if (Build.VERSION.SDK_INT >= 19) {
-                            uiOptions |= 0x00001000;
-                        } else {
-                            uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                        }
-                        dialog_ready.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-                    }
-                });
-                dialog_ready.setCanceledOnTouchOutside(false);
-                dialog_ready.show();
-                //获取主界面当前倒计时所剩时间并显示于模态框内
-                final TextView text = (TextView) dialog_ready.findViewById(R.id.large_dialog_msg);
-                //dialog内倒计时进入训练界面
-                text_dialog = null;//初始化
-                CreateDialogCountDownTheard(text);
-                isDialogReadyDisplay = true;
-            } else if (localCountDown < 12)//训练时间小于12秒
-            {
-                //退出登录请求
-                Intent intent2 = new Intent(MainActivity.this, CardReaderService.class);
-                intent2.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
-                startService(intent2);
-                Intent intent = new Intent(MainActivity.this, BluetoothService.class);
-                intent.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
-                startService(intent);
-                Log.e("MainActivity", "request to logout");
-                //显示退出登录模态框
-                final LargeDialog dialog_cannot = new LargeDialog(MainActivity.this);
-                dialog_cannot.setTitle("提示");
-                dialog_cannot.setMessage("低于合理训练时间的最低限（12秒），训练无法启动\n" +
-                        "您将在3秒后退出系统...");
-                //模态框隐藏导航栏
-                dialog_cannot.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-                dialog_cannot.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                                //布局位于状态栏下方
-                                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                                //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                //隐藏导航栏
-                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                        if (Build.VERSION.SDK_INT >= 19) {
-                            uiOptions |= 0x00001000;
-                        } else {
-                            uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                        }
-                        dialog_cannot.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-                    }
-                });
-                dialog_cannot.setCanceledOnTouchOutside(false);
-                dialog_cannot.show();
-                //创建延迟线程（延迟3秒退出系统）
-                DelayThread = new Thread() {
-                    @Override
-                    public void run() {
-                        super.run();
-                        try {
-                            Thread.sleep(3000);//休眠3秒
-                            dialog_cannot.dismiss();
-                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            MainActivity.this.finish();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                //启动线程
-                DelayThread.start();
-            } else //训练时间大于12秒，直接进入相应训练界面
-            {
-                LaunchDialogLocating(0);
-            }
-        }
+        Message message1 = handler_dialoglocating.obtainMessage();
+        handler_dialoglocating.sendMessage(message1);
     }
 
     //“退出训练”
@@ -443,38 +296,68 @@ public class MainActivity extends BaseActivity {
         }
     };
 
-    //“教练协助”
-    @Event(R.id.connect_coach_bluetooth)
-    private void setConnect_coach_bluetooth_onClick(View v) {
-        //新建定时任务对象
-        Log.e("coach_bluetooth_onClick","触发点击事件");
-        //如果是教练协助
-        if(connect_coach_bluetooth.getText().equals("教练协助")) {
-            connect_coach_bluetooth.setText("教练协助...");
-            Intent intent2 = new Intent(MainActivity.this, CardReaderService.class);
-            intent2.putExtra("command", CommonCommand.SECOND__LOGIN.value());
-            startService(intent2);
-            timer.schedule(task,0,2000);
+    DbManager dbManager = MyApplication.getInstance().getDbManager();
+    Setting setting;
+    /**
+     * 医护设置 进入按钮
+     * 需要密码，在高级设置界面设置
+     * 默认admin
+     */
+    @Event(R.id.btn_setting)
+    private void btnSettingOnClick(View v) {
+        try {
+            setting = dbManager.selector(Setting.class).findFirst();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        //创建对话框对象的时候对对话框进行监听
+        String info = "请输入密码";
+        final int[] cnt = {0};
+        final boolean[] flag = {false};
+        final SmallPwdDialog dialog = new SmallPwdDialog(MainActivity.this, info, R.style.CustomDialog,
+                new SmallPwdDialog.DataBackListener() {
+                    @Override
+                    public void getData(String data) {
+                        String result = data;
+                        if (result.equals(setting.getMedicalSettingPassword())) {
+                            flag[0] = true;
+                        } else {
+                            flag[0] = false;
+                        }
+                        if (flag[0]) {
+                            startActivity(new Intent(MainActivity.this, PersonalSettingActivity.class));
+                        } else if (cnt[0] != 0) {
+                            Toast.makeText(MainActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
+                        }
+                        cnt[0]++;
+                    }
+                });
 
-            Log.d("MainActivity","request to login");
-        }
-        //如果是停止协助
-        else if(connect_coach_bluetooth.getText().equals("停止协助")){
-            Intent intent2 = new Intent(MainActivity.this, CardReaderService.class);
-            intent2.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
-            startService(intent2);
-            Intent intent = new Intent(MainActivity.this, BluetoothService.class);
-            intent.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
-            startService(intent);
-            Log.d("MainActivity","request to logout");
-        }
-        //如果是医护设置
-        else if(connect_coach_bluetooth.getText().equals("医护设置")){
-            //跳转医护设置界面
-            Intent intent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
-            startActivity(intent); //启动
-            MainActivity.this.finish(); //结束当前Activity
-        }
+        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.y = 100;
+        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        dialog.show();
+        initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
 
     //顺向力的“+”
@@ -761,134 +644,6 @@ public class MainActivity extends BaseActivity {
             startActivity(intent);
             MainActivity.this.finish();
         }
-    }
-
-    /**
-     * 创建模态框倒计时线程
-     */
-    public void CreateDialogCountDownTheard(final TextView text) {
-        //创建Handler，用于模态框倒计时
-        handler_dialog = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                int arg1 = msg.arg1;
-                text_dialog = text;
-
-                //设置文本内容
-                text_dialog.setText("准备开始训练！\n" +
-                        "训练将在" + arg1 + "秒后自动启动...");
-            }
-        };
-    }
-
-    /**
-     * 创建本机倒计时线程（如果时间显示器宕机，需要用到该倒计时）
-     */
-    public void CreatelocalCountDownTheard() {
-        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //获取倒计时秒数
-                int arg1 = msg.arg1;
-                //设置文本颜色（区分训练时间与休息时间）
-                if(msg.what == 0) {
-                    //如果当前时间为训练时间
-                    tv_training_duration_text.setText("训 练 时 间");
-                    tv_training_duration_num.setTextColor(tv_training_duration_num.getResources().getColor(R.color.DeepSkyBlue)); //深天蓝色
-                }
-                if(msg.what == 1) {
-                    //如果当前时间为休息时间
-                    tv_training_duration_text.setText("休 息 时 间");
-                    tv_training_duration_num.setTextColor(tv_training_duration_num.getResources().getColor(R.color.OrangeRed)); //橘红色
-                }
-
-                //设置文本内容（有两种特殊情况，单独设置合适的文本格式）
-                int minutes = arg1 / 60;
-                int remainSeconds = arg1 % 60;
-                if(remainSeconds < 10) {
-                    tv_training_duration_num.setText(minutes + ":0" + remainSeconds);
-                } else {
-                    tv_training_duration_num.setText(minutes + ":" + remainSeconds);
-                }
-            }
-        };
-        //如果是健身车/跑步机，特殊处理，训练时间240秒
-        if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("健身车") || MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("椭圆跑步机")) {
-            localCountDown = 240;
-        } else {
-            localCountDown = 60;
-        }
-        localCountDownThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(localCountDownThread != null) {
-                    while(!localCountDownThread.isInterrupted() && localCountDown > 0) {
-                        if(MyApplication.getCurrentTime().getType() != -1) {
-                            //校准本机倒计时秒数
-                            localCountDown = MyApplication.getCurrentTime().getSeconds(); //获取秒数
-                            localCountDownType = MyApplication.getCurrentTime().getType(); //获取时间类型
-                            //Log.d("同步倒计时","MainActivity：校准当前时间成功，当前时间："+MyApplication.getCurrentTime().toString());
-                            //Log.d("同步倒计时","MainActivity：localCountDown " + String.valueOf(localCountDown));
-                            MyApplication.setCurrentTime(new CurrentTime(-1,-1)); //将全局变量currentTime恢复为(-1,-1)，即一旦有值，取后销毁，实现另一种方式的传递。
-                            //Log.d("同步倒计时","MainActivity：校准当前时间成功，恢复currentTime，当前currentTime："+MyApplication.getCurrentTime().toString());
-                        }
-                        //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
-                        Message message = handler.obtainMessage();
-                        message.what = localCountDownType; //what属性指定为当前时间的类型（0为训练时间，1为休息时间）
-                        message.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
-                        handler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
-                        if (isDialogReadyDisplay) {
-                            //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
-                            Message message2 = handler_dialog.obtainMessage();
-                            message2.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
-                            handler_dialog.sendMessage(message2); //把一个包含消息数据的Message对象压入到消息队列中
-                            if (localCountDownType == 0) {
-                                dialog_ready.dismiss();
-                                isDialogReadyDisplay = false;
-                                Message message1 = handler_dialoglocating.obtainMessage();
-                                message1.what = 0;
-                                handler_dialoglocating.sendMessage(message1);
-
-                            }
-                        }
-                        if (handler_dialoglocating != null && !isDialogReadyDisplay) {
-                            Log.d("静态", "locateDone:"+locateDone+"   locateTodo:"+locateTodo);//TODO
-
-                            if (locateDone == locateTodo){
-                                Message message1 = handler_dialoglocating.obtainMessage();
-                                message1.what = 1;
-                                handler_dialoglocating.sendMessage(message1);
-                            }
-                        }
-                        //线程睡眠1s
-                        try {
-                            Thread.sleep(1000);
-                            localCountDown--;
-                        } catch(InterruptedException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-
-                    }
-                    //如果之前是运动时间
-                    if(localCountDownType == 0) {
-                        localCountDownType = 1; //更换为休息时间
-                        localCountDown = 30;
-                    } else {
-                        localCountDownType = 0; //更换为运动时间
-                        //如果是健身车/跑步机，特殊处理，训练时间240秒
-                        if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("健身车") || MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("椭圆跑步机")) {
-                            localCountDown = 240;
-                        } else {
-                            localCountDown = 60;
-                        }
-                    }
-                }
-            }
-        });
     }
 
     /**
