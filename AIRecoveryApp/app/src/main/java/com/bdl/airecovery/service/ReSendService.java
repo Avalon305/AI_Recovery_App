@@ -107,82 +107,35 @@ public class ReSendService extends Service {
 
         Log.d("重传service","数据库id："+tempStorage.getId());
 
-
-//        if (sendMsg.getActivityTypeValue_() == 0) {
-//            for (int devicetype = 0; devicetype < 9; devicetype++) {
         BdlProto.UploadRequest uploadRequest = BdlProto.UploadRequest.newBuilder()
                 .setUid(sendMsg.getUid_())
-                .setTrainModeValue(sendMsg.getTrainModeValue_())
-//                .setCourseId(sendMsg.getCourseId_())
-//                .setActivityId(sendMsg.getActivityId_())
-//                .setActivityRecordId(sendMsg.getActivityRecordId_())
                 .setDeviceTypeValue(sendMsg.getDeviceTypeValue_())
-//                .setActivityTypeValue(sendMsg.getActivityTypeValue_())
-//                .setDefatModeEnable(sendMsg.isDefatModeEnable_())
+                .setSportModeValue(sendMsg.getSportModeValue_())
+                .setTrainModeValue(sendMsg.getTrainModeValue_())
+                .setConsequentForce(sendMsg.getForwardForce_())
                 .setReverseForce(sendMsg.getReverseForce_())
-//                .setForwardForce(sendMsg.getForwardForce_())
                 .setPower(sendMsg.getPower_())
-//                .setFinishCount(sendMsg.getFinishCount_())
-//                .setFinalDistance(sendMsg.getFinalDistance_())
-//                .setCalorie(sendMsg.getCalorie_())
-//                .setTrainTime(sendMsg.getTrainTime_())
-//                .setHeartRateAvg(sendMsg.getHeartRateAvg_())
-//                .setHeartRateMax(sendMsg.getHeartRateMax_())
-//                .setHeartRateMin(sendMsg.getHeartRateMin_())
-//                .setDataId(String.valueOf(tempStorage.getId()))
-                .build();//前两行从蓝牙service获取，后两行从activity获取
+                .setSpeedRank(sendMsg.getSpeedRank())
+                .setFinishNum(sendMsg.getFinishNum_())
+                .setFinishTime(sendMsg.getFinishTime())
+                .setDistance(sendMsg.getFinalDistance_())
+                .setEnergy(sendMsg.getEnergy_())
+                .setHeartRateList(sendMsg.getHeart_rate_list())
+                .setBindId(sendMsg.getBindId_())
+                .setDpId(sendMsg.getDpId_())
+                .setDataId(String.valueOf(tempStorage.getId()))
+                .build();
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         if (trainResultSeq == Integer.MAX_VALUE) {
             trainResultSeq = 1;
         }
         BdlProto.Message message = DataProtoUtil.packUploadRequest(trainResultSeq++, uploadRequest);
 
-//        if(MyApplication.getUpload() != null) {
-//            Log.d("重传service", "设置测试数据：" + MyApplication.getUpload().getHeartRateMin_());
-//        }
-//        Log.d("重传service", "校验打包数据：" + sendMsg.getHeartRateMin_());
         Log.d("重传service", "发送的请求：" + message.toString());
         //发送Message
         Log.d("重传service", "正在发送训练结果");
         DataSocketClient.getInstance().sendMsg(message);
-//            }
-//        }else if (sendMsg.getActivityTypeValue_() == 1){
-//            for (int devicetype = 9; devicetype < 17; devicetype++) {
-//                BdlProto.UploadRequest uploadRequest = BdlProto.UploadRequest.newBuilder()
-//                        .setUid(sendMsg.getUid_())
-//                        .setTrainModeValue(sendMsg.getTrainModeValue_())
-//                        .setCourseId(sendMsg.getCourseId_())
-//                        .setActivityId(sendMsg.getActivityId_())
-//                        .setActivityRecordId(sendMsg.getActivityRecordId_())
-//                        .setDeviceTypeValue(devicetype)
-//                        .setActivityTypeValue(sendMsg.getActivityTypeValue_())
-//                        .setDefatModeEnable(sendMsg.isDefatModeEnable_())
-//                        .setReverseForce(sendMsg.getReverseForce_())
-//                        .setForwardForce(sendMsg.getForwardForce_())
-//                        .setPower(sendMsg.getPower_())
-//                        .setFinishCount(sendMsg.getFinishCount_())
-//                        .setFinalDistance(sendMsg.getFinalDistance_())
-//                        .setCalorie(sendMsg.getCalorie_())
-//                        .setTrainTime(sendMsg.getTrainTime_())
-//                        .setHeartRateAvg(sendMsg.getHeartRateAvg_())
-//                        .setHeartRateMax(sendMsg.getHeartRateMax_())
-//                        .setHeartRateMin(sendMsg.getHeartRateMin_())
-//                        .setDataId(String.valueOf(tempStorage.getId()))
-//                        .build();//前两行从蓝牙service获取，后两行从activity获取
-//                //请求递增，seq达到 Integer.MAX_VALUE时重新计数
-//                if (trainResultSeq == Integer.MAX_VALUE) {
-//                    trainResultSeq = 1;
-//                }
-//                BdlProto.Message message = DataProtoUtil.packUploadRequest(trainResultSeq++, uploadRequest);
-//
-//                Log.d("重传service", "设置测试数据：" + MyApplication1.getUpload().getHeartRateMin_());
-//                Log.d("重传service", "校验打包数据：" + sendMsg.getHeartRateMin_());
-//                Log.d("重传service", "发送的请求：" + message.toString());
-//                //发送Message
-//                Log.d("重传service", "正在发送训练结果");
-//                DataSocketClient.getInstance().sendMsg(message);
-//            }
-//        }
+
 
     }
 
@@ -202,16 +155,17 @@ public class ReSendService extends Service {
         BdlProto.PersonalSetRequest request = BdlProto.PersonalSetRequest.newBuilder()
                 .setUid(sendMsg.getUid()) //用户ID
                 .setDeviceTypeValue(sendMsg.getDeviceTypeValue()) //设备类型
-//                .setActivityTypeValue(sendMsg.getActivityTypeValue()) //循环类型
+                .setTrainModeValue(sendMsg.getTrainModeValue())   //训练模式
                 .setSeatHeight(sendMsg.getSeatHeight()) //座位高度
                 .setBackDistance(sendMsg.getBackDistance()) //靠背距离
-//                .setLeverLength(sendMsg.getLeverLength()) //杠杆长度
+                .setFootboardDistance(sendMsg.getFootboardDistance())//踏板距离
                 .setLeverAngle(sendMsg.getLeverAngle()) //杠杆角度
                 .setForwardLimit(sendMsg.getFrontLimit()) //前方限制
                 .setBackLimit(sendMsg.getBackLimit()) //后方限制
-                .setTrainModeValue(sendMsg.getTrainModeValue()) //训练模式
-//                .setDefatModeEnable(sendMsg.isOpenFatLossMode()) //是否开启减脂模式
-//                .setDataId(String.valueOf(tempStorage.getId()))
+                .setConsequentForce(sendMsg.getConsequentForce())//顺向力
+                .setReverseForce(sendMsg.getReverseForce())
+                .setPower(sendMsg.getPower())
+                .setDataId(String.valueOf(tempStorage.getId()))
                 .build();
 
         //打包方法的第一个参数seq是消息序列号，每个请求递增，当达到 Integer.MAX_VALUE时重新计数，调用时自行处理

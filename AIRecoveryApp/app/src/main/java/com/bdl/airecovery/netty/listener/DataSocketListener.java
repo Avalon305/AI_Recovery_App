@@ -57,6 +57,10 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 			LoginBiz.getInstance().COUNT_DOWN_LATCH.countDown();
 			LogUtil.e("收到教练机反馈-结束");
 		}
+		if(message.hasKeepaliveResponse()){
+			BdlProto.KeepaliveResponse resp = message.getKeepaliveResponse();
+			logger.info("DataSocket客户端收到上传训练结果的响应:"+gsonUtil.toJson(resp).toString());
+		}
 		if (message.hasUploadResponse()){
 			//logger.info("DataSocket客户端收到上传训练结果的响应:"+message);
 			//TODO 在这里处理上传结果的业务

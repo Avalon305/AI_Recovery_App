@@ -2,23 +2,22 @@ package com.bdl.airecovery.entity.DTO;
 
 public class TrainResultDTO {
     String uid_ = "";                 //用户ID
-    int trainModeValue_ = 0;          //训练模式名称
-    long courseId_ = 0L;              //训练课程ID
-    long activityId_ = 0L;            //训练活动ID
-    long  activityRecordId_ = 0L;     //训练活动记录ID
     int deviceTypeValue_ = 0;              //设备名
-    int activityTypeValue_ = 0;            //循环名称
-    boolean defatModeEnable_ =false;  //是否开启减脂模式状态
-    double reverseForce_ = 0D;        //最终反向力
-    double forwardForce_ = 0D;        //最终顺向力
+    int sportModeValue_=0;               //涌动模式
+    int trainModeValue_ = 0;          //训练模式名称
+    double forwardForce_ = 0D;        //顺向力
+    double reverseForce_ = 0D;        //反向力
     double  power_ = 0D;              //最终功率
-    int finishCount_ = 0;             //训练个数
+    int speedRank=0;                   //运动速度
+    int finishNum_ = 0;             //训练个数
+    int finishTime=0;                 //训练时间
     double finalDistance_ = 0D;       //运动距离
-    double calorie_ = 0D;             //耗能（卡路里）
+    double energy_ = 0D;             //耗能（卡路里）
     int trainTime_ = 0;               //训练时间
-    int heartRateAvg_ = 0;            //运动过程中的平均心率
-    int heartRateMax_ = 0;            //运动过程中的最大心率
-    int heartRateMin_ = 0;            //运动过程中的最小心率
+    String heart_rate_list ="";      ////心率集合：运动过程实时心率集合，数据之间*分割'
+    String bindId_="";                //手环id
+    int dpId_=0;                      //处方id
+
 
     public TrainResultDTO() {
     }
@@ -31,36 +30,20 @@ public class TrainResultDTO {
         this.uid_ = uid_;
     }
 
-    public int getTrainModeValue_() {
-        return trainModeValue_;
+    public String getBindId_() {
+        return bindId_;
     }
 
-    public void setTrainModeValue_(int trainModeValue_) {
-        this.trainModeValue_ = trainModeValue_;
+    public void setBindId_(String bindId_) {
+        this.bindId_ = bindId_;
     }
 
-    public long getCourseId_() {
-        return courseId_;
+    public int getDpId_() {
+        return dpId_;
     }
 
-    public void setCourseId_(long courseId_) {
-        this.courseId_ = courseId_;
-    }
-
-    public long getActivityId_() {
-        return activityId_;
-    }
-
-    public void setActivityId_(long activityId_) {
-        this.activityId_ = activityId_;
-    }
-
-    public long getActivityRecordId_() {
-        return activityRecordId_;
-    }
-
-    public void setActivityRecordId_(long activityRecordId_) {
-        this.activityRecordId_ = activityRecordId_;
+    public void setDpId_(int dpId_) {
+        this.dpId_ = dpId_;
     }
 
     public int getDeviceTypeValue_() {
@@ -71,28 +54,20 @@ public class TrainResultDTO {
         this.deviceTypeValue_ = deviceTypeValue_;
     }
 
-    public int getActivityTypeValue_() {
-        return activityTypeValue_;
+    public int getSportModeValue_() {
+        return sportModeValue_;
     }
 
-    public void setActivityTypeValue_(int activityTypeValue_) {
-        this.activityTypeValue_ = activityTypeValue_;
+    public void setSportModeValue_(int sportModeValue_) {
+        this.sportModeValue_ = sportModeValue_;
     }
 
-    public boolean isDefatModeEnable_() {
-        return defatModeEnable_;
+    public int getTrainModeValue_() {
+        return trainModeValue_;
     }
 
-    public void setDefatModeEnable_(boolean defatModeEnable_) {
-        this.defatModeEnable_ = defatModeEnable_;
-    }
-
-    public double getReverseForce_() {
-        return reverseForce_;
-    }
-
-    public void setReverseForce_(double reverseForce_) {
-        this.reverseForce_ = reverseForce_;
+    public void setTrainModeValue_(int trainModeValue_) {
+        this.trainModeValue_ = trainModeValue_;
     }
 
     public double getForwardForce_() {
@@ -103,6 +78,14 @@ public class TrainResultDTO {
         this.forwardForce_ = forwardForce_;
     }
 
+    public double getReverseForce_() {
+        return reverseForce_;
+    }
+
+    public void setReverseForce_(double reverseForce_) {
+        this.reverseForce_ = reverseForce_;
+    }
+
     public double getPower_() {
         return power_;
     }
@@ -111,12 +94,28 @@ public class TrainResultDTO {
         this.power_ = power_;
     }
 
-    public int getFinishCount_() {
-        return finishCount_;
+    public int getSpeedRank() {
+        return speedRank;
     }
 
-    public void setFinishCount_(int finishCount_) {
-        this.finishCount_ = finishCount_;
+    public void setSpeedRank(int speedRank) {
+        this.speedRank = speedRank;
+    }
+
+    public int getFinishNum_() {
+        return finishNum_;
+    }
+
+    public void setFinishNum_(int finishNum_) {
+        this.finishNum_ = finishNum_;
+    }
+
+    public int getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(int finishTime) {
+        this.finishTime = finishTime;
     }
 
     public double getFinalDistance_() {
@@ -127,12 +126,12 @@ public class TrainResultDTO {
         this.finalDistance_ = finalDistance_;
     }
 
-    public double getCalorie_() {
-        return calorie_;
+    public double getEnergy_() {
+        return energy_;
     }
 
-    public void setCalorie_(double calorie_) {
-        this.calorie_ = calorie_;
+    public void setEnergy_(double energy_) {
+        this.energy_ = energy_;
     }
 
     public int getTrainTime_() {
@@ -143,27 +142,11 @@ public class TrainResultDTO {
         this.trainTime_ = trainTime_;
     }
 
-    public int getHeartRateAvg_() {
-        return heartRateAvg_;
+    public String getHeart_rate_list() {
+        return heart_rate_list;
     }
 
-    public void setHeartRateAvg_(int heartRateAvg_) {
-        this.heartRateAvg_ = heartRateAvg_;
-    }
-
-    public int getHeartRateMax_() {
-        return heartRateMax_;
-    }
-
-    public void setHeartRateMax_(int heartRateMax_) {
-        this.heartRateMax_ = heartRateMax_;
-    }
-
-    public int getHeartRateMin_() {
-        return heartRateMin_;
-    }
-
-    public void setHeartRateMin_(int heartRateMin_) {
-        this.heartRateMin_ = heartRateMin_;
+    public void setHeart_rate_list(String heart_rate_list) {
+        this.heart_rate_list = heart_rate_list;
     }
 }
