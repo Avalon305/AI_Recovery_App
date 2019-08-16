@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,6 +104,12 @@ public class StandardModeActivity extends BaseActivity {
      * 类成员
      */
     private int flag_dialog;                //警告模态框弹出标志位
+    private Thread localCountDownThread;    //本机倒计时线程
+    private int localCountDown = 60;        //本机倒计时（单位：秒）
+    private int localCountDownType = 0;     //本机倒计时类型（0运动，1休息）
+    private Handler handler;                //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
+    private Handler handler_dialog;         //用于模态框ui线程中获取倒计时线程创建的Message对象
+    private Boolean isAlert = false;        //标识是否弹5s倒计时模态框
     private locationReceiver LocationReceiver = new locationReceiver();       //广播监听类
     private IntentFilter filterHR = new IntentFilter();                       //广播过滤器
     private Thread seekBarThread;           //电机速度与位移的SeekBar线程
@@ -151,7 +158,13 @@ public class StandardModeActivity extends BaseActivity {
     private com.bdl.airecovery.widget.MySeekBar sp_speed;//速度seekbar
     @ViewInject(R.id.sp_ms_scope)
     private com.bdl.airecovery.widget.MySeekBar sp_scope;//活动范围seekbar
-
+    //RelativeLayout
+    @ViewInject(R.id.rl_targetnum)
+    private RelativeLayout rl_targetnum; //剩余运动次数
+    @ViewInject(R.id.rl_timecount)
+    private RelativeLayout rl_timecount; //剩余运动时间
+    @ViewInject(R.id.tv_ms_gettime)
+    private TextView tv_ms_gettime; //剩余运动时间
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1087,41 +1100,6 @@ public class StandardModeActivity extends BaseActivity {
         window.setAttributes(lp);
     }
 
-    MediumDialog mediumDialog;
-
-    /**
-     * 最后5秒倒计时 模态框
-     */
-    private void Last5sAlertDialog() {
-        mediumDialog = new MediumDialog((StandardModeActivity.this));
-        mediumDialog.setTime("0:05");
-        //模态框隐藏导航栏
-        mediumDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        mediumDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                mediumDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        mediumDialog.show();
-
-        //找到CommonDialog内容控件
-        medium_dialog_msg = mediumDialog.findViewById(R.id.medium_dialog_time);
-    }
-
     /**
      * 隐藏状态栏，导航栏
      */
@@ -1266,4 +1244,124 @@ public class StandardModeActivity extends BaseActivity {
             }
         }
     }
+
+    MediumDialog mediumDialog;
+
+    /**
+     * 最后5秒倒计时 模态框
+     */
+    private void Last5sAlertDialog() {
+        mediumDialog = new MediumDialog((StandardModeActivity.this));
+        mediumDialog.setTime("0:05");
+        //模态框隐藏导航栏
+        mediumDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        mediumDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                mediumDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        mediumDialog.show();
+
+        //找到CommonDialog内容控件
+        medium_dialog_msg = mediumDialog.findViewById(R.id.medium_dialog_time);
+    }
+
+    /**
+     * 创建本机倒计时线程（如果时间显示器宕机，需要用到该倒计时）
+     */
+    private void CreatelocalCountDownTheard() {
+        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                //获取倒计时秒数
+                int arg1 = msg.arg1;
+                //如果倒计时秒数小于等于5秒，弹模态框
+                if (!isAlert && arg1 <= 5 && msg.what == 0) {
+                    Last5sAlertDialog();
+                    isAlert = true;
+                }
+                if (isAlert) {
+                    medium_dialog_msg.setText("0:0" + arg1);
+                }
+                //设置文本内容（有两种特殊情况，单独设置合适的文本格式）
+                int minutes = arg1 / 60;
+                int remainSeconds = arg1 % 60;
+                if (remainSeconds < 10) {
+                    tv_ms_gettime.setText(minutes + ":0" + remainSeconds);
+                } else {
+                    tv_ms_gettime.setText(minutes + ":" + remainSeconds);
+                }
+            }
+        };
+        localCountDownThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //训练时间60s倒计时
+                localCountDown = 60;
+                while (!localCountDownThread.isInterrupted() && localCountDown > 0) {
+                    //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
+                    Message message = handler.obtainMessage();
+                    message.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
+                    handler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
+
+                    //线程睡眠1s
+                    try {
+                        Thread.sleep(1000);
+                        localCountDown--;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                }
+
+                //设置训练结果
+                //1.获取当前次数
+                upload.setFinishCount_(Integer.parseInt(getnumber.getText().toString()));
+                upload.setCalorie_(countEnergy(Integer.parseInt(getnumber.getText().toString()),Integer.parseInt(positivenumber.getText().toString())));
+                //2.获取训练时长
+                //已经在第一次校准时间处获取
+                //3.最终顺向力
+                upload.setForwardForce_(Integer.parseInt(positivenumber.getText().toString()));
+                //4.最终反向力
+                upload.setReverseForce_(Integer.parseInt(inversusnumber.getText().toString()));
+                MyApplication.setUpload(upload);
+
+                //倒计时结束，跳转再见界面
+                //新建一个跳转到再见界面Activity的显式意图
+                if (mediumDialog != null && mediumDialog.isShowing()) {
+                    mediumDialog.dismiss();
+                }
+                if (commonDialog != null && commonDialog.isShowing()) {
+                    commonDialog.dismiss();
+                }
+                if (helpDialog != null && helpDialog.isShowing()) {
+                    helpDialog.dismiss();
+                }
+                Intent intent = new Intent(StandardModeActivity.this, ByeActivity.class);
+                //启动
+                //startActivity(intent); //TODO 注释后不会跳转到再见界面
+                //结束当前Activity
+                //StandardModeActivity.this.finish(); //TODO 注释后不会跳转到再见界面
+            }
+        });
+    }
+
+
 }
