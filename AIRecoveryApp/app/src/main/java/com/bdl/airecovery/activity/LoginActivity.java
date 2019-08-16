@@ -63,8 +63,6 @@ public class LoginActivity extends BaseActivity {
     private TextView tv_dev_id;         //设备ID（body strong <ID>)
     @ViewInject(R.id.tv_dev_name)
     private TextView tv_dev_name;       //设备名称
-    @ViewInject(R.id.tv_time)
-    private TextView tv_time;           //倒计时
     //ImageView
     @ViewInject(R.id.iv_muscle_image)
     private ImageView iv_muscle_image;  //锻炼肌肉图
