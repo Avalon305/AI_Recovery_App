@@ -14,7 +14,7 @@ public class Device {
 
     private int deviceType; //设备类型，1为拉设备，2为推设备，3为特殊设备，4为单车或者跑步机
 
-    private int activityType;//循环类型，0为力量循环，1为力量耐力循环
+    //private int activityType;//循环类型，0为力量循环，1为力量耐力循环
 
     private String generalImg;//图片名称，显示在主页面
 
@@ -60,14 +60,6 @@ public class Device {
 
     public void setDeviceType(int deviceType) {
         this.deviceType = deviceType;
-    }
-
-    public int getActivityType() {
-        return activityType;
-    }
-
-    public void setActivityType(int activityType) {
-        this.activityType = activityType;
     }
 
     public String getGeneralImg() {
@@ -118,6 +110,14 @@ public class Device {
         this.consequentForce = consequentForce;
     }
 
+    public String getReverseForce() {
+        return reverseForce;
+    }
+
+    public void setReverseForce(String reverseForce) {
+        this.reverseForce = reverseForce;
+    }
+
     public int getMaxLimit() {
         return maxLimit;
     }
@@ -132,14 +132,6 @@ public class Device {
 
     public void setMinLimit(int minLimit) {
         this.minLimit = minLimit;
-    }
-
-    public String getReverseForce() {
-        return reverseForce;
-    }
-
-    public void setReverseForce(String reverseForce) {
-        this.reverseForce = reverseForce;
     }
 
     public List<Personal> getPersonalList() {
@@ -164,7 +156,6 @@ public class Device {
                 "deviceName='" + deviceName + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", deviceType=" + deviceType +
-                ", activityType=" + activityType +
                 ", generalImg='" + generalImg + '\'' +
                 ", muscleImg='" + muscleImg + '\'' +
                 ", helpImg='" + helpImg + '\'' +

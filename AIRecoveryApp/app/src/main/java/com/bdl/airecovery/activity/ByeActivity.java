@@ -224,30 +224,29 @@ public class ByeActivity extends BaseActivity{
             if (MyApplication.getInstance().getCurrentDevice().getDeviceName().equals("健身车(力量耐力循环)")){
                 upload.setDeviceType_(16);
             }
-            upload.setActivityType_(MyApplication.getInstance().getCurrentDevice().getActivityType());
         }
         //打包训练结果
         TrainResultDTO trainResultDTO = new TrainResultDTO();
         //从user及device获取
         trainResultDTO.setUid_(upload.getUid_());
         trainResultDTO.setTrainModeValue_(upload.getTrainMode_());
-        trainResultDTO.setCourseId_(upload.getCourseId_());
-        trainResultDTO.setActivityId_(upload.getActivityId_());
-        trainResultDTO.setActivityRecordId_(upload.getActivityRecordId_());
+//        trainResultDTO.setCourseId_(upload.getCourseId_());
+//        trainResultDTO.setActivityId_(upload.getActivityId_());
+//        trainResultDTO.setActivityRecordId_(upload.getActivityRecordId_());
         trainResultDTO.setDeviceTypeValue_(upload.getDeviceType_());
-        trainResultDTO.setActivityTypeValue_(upload.getActivityType_());
-        trainResultDTO.setDefatModeEnable_(upload.isDefatModeEnable_());
+//        trainResultDTO.setActivityTypeValue_(upload.getActivityType_());
+//        trainResultDTO.setDefatModeEnable_(upload.isDefatModeEnable_());
         //从activity获取
         trainResultDTO.setReverseForce_(upload.getReverseForce_());
         trainResultDTO.setForwardForce_(upload.getForwardForce_());
         trainResultDTO.setPower_(upload.getPower_());
-        trainResultDTO.setFinishCount_(upload.getFinishCount_());
+//        trainResultDTO.setFinishCount_(upload.getFinishCount_());
         trainResultDTO.setFinalDistance_(upload.getFinalDistance_());
-        trainResultDTO.setCalorie_(upload.getCalorie_());
+//        trainResultDTO.setCalorie_(upload.getCalorie_());
         trainResultDTO.setTrainTime_(upload.getTrainTime_());
-        trainResultDTO.setHeartRateAvg_(upload.getHeartRateAvg_());
-        trainResultDTO.setHeartRateMax_(upload.getHeartRateMax_());
-        trainResultDTO.setHeartRateMin_(upload.getHeartRateMin_());
+//        trainResultDTO.setHeartRateAvg_(upload.getHeartRateAvg_());
+//        trainResultDTO.setHeartRateMax_(upload.getHeartRateMax_());
+//        trainResultDTO.setHeartRateMin_(upload.getHeartRateMin_());
         //存暂存表
         TempStorage tempStorage = new TempStorage();
         Gson gson = new Gson();
