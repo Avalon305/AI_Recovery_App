@@ -49,9 +49,6 @@ public class SystemSettingActivity extends BaseActivity {
     /**
      * 依赖注入
      */
-    @ViewInject(R.id.sys_device_name)     //设备类型TextView
-    private TextView tvDeviceName;
-
     @ViewInject(R.id.sys_update_address) //远程升级地址TextView
     private TextView tvUpdateAddress;
 
@@ -66,9 +63,6 @@ public class SystemSettingActivity extends BaseActivity {
 
     @ViewInject(R.id.tv_connect_status)
     private TextView tvConnectStatus; //C#端连接状态
-
-    @ViewInject(R.id.btn_set_device_name)  //修改设备类型按钮
-    private QMUIRoundButton setDeviceName;
 
     @ViewInject(R.id.btn_set_update_address) //修改远程升级地址
     private QMUIRoundButton setUpdateAddress;
@@ -92,7 +86,7 @@ public class SystemSettingActivity extends BaseActivity {
     private QMUIRoundButton btnAdset;
 
     Setting setting = null; //接收数据库数据的Setting对象
-    String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
+    //String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
     Timer updateStatusTimer = new Timer(); //更新C#端连接状态
     Boolean isModify = false; //是否修改
@@ -164,13 +158,12 @@ public class SystemSettingActivity extends BaseActivity {
                 setting.setVersion(null);
                 setting.setCanQuickLogin(null);
                 setting.setCanStrengthTest(null);
+                setting.setMedicalSettingPassword("admin"); //默认密码
             }
             //处理数据库中查询到的数据
-            String deviceName = setting.getDeviceName();
             String updateAddress = setting.getUpdateAddress();
             String setCoachDeviceAddressDeviceAddress = setting.getCoachDeviceAddress();
             //设置TextView的Text
-            setTextView(tvDeviceName, deviceName);
             setTextView(tvUpdateAddress, updateAddress);
             setTextView(tvCoachDeviceAddress, setCoachDeviceAddressDeviceAddress);
         }
@@ -190,87 +183,6 @@ public class SystemSettingActivity extends BaseActivity {
 
         //动态更新当前与C#端连接状态
         updateStatusTimer.schedule(updateStatusTask, 0, 2);
-    }
-
-    /**
-     * 获取设备名称数组
-     *
-     * @return
-     */
-    private String[] getDeviceNameArray() {
-        //获取设备名称数组
-        List<Device> deviceList = MyApplication.getInstance().getDeviceList(); //获得json文件中所有Device的List
-        int length = deviceList.size();
-        String[] deviceName = new String[length]; //使用一个数组接收名称
-        for (int i = 0; i < length; i++) { //将List中的设备名称赋值给String数组
-            deviceName[i] = deviceList.get(i).getDeviceName();
-        }
-        return deviceName;
-    }
-
-    /**
-     * 获取当前设备名称的下标值
-     *
-     * @return
-     */
-    private int getCurrentDeviceIndex() {
-        String currentDeviceName = (String) tvDeviceName.getText();
-        for (int i = 0; i < deviceNameArray.length; i++) {
-            if (currentDeviceName.equals(deviceNameArray[i])) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * 修改设备类型
-     *
-     * @param view
-     */
-    @Event(R.id.btn_set_device_name)
-    private void setDeviceNameClick(View view) {
-        isModify = true;
-        List<String> menuItemsList = new ArrayList<String>();
-        for(int i = 0; i < deviceNameArray.length; i++) {
-            menuItemsList.add(deviceNameArray[i]);
-        }
-
-        final MenuDialog menuDialog = new MenuDialog(SystemSettingActivity.this);
-        menuDialog.setTitle("选择训练模式");
-        menuDialog.setMenuItems(menuItemsList);
-        menuDialog.setSelectedIndex(getCurrentDeviceIndex());
-        //ListView子项点击事件监听
-        menuDialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //更新当前选择项的索引
-                tvDeviceName.setText(deviceNameArray[i]);
-                menuDialog.dismiss();
-            }
-        });
-        //模态框隐藏导航栏
-        menuDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        menuDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-                        //View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                menuDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        menuDialog.show();
     }
 
     /**
@@ -481,7 +393,7 @@ public class SystemSettingActivity extends BaseActivity {
      * @return
      */
     private Setting getCurrentSettings(Setting setting) {
-        setting.setDeviceName(getRealData(tvDeviceName));
+        //setting.setDeviceName(getRealData(tvDeviceName));
         setting.setUpdateAddress(getRealData(tvUpdateAddress));
         setting.setCoachDeviceAddress(getRealData(tvCoachDeviceAddress));
         return setting;
@@ -536,12 +448,6 @@ public class SystemSettingActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case 0: //接收来自SetDeviceNameActivity回传的数据
-                if (data != null) { //这里必须要判空否则Activity不带数据返回时会报错
-                    String result = data.getStringExtra("value");
-                    tvDeviceName.setText(result);
-                }
-                break;
             case 1:
                 if (data != null) { //这里必须要判空否则Activity不带数据返回时会报错
                     String results[] = data.getStringArrayExtra("results");

@@ -249,13 +249,14 @@ public class MyApplication extends MultiDexApplication {
     private void initSetting() throws DbException {
         Setting setting = new Setting();
         if (db.findAll(Setting.class) == null){
-            setting.setDeviceName("腿部推蹬机(力量循环)");
+            setting.setDeviceName("坐式划船机");
             setting.setVersion("1.0");
             setting.setUpdateAddress("192.168.1.102");
             setting.setCoachDeviceAddress("192.168.1.102");
             setting.setUUID(UUID.randomUUID().toString());
             setting.setCanQuickLogin(true);
             setting.setCanStrengthTest(true);
+            setting.setMedicalSettingPassword("admin");
             db.save(setting);
         }
     }
