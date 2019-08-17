@@ -100,8 +100,6 @@ public class PersonalSettingActivity extends BaseActivity {
     private TextView tv_mode_note;                  //提示文本 当前模式：
     @ViewInject(R.id.tv_cur_mode)
     private TextView tv_cur_mode;                   //当前模式文本（根据设置模式按钮弹出模态框选择后显示在该文本中）
-    @ViewInject(R.id.tv_fatloss_note)
-    private TextView tv_fatloss_note;               //提示文本 减脂模式
     //ImageView
     @ViewInject(R.id.iv_dev_setting)
     private ImageView iv_dev_setting;               //设备图片
@@ -128,9 +126,6 @@ public class PersonalSettingActivity extends BaseActivity {
     private Button btn_save;               //“保存医护设置”按钮
     @ViewInject(R.id.btn_back)
     private Button btn_back;               //“返回”按钮
-    //CheckBox
-    @ViewInject(R.id.cb_isopen_fatlossmode)
-    private CheckBox cb_isopen_fatlossmode;         //减脂模式：“开启/关闭”按钮
     //SeekBar
     @ViewInject(R.id.seekBar)
     private SeekBar seekBar;                        //用于医护设置中调节各选项的拖动条
@@ -513,9 +508,6 @@ public class PersonalSettingActivity extends BaseActivity {
                             case "靠背距离":
                                 backDistance = Integer.parseInt(curPersonal.getValue());
                                 break;
-                            case "杠杆长度":
-                                leverLength = Integer.parseInt(curPersonal.getValue());
-                                break;
                             case "杠杆角度":
                                 leverAngle = Double.parseDouble(curPersonal.getValue());
                                 break;
@@ -761,97 +753,33 @@ public class PersonalSettingActivity extends BaseActivity {
      */
     private void queryUserInfo() {
         //获取实体类User
-        if (MyApplication.getInstance().getUser() != null) {
-            //获取用户名
-            if (MyApplication.getInstance().getUser().getUsername() != null && !MyApplication.getInstance().getUser().getUsername().equals("")) {
-                tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
-            }
-
-            //获取当前训练模式
-            if (MyApplication.getInstance().getUser().getTrainMode() != null && !MyApplication.getInstance().getUser().getTrainMode().equals("")) {
-                curMode = MyApplication.getInstance().getUser().getTrainMode();
-                for (int i = 0; i < modeItems.length; i++) {
-                    if (curMode.equals(modeItems[i])) {
-                        curModeIndex = i;
-                    }
-                }
-                tv_cur_mode.setText(curMode); //前端显示当前训练模式
-            }
-
-//            //获取是否开启减脂模式
-//            isOpenFatLossMode = MyApplication.getInstance().getUser().isDefatModeEnable();
-//            cb_isopen_fatlossmode.setChecked(isOpenFatLossMode);
-
-            //获取当前用户版本（普通版0/豪华版1）
-            if (MyApplication.getInstance().getUser().getSysVersion() == 0) {
-                //普通版
-                modeItems = new String[]{    //有3种训练模式可设置，有减脂模式
-                        "标准模式",
-                        "适应性模式",
-                        "等速模式"};
-                cb_isopen_fatlossmode.setVisibility(View.VISIBLE);
-                tv_fatloss_note.setVisibility(View.VISIBLE);
-            } else if (MyApplication.getInstance().getUser().getSysVersion() == 1) {
-                //豪华版
-                modeItems = new String[]{    //有3种训练模式可设置，有减脂模式
-                        "标准模式",
-                        "适应性模式",
-                        "等速模式",
-                        "心率模式",
-                        "增肌模式",
-                        "主被动模式",
-                        "被动模式"};
-                cb_isopen_fatlossmode.setVisibility(View.VISIBLE);
-                tv_fatloss_note.setVisibility(View.VISIBLE);
-            }
-        }
-
-        //对健身车/跑步机的特殊处理（如果是，不显示训练模式相关设置）
-        if (MyApplication.getInstance().getCurrentDevice() != null && MyApplication.getInstance().getCurrentDevice().getDeviceName() != null) {
-            //如果当前设备不是健身车(力量耐力循环)/椭圆跑步机(力量耐力循环)，可选择模式
-            if (MyApplication.getInstance().getCurrentDevice().getDeviceName().equals("健身车(力量耐力循环)") || MyApplication.getInstance().getCurrentDevice().getDeviceName().equals("椭圆跑步机(力量耐力循环)")) {
-                //如果是健身车/跑步机，不显示训练模式相关设置
-                tv_mode_note.setVisibility(View.GONE);
-                tv_cur_mode.setVisibility(View.GONE);
-                //cb_isopen_fatlossmode.setVisibility(View.GONE);
-                //tv_fatloss_note.setVisibility(View.GONE);
-                btn_setting_mode.setVisibility(View.GONE);
-            }
-        }
-
-        //判空，如果非空是正常登陆
-        if(MyApplication.getInstance().getUser() != null) {
-            //非空的情况下，把第一用户的名字进行设置到指定位置
-            tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
-            //界面左上角模式标题
-            //判断角色是否是教练，如果是教练设置按钮和状态图
-            if (MyApplication.getInstance().getUser().getRole().equals("coach")){
-                //第一用户是教练自己训练的场景
-                iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.guanliyuan1));
-            }else{
-                //不是教练，一定是用户
-                iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.yonghu1));
-                //对于用户登陆的场景，特殊考虑，是否存在第二用户，如果存在，一定是教练在协助，则显示协助的信息
-                if(MyApplication.getInstance().getUser().getHelperuser() != null){
-                    iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.shou));
-                }
-            }
-        }else{
-            //否则就是测试页面直接跳转到主页面，应该显示扳手图标，开发者名字，测试状态按钮
+        if (MyApplication.getInstance().getUser() == null) {
             tv_user_name.setText("开发者");
             iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.banshou1));
+            return;
         }
-//        //判断【教练用户/调试模式/测试模式】
-//        if (MyApplication.getInstance().getUser() == null) {
-//            tv_user_name.setText("admin");
-//            iv_ps_state.setImageDrawable(getResources().getDrawable((R.drawable.banshou1)));
-//        } else if (MyApplication.getInstance().getUser().getHelperuser() != null) {
-//            iv_ps_state.setImageDrawable(getResources().getDrawable((R.drawable.shou)));
-//        } else if (MyApplication.getInstance().getUser().getRole().equals("coach")) {
-//            iv_ps_state.setImageDrawable(getResources().getDrawable((R.drawable.guanliyuan1)));
-//        } else if (MyApplication.getInstance().getUser().getRole().equals("trainee")) {
-//            iv_ps_state.setImageDrawable(getResources().getDrawable((R.drawable.yonghu1)));
-//        }
+
+        //获取用户名
+        if (MyApplication.getInstance().getUser().getUsername() != null && !MyApplication.getInstance().getUser().getUsername().equals("")) {
+            tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
+            iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.yonghu1));
+        }
+
+        //获取当前训练模式
+        if (MyApplication.getInstance().getUser().getTrainMode() != null && !MyApplication.getInstance().getUser().getTrainMode().equals("")) {
+            curMode = MyApplication.getInstance().getUser().getTrainMode();
+            for (int i = 0; i < modeItems.length; i++) {
+                if (curMode.equals(modeItems[i])) {
+                    curModeIndex = i;
+                }
+            }
+            tv_cur_mode.setText(curMode); //前端显示当前训练模式
+        }
+
+        modeItems = new String[]{    //有3种训练模式可设置，有减脂模式
+                "主被动模式",
+                "被动模式",
+                "康复模式"};
     }
 
     /**
