@@ -32,13 +32,11 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 		//Log.e("BtService","channelRead");
 		if (message.hasLoginResponse()) {
 
-			//logger.info("DataSocket客户端收到登陆结果响应:"+message.toString());
+			logger.info("DataSocket客户端收到登陆结果响应:"+message.toString());
 //			if (message.getLoginResponse().getExisitSetting()==false) {
 //				if (CardReaderService.isIsCardLog()){
 //					CardReaderService.setNoSuchPerson(true);
 //				}
-//				logger.info("DataSocket客户端收到登陆结果响应:"+"无此人的医护设置，傻逼陈其钊！");
-//				//Log.e("channelRead.LoginResp","无此人的医护设置，傻逼陈其钊！");
 //			}else{
 //				//TODO 在这里处理获取到的登陆信息
 //				BdlProto.LoginResponse resp =message.getLoginResponse();
@@ -59,6 +57,10 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 			LoginBiz.getInstance().COUNT_DOWN_LATCH.countDown();
 			LogUtil.e("收到教练机反馈-结束");
 		}
+		if(message.hasKeepaliveResponse()){
+			BdlProto.KeepaliveResponse resp = message.getKeepaliveResponse();
+			logger.info("DataSocket客户端收到上传训练结果的响应:"+gsonUtil.toJson(resp).toString());
+		}
 		if (message.hasUploadResponse()){
 			//logger.info("DataSocket客户端收到上传训练结果的响应:"+message);
 			//TODO 在这里处理上传结果的业务
@@ -67,7 +69,7 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 				logger.info("DataSocket客户端收到上传训练结果的响应:"+gsonUtil.toJson(resp).toString());
 				//Log.d("重传service-upload",gsonUtil.toJson(resp).toString());
 				if (dbManager!=null) {
-					dbManager.deleteById(TempStorage.class,Integer.parseInt(message.getUploadResponse().getDataId()));
+					dbManager.deleteById(TempStorage.class,Integer.parseInt(message.getUploadResponse().getUid()));
 				}
 			}
 		}
@@ -75,11 +77,34 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 			//logger.info("DataSocket客户端收到更新医护设置的响应："+message);
 			//TODO 在这里处理更新医护设置后的业务
 			BdlProto.PersonalSetResponse resp = message.getPersonalSetResponse();
-			if (message.getPersonalSetResponse().getSuccess() == true){
+			if (resp.getSuccess() == true){
 				//Log.d("重传service-set",gsonUtil.toJson(resp).toString());
 				logger.info("DataSocket客户端收到更新医护设置的响应："+gsonUtil.toJson(resp).toString());
 				if (dbManager!=null) {
-					dbManager.deleteById(TempStorage.class,Integer.parseInt(message.getPersonalSetResponse().getDataId()));
+					dbManager.deleteById(TempStorage.class,Integer.parseInt(resp.getUid()));
+				}
+			}
+		}
+		if(message.hasMuscleStrengthResponse()){
+			BdlProto.MuscleStrengthResponse resp = message.getMuscleStrengthResponse();
+
+			if(resp.getSuccess()==true){
+				logger.info("DataSocket客户端收到上传肌力测试的响应："+gsonUtil.toJson(resp).toString());
+
+				if (dbManager!=null) {
+					dbManager.deleteById(TempStorage.class,Integer.parseInt(resp.getUid()));
+				}
+			}
+
+		}
+		if(message.hasErrorInfoResponse()){
+			BdlProto.ErrorInfoResponse resp = message.getErrorInfoResponse();
+
+			if(resp.getSuccess()==true){
+				logger.info("DataSocket客户端收到错误信息上传的响应："+gsonUtil.toJson(resp).toString());
+
+				if (dbManager!=null) {
+					dbManager.deleteById(TempStorage.class,Integer.parseInt(resp.getUid()));
 				}
 			}
 		}

@@ -4,9 +4,7 @@ import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.netty.listener.DataSocketListener;
 import com.bdl.airecovery.proto.BdlProto;
-import com.bdl.airecovery.proto.DataProtoUtil;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.xutils.ex.DbException;
 
@@ -37,6 +35,7 @@ public class DataSocketClient {
 	private final int port;
 	private ChannelFuture cf;
 	private EventLoopGroup group;
+	public Boolean status = false;
 
 	{
 		try {
@@ -89,8 +88,10 @@ public class DataSocketClient {
 		try {
 			this.cf = b.connect(host, port).sync();
 			//logger.debug("远程服务器已经连接, 可以进行数据交换..");
+			status = true;
 		} catch (Exception e) {
 			//logger.error("远程服务器连接失败", e);
+			status = false;
 			throw new ConnectException("远程服务器连接失败");
 		}
 
@@ -142,23 +143,23 @@ public class DataSocketClient {
 	public static void main(String[] args){
 		//示例同CountDownSocketClient的main函数
 		//获取请求
-		BasicConfigurator.configure();
-		BdlProto.LoginRequest request =
-				BdlProto.LoginRequest.newBuilder().setDeviceType(BdlProto.DeviceType.E13)
-						.setUid("YK-488A").setActivityType(BdlProto.ActivityType.forNumber(1)).build();
-
-		System.out.println("request : " + request.toString());
-
-		//包装Message
-		BdlProto.Message message = DataProtoUtil.packLoginRequest(1,request);
-
-		System.out.println("message : " + message.toString());
-
-		try {
-			DataSocketClient.getInstance().sendMsg(message);
-		} catch (ConnectException e) {
-			e.printStackTrace();
-			System.out.println("连不上教练机");
-		}
+//		BasicConfigurator.configure();
+//		BdlProto.LoginRequest request =
+//				BdlProto.LoginRequest.newBuilder().setDeviceType(BdlProto.DeviceType.E13)
+//						.setUid("YK-488A").setActivityType(BdlProto.ActivityType.forNumber(1)).build();
+//
+//		System.out.println("request : " + request.toString());
+//
+//		//包装Message
+//		BdlProto.Message message = DataProtoUtil.packLoginRequest(1,request);
+//
+//		System.out.println("message : " + message.toString());
+//
+//		try {
+//			DataSocketClient.getInstance().sendMsg(message);
+//		} catch (ConnectException e) {
+//			e.printStackTrace();
+//			System.out.println("连不上教练机");
+//		}
 	}
 }

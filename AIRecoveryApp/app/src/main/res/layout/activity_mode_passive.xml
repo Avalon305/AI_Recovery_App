@@ -56,10 +56,13 @@
 
 
     <!--左侧信息栏-->
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="500dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
         android:layout_below="@+id/rl_top_title">
         <!--帮助图标-->
         <ImageView
@@ -70,124 +73,138 @@
             android:layout_marginTop="30dp"
             android:src="@drawable/mode_questioncircle" />
         <!--心率-->
-        <ImageView
-            android:id="@+id/iv_mp_heartrate"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/iv_mp_help"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/mode_heartrate" />
-        <TextView
-            android:id="@+id/tv_mp_heart"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/iv_mp_heartrate"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/iv_mp_heartrate"
-            android:text="心率: "
-            android:textSize="40sp" />
-        <!--获取心率值显示此文本-->
-        <TextView
-            android:id="@+id/tv_mp_getrate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/iv_mp_heartrate"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/tv_mp_heart"
-            android:text="--"
-            android:textSize="40sp" />
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_mp_heartrate"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/mode_heartrate" />
+            <TextView
+                android:id="@+id/tv_mp_heart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_mp_heartrate"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/iv_mp_heartrate"
+                android:text="心率: "
+                android:textSize="40sp" />
+            <!--获取心率值显示此文本-->
+            <TextView
+                android:id="@+id/tv_mp_getrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_mp_heartrate"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/tv_mp_heart"
+                android:text="--"
+                android:textSize="40sp" />
+        </RelativeLayout>
 
         <!--次数-->
-        <ImageView
-            android:id="@+id/iv_mp_number"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/iv_mp_heartrate"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/mode_number" />
-        <TextView
-            android:id="@+id/tv_mp_number"
+        <RelativeLayout
+            android:id="@+id/rl_targetnum"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/iv_mp_number"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/iv_mp_number"
-            android:text="次数: "
-            android:textSize="40sp" />
-        <!--获取次数值显示此文本-->
-        <TextView
-            android:id="@+id/tv_mp_getnumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/iv_mp_number"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/tv_mp_number"
-            android:text="0"
-            android:textSize="40sp" />
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_mp_number"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/mode_number" />
+            <TextView
+                android:id="@+id/tv_mp_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_mp_number"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/iv_mp_number"
+                android:text="剩余运动次数: "
+                android:textSize="40sp" />
+            <!--获取次数值显示此文本-->
+            <TextView
+                android:id="@+id/tv_mp_getnumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_mp_number"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/tv_mp_number"
+                android:text="0"
+                android:textSize="40sp" />
+        </RelativeLayout>
 
-        <!--训练倒计时-->
-        <ImageView
-            android:id="@+id/iv_mp_time"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/iv_mp_number"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/mode_hourglass" />
-        <TextView
-            android:id="@+id/tv_mp_time"
+        <RelativeLayout
+            android:id="@+id/rl_timecount"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/iv_mp_time"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/iv_mp_time"
-            android:text="训练倒计时: "
-            android:textSize="40sp" />
-        <!--倒计时文本-->
-        <TextView
-            android:id="@+id/tv_mp_gettime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/iv_mp_time"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/tv_mp_time"
-            android:text="暂无"
-            android:textSize="40sp" />
+            android:layout_height="wrap_content">
+            <!--训练倒计时-->
+            <ImageView
+                android:id="@+id/iv_mp_time"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/mode_hourglass" />
+            <TextView
+                android:id="@+id/tv_mp_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_mp_time"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/iv_mp_time"
+                android:text="训练倒计时: "
+                android:textSize="40sp" />
+            <!--倒计时文本-->
+            <TextView
+                android:id="@+id/tv_mp_gettime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/iv_mp_time"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/tv_mp_time"
+                android:text="--"
+                android:textSize="40sp" />
+        </RelativeLayout>
 
-        <Button
-            android:id="@+id/btn_mp_coach"
-            android:layout_width="200dp"
-            android:layout_height="90dp"
-            android:gravity="center"
-            android:layout_below="@+id/iv_mp_time"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="30dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:background="@drawable/button_selector"
-            android:text="测试状态"
-            android:textColor="#2b2b2b"
-            android:textSize="30sp" />
-        <!--暂停-->
-        <Button
-            android:id="@+id/btn_mp_pause"
-            android:layout_width="200dp"
-            android:layout_height="90dp"
-            android:gravity="center"
-            android:layout_alignBottom="@+id/btn_mp_coach"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/btn_mp_coach"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:background="@drawable/button_selector"
-            android:text="暂停"
-            android:textColor="#2b2b2b"
-            android:textSize="30sp" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_setting"
+                android:layout_width="200dp"
+                android:layout_height="90dp"
+                android:gravity="center"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="30dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:background="@drawable/button_selector"
+                android:text="医护设置"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp" />
+            <!--暂停-->
+            <Button
+                android:id="@+id/btn_mp_pause"
+                android:layout_width="200dp"
+                android:layout_height="90dp"
+                android:gravity="center"
+                android:layout_alignBottom="@+id/btn_setting"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/btn_setting"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:background="@drawable/button_selector"
+                android:text="暂停"
+                android:textColor="#2b2b2b"
+                android:textSize="30sp" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <!--下方速度数值-->
     <RelativeLayout

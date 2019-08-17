@@ -23,23 +23,19 @@ public class LoginUtils {
      * @return
      */
     public static String getTrainMode(BdlProto.TrainMode trainMode){
-        if (trainMode.equals(BdlProto.TrainMode.STANDARD_MODE)){
-            return "标准模式";
-        }else if (trainMode.equals(BdlProto.TrainMode.ADAPTER_MODE)){
-            return "适应性模式";
-        }else if (trainMode.equals(BdlProto.TrainMode.CONST_SPEED_MODE)){
-            return "等速模式";
-        }else if (trainMode.equals(BdlProto.TrainMode.HEART_RATE_MODE)){
-            return "心率模式";
-        }else if (trainMode.equals(BdlProto.TrainMode.ADD_MUSCLES_MODE)){
-            return "增肌模式";
-        }else if (trainMode.equals(BdlProto.TrainMode.ACTIVE_MODE)){
+
+         if (trainMode.equals(BdlProto.TrainMode.ActiveModel)){
             return "主被动模式";
-        }else if (trainMode.equals(BdlProto.TrainMode.PASSIVE_MODE)){
+        }else if (trainMode.equals(BdlProto.TrainMode.PassiveModel)){
             return "被动模式";
-        }else {
-            return "未知模式";
-        }
+         }
+         else if(trainMode.equals(BdlProto.TrainMode.RehabilitationModel)){
+             return "康复模式";
+         }
+        else {
+             return "未知模式";
+         }
+
     }
     /**
      * 根据当前设备类型转化为proto设备类型枚举对象
@@ -67,20 +63,20 @@ public class LoginUtils {
                 return BdlProto.DeviceType.P08;
             case "9":
                 return BdlProto.DeviceType.P09;
-            case "10":
-                return BdlProto.DeviceType.E10;
-            case "11":
-                return BdlProto.DeviceType.E11;
-            case "12":
-                return BdlProto.DeviceType.E12;
-            case "13":
-                return BdlProto.DeviceType.E13;
-            case "14":
-                return BdlProto.DeviceType.E14;
-            case "15":
-                return BdlProto.DeviceType.E15;
-            case "16":
-                return BdlProto.DeviceType.E16;
+//            case "10":
+//                return BdlProto.DeviceType.E10;
+//            case "11":
+//                return BdlProto.DeviceType.E11;
+//            case "12":
+//                return BdlProto.DeviceType.E12;
+//            case "13":
+//                return BdlProto.DeviceType.E13;
+//            case "14":
+//                return BdlProto.DeviceType.E14;
+//            case "15":
+//                return BdlProto.DeviceType.E15;
+//            case "16":
+//                return BdlProto.DeviceType.E16;
             default:
                 return null;
         }
@@ -138,11 +134,11 @@ public class LoginUtils {
         //如果此人的医护设置在教练机中存在，则存入本机。
         if (message.getLoginResponse().getExisitSetting() == true){
             //循环类型
-            device.setActivityType(message.getLoginResponse().getActivityTypeValue());
-            //顺向力
-            int forward = (int)message.getLoginResponse().getForwardForce();
-            device.setConsequentForce(String.valueOf(forward));
-            LogUtil.e("同步完成顺向力" + String.valueOf(forward));
+//            device.setActivityType(message.getLoginResponse().getActivityTypeValue());
+//            //顺向力
+//            int forward = (int)message.getLoginResponse().getForwardForce();
+//            device.setConsequentForce(String.valueOf(forward));
+//            LogUtil.e("同步完成顺向力" + String.valueOf(forward));
             //反向力
             int reverse = (int)message.getLoginResponse().getReverseForce();
             device.setReverseForce(String.valueOf(reverse));
@@ -170,7 +166,7 @@ public class LoginUtils {
                     LogUtil.e("初始功率");
                     personal.setValue(String.valueOf(power));
                 }else if (personal.getName().equals("杠杆长度")){
-                    personal.setValue(String.valueOf(message.getLoginResponse().getLeverLength()));
+//                    personal.setValue(String.valueOf(message.getLoginResponse().getLeverLength()));
                     LogUtil.e("杠杆长度");
                 }
             }

@@ -44,7 +44,7 @@ public class User {
     }
     public User(BdlProto.Message message) {
         //用户类型
-        this.role = message.getLoginResponse().getRoleId() == 1 ? "trainee" : "coach";
+//        this.role = message.getLoginResponse().getRoleId() == 1 ? "trainee" : "coach";
         //手机号后4位
         this.phone = message.getLoginResponse().getUid().substring(message.getLoginResponse().getUid().length()-4);
         //用户标识
@@ -52,25 +52,25 @@ public class User {
         //用户名
         this.username = message.getLoginResponse().getUid().substring(0,message.getLoginResponse().getUid().length()-4);
         //系统版本
-        this.sysVersion = message.getLoginResponse().getSysVersion();
+//        this.sysVersion = message.getLoginResponse().getSysVersion();
         //体重
-        this.weight = message.getLoginResponse().getWeight();
-        //年龄
-        this.age = message.getLoginResponse().getAge();
-        //是否开启减脂模式
-        this.defatModeEnable = message.getLoginResponse().getDefatModeEnable();
-        //训练模式
+//        this.weight = message.getLoginResponse().getWeight();
+//        //年龄
+//        this.age = message.getLoginResponse().getAge();
+//        //是否开启减脂模式
+//        this.defatModeEnable = message.getLoginResponse().getDefatModeEnable();
+//        //训练模式
         this.trainMode = LoginUtils.getTrainMode(message.getLoginResponse().getTrainMode());
         //最大心率
-        this.heartRatemMax = message.getLoginResponse().getHeartRateMax();
+//        this.heartRatemMax = message.getLoginResponse().getHeartRateMax();
         //带训练设备列表
         this.deviceTypearrList = String.valueOf(message.getLoginResponse().getDeviceTypeArrList());
         //训练活动ID
-        this.activityId = (int)message.getLoginResponse().getActivityId();
-        //训练活动记录ID
-        this.activityRecordId = (int)message.getLoginResponse().getActivityRecordId();
-        //课程ID
-        this.courseId = (int)message.getLoginResponse().getCourseId();
+//        this.activityId = (int)message.getLoginResponse().getActivityId();
+//        //训练活动记录ID
+//        this.activityRecordId = (int)message.getLoginResponse().getActivityRecordId();
+//        //课程ID
+//        this.courseId = (int)message.getLoginResponse().getCourseId();
         //是否存在医护设置
         this.exisitSetting = message.getLoginResponse().getExisitSetting();
     }

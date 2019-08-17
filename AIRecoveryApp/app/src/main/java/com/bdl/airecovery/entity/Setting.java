@@ -35,6 +35,9 @@ public class Setting {
     @Column(name = "canStrengthTest")
     private Boolean canStrengthTest; //是否可以肌力测试
 
+    @Column(name = "medicalSettingPassword")
+    private String medicalSettingPassword; //医护设置进入密码
+
     public int getId() {
         return id;
     }
@@ -99,6 +102,14 @@ public class Setting {
         this.canStrengthTest = canStrengthTest;
     }
 
+    public String getMedicalSettingPassword() {
+        return medicalSettingPassword;
+    }
+
+    public void setMedicalSettingPassword(String medicalSettingPassword) {
+        this.medicalSettingPassword = medicalSettingPassword;
+    }
+
     @Override
     public String toString() {
         return "Setting{" +
@@ -110,9 +121,9 @@ public class Setting {
                 ", UUID='" + UUID + '\'' +
                 ", canQuickLogin=" + canQuickLogin +
                 ", canStrengthTest=" + canStrengthTest +
+                ", medicalSettingPassword='" + medicalSettingPassword + '\'' +
                 '}';
     }
-
 }
 
 

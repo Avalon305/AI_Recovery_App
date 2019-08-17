@@ -2,16 +2,18 @@ package com.bdl.airecovery.entity.DTO;
 
 public class PersonalSettingDTO {
     String Uid = "";                        //用户ID
+    String bindId="";                       //手环id
     int deviceTypeValue = 0;               //设备类型
-    int activityTypeValue = 0;             //循环类型
+    int trainModeValue = 0;                //训练模式
     int seatHeight = 0;                    //座位高度
     int backDistance = 0;                  //靠背距离
-    int leverLength = 0;                   //杠杆长度
+    int footboardDistance=0;               //踏板距离
     double leverAngle = 0D;                 //杠杆角度
     int frontLimit = 0;                    //前方限制
     int backLimit = 0;                     //后方限制
-    int trainModeValue = 0;                //训练模式
-    boolean isOpenFatLossMode=false;         //是否开启减脂模式
+    double consequentForce =0D;            //顺向力
+    double reverseForce=0D;                //反向力
+    double power=0D;                       //功率
 
     public PersonalSettingDTO() {
     }
@@ -24,6 +26,14 @@ public class PersonalSettingDTO {
         Uid = uid;
     }
 
+    public String getBindId() {
+        return bindId;
+    }
+
+    public void setBindId(String bindId) {
+        this.bindId = bindId;
+    }
+
     public int getDeviceTypeValue() {
         return deviceTypeValue;
     }
@@ -32,12 +42,12 @@ public class PersonalSettingDTO {
         this.deviceTypeValue = deviceTypeValue;
     }
 
-    public int getActivityTypeValue() {
-        return activityTypeValue;
+    public int getTrainModeValue() {
+        return trainModeValue;
     }
 
-    public void setActivityTypeValue(int activityTypeValue) {
-        this.activityTypeValue = activityTypeValue;
+    public void setTrainModeValue(int trainModeValue) {
+        this.trainModeValue = trainModeValue;
     }
 
     public int getSeatHeight() {
@@ -56,12 +66,12 @@ public class PersonalSettingDTO {
         this.backDistance = backDistance;
     }
 
-    public int getLeverLength() {
-        return leverLength;
+    public int getFootboardDistance() {
+        return footboardDistance;
     }
 
-    public void setLeverLength(int leverLength) {
-        this.leverLength = leverLength;
+    public void setFootboardDistance(int footboardDistance) {
+        this.footboardDistance = footboardDistance;
     }
 
     public double getLeverAngle() {
@@ -88,20 +98,28 @@ public class PersonalSettingDTO {
         this.backLimit = backLimit;
     }
 
-    public int getTrainModeValue() {
-        return trainModeValue;
+    public double getConsequentForce() {
+        return consequentForce;
     }
 
-    public void setTrainModeValue(int trainModeValue) {
-        this.trainModeValue = trainModeValue;
+    public void setConsequentForce(double consequentForce) {
+        this.consequentForce = consequentForce;
     }
 
-    public boolean isOpenFatLossMode() {
-        return isOpenFatLossMode;
+    public double getReverseForce() {
+        return reverseForce;
     }
 
-    public void setOpenFatLossMode(boolean openFatLossMode) {
-        isOpenFatLossMode = openFatLossMode;
+    public void setReverseForce(double reverseForce) {
+        this.reverseForce = reverseForce;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public void setPower(double power) {
+        this.power = power;
     }
 
 }

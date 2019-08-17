@@ -10,10 +10,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
@@ -26,13 +30,18 @@ import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LargeDialogHelp;
+import com.bdl.airecovery.dialog.MediumDialog;
+import com.bdl.airecovery.dialog.SmallPwdDialog;
+import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
 import com.google.gson.Gson;
 
+import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -80,6 +89,12 @@ public class ActivePassiveModeActivity extends BaseActivity {
      * 类成员
      */
     private int flag_dialog;                //警告模态框弹出标志位
+    private Thread localCountDownThread;    //本机倒计时线程
+    private int localCountDown = 60;        //本机倒计时（单位：秒）
+    private int localCountDownType = 0;     //本机倒计时类型（0运动，1休息）
+    private Handler handler;                //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
+    private Handler handler_dialog;         //用于模态框ui线程中获取倒计时线程创建的Message对象
+    private Boolean isAlert = false;        //标识是否弹5s倒计时模态框
     private ActivePassiveModeActivity.locationReceiver LocationReceiver = new ActivePassiveModeActivity.locationReceiver();       //广播监听类
     private IntentFilter filterHR = new IntentFilter();                       //广播过滤器
     private Thread seekBarThread;           //电机速度与位移的SeekBar线程
@@ -105,9 +120,6 @@ public class ActivePassiveModeActivity extends BaseActivity {
     @ViewInject(R.id.tv_map_getnumber)
     private TextView getnumber;
 
-    @ViewInject(R.id.tv_map_gettime)
-    private TextView gettime;        //倒计时
-
     @ViewInject(R.id.tv_map_speednumber)
     private TextView speednumber; //当前速度
     //ImageView
@@ -121,14 +133,15 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private ImageView iv_map_help;     //“帮助”图片按钮
 
     @ViewInject(R.id.iv_map_state)
-    private ImageView iv_map_state;    //登录状态
+    private ImageView iv_map_state;    //用户角色图标
 
-    //Button
-    @ViewInject(R.id.btn_map_end)
-    private Button btn_map_end;     //“教练协助/停止协助”按钮
+    @ViewInject(R.id.rl_targetnum)
+    private RelativeLayout rl_targetnum; //剩余运动次数
 
-    @ViewInject(R.id.btn_map_pause)
-    private Button btn_map_pause;   //“暂停”按钮
+    @ViewInject(R.id.rl_timecount)
+    private RelativeLayout rl_timecount; //剩余运动时间
+    @ViewInject(R.id.tv_map_gettime)
+    private TextView tv_map_gettime; //剩余运动时间
 
     //MySeekBar
     @ViewInject(R.id.sp_map_speed)
@@ -136,6 +149,8 @@ public class ActivePassiveModeActivity extends BaseActivity {
 
     @ViewInject(R.id.sp_map_scope)
     private com.bdl.airecovery.widget.MySeekBar sp_scope;//活动范围seekbar
+
+    private TextView medium_dialog_msg;     //最后5秒模态框 时间文本
 
 
 //    //顺向力反向力handler
@@ -569,32 +584,11 @@ public class ActivePassiveModeActivity extends BaseActivity {
      * 获取用户信息
      */
     private void queryUserInfo() {
-        if (MyApplication.getInstance().getUser() != null) { //判空
-            //用户名
-            person.setText(MyApplication.getInstance().getUser().getUsername());
-            //如果用户是学员，则执行如下逻辑
-            if (MyApplication.getInstance().getUser().getRole() != null) {
-                if (MyApplication.getInstance().getUser().getRole().equals("trainee")) {
-                    //如果为空，说明无教练连接蓝牙
-                    if (MyApplication.getInstance().getUser().getHelperuser() == null || MyApplication.getInstance().getUser().getHelperuser().getUsername().equals("")) {
-                        btn_map_end.setText("教练协助"); //更新为“教练协助”按钮
-                        iv_map_state.setImageDrawable(getResources().getDrawable((R.drawable.yonghu1)));
-                    } else { //否则，不为空串，说明有教练连接蓝牙
-                        btn_map_end.setText("停止协助"); //更新为“停止协助”按钮
-                        //person.append("【调试模式】"); //追加“【调试模式】”文本
-                        iv_map_state.setImageDrawable(getResources().getDrawable((R.drawable.shou)));
-                    }
-                } else if (MyApplication.getInstance().getUser().getRole().equals("coach")) {
-                    btn_map_end.setText("医护设置"); //更新为“医护设置”按钮
-                    iv_map_state.setImageDrawable(getResources().getDrawable((R.drawable.guanliyuan1)));
-                    //person.append("【教练用户】"); //追加“【教练用户】”文本
-                } else {
-                    //person.append("【测试模式】"); //追加“【测试模式】”文本
-                    iv_map_state.setImageDrawable(getResources().getDrawable((R.drawable.banshou1)));
-                }
-            }
-            weight = MyApplication.getInstance().getUser().getWeight();
+        if (MyApplication.getInstance().getUser() == null) {
+            return;
         }
+        person.setText(MyApplication.getInstance().getUser().getUsername()); //用户名
+        weight = MyApplication.getInstance().getUser().getWeight(); //体重
     }
 
     //扫描教练的定时任务
@@ -609,8 +603,71 @@ public class ActivePassiveModeActivity extends BaseActivity {
         }
     };
 
-    CommonDialog commonDialog;
+    DbManager dbManager = MyApplication.getInstance().getDbManager();
+    Setting setting;
+    /**
+     * 医护设置 进入按钮
+     * 需要密码，在高级设置界面设置
+     * 默认admin
+     */
+    @Event(R.id.btn_setting)
+    private void btnSettingOnClick(View v) {
+        try {
+            setting = dbManager.selector(Setting.class).findFirst();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        //创建对话框对象的时候对对话框进行监听
+        String info = "请输入密码";
+        final int[] cnt = {0};
+        final boolean[] flag = {false};
+        final SmallPwdDialog dialog = new SmallPwdDialog(ActivePassiveModeActivity.this, info, R.style.CustomDialog,
+                new SmallPwdDialog.DataBackListener() {
+                    @Override
+                    public void getData(String data) {
+                        String result = data;
+                        if (result.equals(setting.getMedicalSettingPassword())) {
+                            flag[0] = true;
+                        } else {
+                            flag[0] = false;
+                        }
+                        if (flag[0]) {
+                            startActivity(new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class));
+                        } else if (cnt[0] != 0) {
+                            Toast.makeText(ActivePassiveModeActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
+                        }
+                        cnt[0]++;
+                    }
+                });
 
+        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.y = 100;
+        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        dialog.show();
+        initImmersiveMode(); //隐藏虚拟按键和状态栏
+    }
+
+    CommonDialog commonDialog;
     /**
      * 暂停按钮    暂停后不计个数 TODO：发送训练结果（要发送的内容）
      */
@@ -816,6 +873,124 @@ public class ActivePassiveModeActivity extends BaseActivity {
                     LogUtil.e("未知广播，收到message：" + commonMessage.getMsgType());
             }
         }
+    }
+
+    MediumDialog mediumDialog;
+    /**
+     * 最后5秒倒计时 模态框
+     */
+    private void Last5sAlertDialog() {
+        mediumDialog = new MediumDialog((ActivePassiveModeActivity.this));
+        mediumDialog.setTime("0:05");
+        //模态框隐藏导航栏
+        mediumDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        mediumDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                mediumDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        mediumDialog.show();
+
+        //找到CommonDialog内容控件
+        medium_dialog_msg = mediumDialog.findViewById(R.id.medium_dialog_time);
+    }
+
+    /**
+     * 创建本机倒计时线程（如果时间显示器宕机，需要用到该倒计时）
+     */
+    private void CreatelocalCountDownTheard() {
+        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                //获取倒计时秒数
+                int arg1 = msg.arg1;
+                //如果倒计时秒数小于等于5秒，弹模态框
+                if (!isAlert && arg1 <= 5 && msg.what == 0) {
+                    Last5sAlertDialog();
+                    isAlert = true;
+                }
+                if (isAlert) {
+                    medium_dialog_msg.setText("0:0" + arg1);
+                }
+                //设置文本内容（有两种特殊情况，单独设置合适的文本格式）
+                int minutes = arg1 / 60;
+                int remainSeconds = arg1 % 60;
+                if (remainSeconds < 10) {
+                    tv_map_gettime.setText(minutes + ":0" + remainSeconds);
+                } else {
+                    tv_map_gettime.setText(minutes + ":" + remainSeconds);
+                }
+            }
+        };
+        localCountDownThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //训练时间60s倒计时
+                localCountDown = 60;
+                while (!localCountDownThread.isInterrupted() && localCountDown > 0) {
+                    //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
+                    Message message = handler.obtainMessage();
+                    message.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
+                    handler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
+
+                    //线程睡眠1s
+                    try {
+                        Thread.sleep(1000);
+                        localCountDown--;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                }
+
+                //设置训练结果
+                //1.获取当前次数
+                upload.setFinishCount_(Integer.parseInt(getnumber.getText().toString()));
+                upload.setCalorie_(countEnergy(Integer.parseInt(getnumber.getText().toString()),positiveTorqueLimited));
+
+                //2.获取训练时长
+                //已经在第一次校准时间处获取
+                //3.最终顺向力
+                upload.setForwardForce_(positiveTorqueLimited);
+                //4.最终反向力
+                upload.setReverseForce_(negativeTorqueLimited);
+                MyApplication.setUpload(upload);
+
+                //倒计时结束，跳转再见界面
+                //新建一个跳转到再见界面Activity的显式意图
+                if (mediumDialog != null && mediumDialog.isShowing()) {
+                    mediumDialog.dismiss();
+                }
+                if (commonDialog != null && commonDialog.isShowing()) {
+                    commonDialog.dismiss();
+                }
+                if (helpDialog != null && helpDialog.isShowing()) {
+                    helpDialog.dismiss();
+                }
+                Intent intent = new Intent(ActivePassiveModeActivity.this, ByeActivity.class);
+                //启动
+//                startActivity(intent); //TODO 注释后不会跳转到再见界面
+                //结束当前Activity
+//                StandardModeActivity.this.finish(); //TODO 注释后不会跳转到再见界面
+            }
+        });
     }
 
 }

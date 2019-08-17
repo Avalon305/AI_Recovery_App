@@ -70,100 +70,115 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="-10dp"
             android:src="@drawable/backboard"/>
-        <!--帮助图标-->
-        <ImageView
-            android:id="@+id/iv_map_help"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="70dp"
-            android:layout_marginTop="35dp"
-            android:src="@drawable/mode_questioncircle" />
-        <!--心率-->
-        <ImageView
-            android:id="@+id/iv_map_heartrate"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignStart="@id/iv_map_help"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/iv_map_help"
-            android:src="@drawable/mode_heartrate"/>
-        <TextView
-            android:id="@+id/tv_map_heart"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_map_heartrate"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/iv_map_heartrate"
-            android:textSize="40sp"
-            android:text="心率: " />
-        <!--获取心率值显示此文本-->
-        <TextView
-            android:id="@+id/tv_map_getrate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/tv_map_heart"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/iv_map_heartrate"
-            android:textSize="40sp"
-            android:text="--" />
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical">
+            <!--帮助图标-->
+            <ImageView
+                android:id="@+id/iv_map_help"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/mode_questioncircle" />
+            <!--心率-->
+            <RelativeLayout
+                android:id="@+id/rl_heartrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_map_heartrate"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/mode_heartrate"/>
+                <TextView
+                    android:id="@+id/tv_map_heart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_map_heartrate"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/iv_map_heartrate"
+                    android:textSize="40sp"
+                    android:text="心率: " />
+                <!--获取心率值显示此文本-->
+                <TextView
+                    android:id="@+id/tv_map_getrate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tv_map_heart"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/iv_map_heartrate"
+                    android:textSize="40sp"
+                    android:text="--" />
+            </RelativeLayout>
 
-        <!--次数-->
-        <ImageView
-            android:id="@+id/iv_map_number"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignStart="@id/iv_map_heartrate"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/iv_map_heartrate"
-            android:src="@drawable/mode_number"/>
-        <TextView
-            android:id="@+id/tv_map_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_map_number"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/iv_map_number"
-            android:textSize="40sp"
-            android:text="次数: " />
-        <!--获取次数值显示此文本-->
-        <TextView
-            android:id="@+id/tv_map_getnumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/tv_map_number"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/iv_map_number"
-            android:textSize="40sp"
-            android:text="0" />
+            <!--次数-->
+            <RelativeLayout
+                android:id="@+id/rl_targetnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_map_number"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/mode_number"/>
+                <TextView
+                    android:id="@+id/tv_map_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_map_number"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/iv_map_number"
+                    android:textSize="40sp"
+                    android:text="剩余运动次数: " />
+                <!--获取次数值显示此文本-->
+                <TextView
+                    android:id="@+id/tv_map_getnumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tv_map_number"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/iv_map_number"
+                    android:textSize="40sp"
+                    android:text="0" />
+            </RelativeLayout>
 
-        <!--训练倒计时-->
-        <ImageView
-            android:id="@+id/iv_map_time"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignStart="@id/iv_map_number"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/iv_map_number"
-            android:src="@drawable/mode_hourglass"/>
-        <TextView
-            android:id="@+id/tv_map_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/iv_map_time"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/iv_map_time"
-            android:textSize="40sp"
-            android:text="训练倒计时: " />
-        <!--倒计时文本-->
-        <TextView
-            android:id="@+id/tv_map_gettime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/tv_map_time"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/iv_map_time"
-            android:textSize="40sp"
-            android:text="暂无" />
+            <!--训练倒计时-->
+            <RelativeLayout
+                android:id="@+id/rl_timecount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_map_time"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/mode_hourglass"/>
+                <TextView
+                    android:id="@+id/tv_map_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_map_time"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/iv_map_time"
+                    android:textSize="40sp"
+                    android:text="训练倒计时: " />
+                <!--倒计时文本-->
+                <TextView
+                    android:id="@+id/tv_map_gettime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tv_map_time"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignTop="@+id/iv_map_time"
+                    android:textSize="40sp"
+                    android:text="--" />
+            </RelativeLayout>
+        </LinearLayout>
     </RelativeLayout>
 
 
@@ -270,7 +285,7 @@
         android:layout_marginTop="-40dp"
         android:layout_marginLeft="20dp">
         <Button
-            android:id="@+id/btn_map_end"
+            android:id="@+id/btn_setting"
             android:layout_width="200dp"
             android:layout_height="90dp"
             android:gravity="center"
@@ -278,7 +293,7 @@
             android:paddingRight="20dp"
             android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
-            android:text="测试状态"
+            android:text="医护设置"
             android:textColor="#2b2b2b"
             android:textSize="30sp" />
         <!--暂停-->

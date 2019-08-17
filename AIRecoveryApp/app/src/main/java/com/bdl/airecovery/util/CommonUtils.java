@@ -33,20 +33,6 @@ public class CommonUtils {
                 return BdlProto.DeviceType.P08;
             case "9":
                 return BdlProto.DeviceType.P09;
-            case "10":
-                return BdlProto.DeviceType.E10;
-            case "11":
-                return BdlProto.DeviceType.E11;
-            case "12":
-                return BdlProto.DeviceType.E12;
-            case "13":
-                return BdlProto.DeviceType.E13;
-            case "14":
-                return BdlProto.DeviceType.E14;
-            case "15":
-                return BdlProto.DeviceType.E15;
-            case "16":
-                return BdlProto.DeviceType.E16;
             default:
                 return null;
         }
@@ -54,16 +40,31 @@ public class CommonUtils {
     /**
      * 根据当前设备类型转化为proto活动类型枚举对象
      */
-    public static BdlProto.ActivityType getActivityType(){
-        switch (MyApplication.getInstance().getCurrentDevice().getActivityType()){
-            case 0:
-                return BdlProto.ActivityType.forNumber(0);
-            case 1:
-                return BdlProto.ActivityType.forNumber(1);
-            default:
-                return BdlProto.ActivityType.forNumber(-1);
-        }
-    }
+//    public static BdlProto.ActivityType getActivityType(){
+//        switch (MyApplication.getInstance().getCurrentDevice().getActivityType()){
+//            case 0:
+//                return BdlProto.ActivityType.forNumber(0);
+//            case 1:
+//                return BdlProto.ActivityType.forNumber(1);
+//            default:
+//                return BdlProto.ActivityType.forNumber(-1);
+//        }
+//    }
+    /**
+     *  @author zfc
+     *  @time 2019/8/14  21:07
+     *  @describe 根据当前设备类型转化为proto用户运动模式枚举对象
+     */
+    //public static  BdlProto.SportMode getSportMode(){
+//        switch (MyApplication.getInstance().getCurrentDevice().getSportMode()){
+//            case 0:
+//                return BdlProto.getSportMode.forNumber(0);
+//            case 1:
+//                return BdlProto.getSportMode.forNumber(1);
+//            default:
+//                return BdlProto.getSportMode.forNumber(-1);
+//        }
+// }
 
 
 
