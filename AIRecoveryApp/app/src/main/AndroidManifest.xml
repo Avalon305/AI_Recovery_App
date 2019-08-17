@@ -88,6 +88,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".activity.CalibrationActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+
         <!-- service -->
         <service android:name=".service.ReSendService" />
         <service android:name=".service.StaticMotorService" />

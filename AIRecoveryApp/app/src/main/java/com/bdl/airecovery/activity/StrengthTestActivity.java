@@ -1,5 +1,6 @@
 package com.bdl.airecovery.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Reader;
+import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LargeDialog;
 import com.bdl.airecovery.service.StaticMotorService;
 import com.bdl.airecovery.widget.CircularRingPercentageView;
@@ -43,6 +45,18 @@ public class StrengthTestActivity extends BaseActivity {
     private int strength = 0;
     private int maxStrength = 0;
 
+    private Handler mHandler = new Handler() { //次数handler
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int arg1 = msg.arg1;
+            switch (msg.what) {
+                case 1:
+                    showCommonDialog();
+                    break;
+            }
+        }
+    };
     CircularRingPercentageView circularRingPercentageView;
     @ViewInject(R.id.btn_st_start)
     private Button btnStartTest;                   //“开始训练”按钮
@@ -54,7 +68,7 @@ public class StrengthTestActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         circularRingPercentageView = (CircularRingPercentageView) findViewById(R.id.process_circle);
 
-        tvTip.setTextColor(0xff696969);
+//        tvTip.setTextColor(0xff696969);
 
         try {
             LaunchDialogLocating();
@@ -69,6 +83,7 @@ public class StrengthTestActivity extends BaseActivity {
         MotorProcess.motorInitialization();
         super.onDestroy();
     }
+
 
     //点击事件
     @Event(R.id.btn_st_start)
@@ -87,7 +102,12 @@ public class StrengthTestActivity extends BaseActivity {
                     Log.e("count", String.valueOf(strength));
                     circularRingPercentageView.setProgress(strength);
                     if (strength >= 100) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = 1;
+                        message.arg1 = 1;
+                        mHandler.sendMessage(message);
                         strength = 0;
+                        timer.cancel();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -97,6 +117,19 @@ public class StrengthTestActivity extends BaseActivity {
         timer.schedule(timerTask, 0, 50);
     }
 
+    private void showCommonDialog() {
+        final CommonDialog commonDialog = new CommonDialog(StrengthTestActivity.this);
+        commonDialog.setTitle("测试结果");
+        commonDialog.setMessage("您在肌力测试中使用的最大力量为"+ strength +",肌力测试评级为");
+        commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog.dismiss();
+                startActivity(new Intent(StrengthTestActivity.this, LocationActivity.class));
+                StrengthTestActivity.this.finish();
+            }
+        });
+        commonDialog.show();
+    }
     //打开定位模态框
     private void LaunchDialogLocating() throws Exception {
         dialog_locating = new LargeDialog(StrengthTestActivity.this);

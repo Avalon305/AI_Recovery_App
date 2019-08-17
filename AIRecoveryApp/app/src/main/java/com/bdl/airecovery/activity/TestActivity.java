@@ -87,6 +87,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     @ViewInject(R.id.strength_test)
     private Button strengthTest;
 
+    @ViewInject(R.id.calibration)
+    private Button calibration;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         test_ByeActivity.setOnClickListener(this);
@@ -110,6 +113,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         test_static_testlocate.setOnClickListener(this);
         test_static_setposition.setOnClickListener(this);
         strengthTest.setOnClickListener(this);
+        calibration.setOnClickListener(this);
     }
 
     @Override
@@ -153,6 +157,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             }
         } else if (view == strengthTest) {
             startActivity(new Intent(TestActivity.this, StrengthTestActivity.class));
+        } else if (view == calibration) {
+            startActivity(new Intent(TestActivity.this, CalibrationActivity.class));
         }
     }
 }

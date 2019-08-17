@@ -180,5 +180,16 @@
                 android:text="肌力测试" />
 
         </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            <Button
+                android:id="@+id/calibration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="标定页面" />
+
+        </TableRow>
     </TableLayout>
 </LinearLayout>

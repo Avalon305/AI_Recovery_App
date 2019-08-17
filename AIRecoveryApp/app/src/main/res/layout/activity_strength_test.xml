@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/timg"
+    android:background="@drawable/timg3"
     android:orientation="vertical">
     <!--标题-->
 
@@ -52,6 +52,7 @@
                 android:layout_marginLeft="80dp"
                 android:layout_marginTop="50dp"
                 android:paddingLeft="20dp"
+                android:textColor="@color/white"
                 android:text="    请在医护人员的指导下将手放到握把上，由医护人员点击开始测试开始进行肌力测试。"
                 android:textSize="35dp" />
 
