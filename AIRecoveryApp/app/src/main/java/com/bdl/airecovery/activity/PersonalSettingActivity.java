@@ -65,7 +65,6 @@ public class PersonalSettingActivity extends BaseActivity {
     private int SeekBarCurProgress = 0;         //保存当前拖动条的值
     private String curMode;                     //当前训练模式
     private int curModeIndex = 0;               //选择模式的索引值（默认为0，即“标准模式”）
-    private Boolean isOpenFatLossMode = false;  //是否开启减脂模式
     private Boolean isSave = true;              //标识用户是否保存医护设置（一旦对 参数/模式 进行修改，则为false）
     String[] modeItems = new String[]{          //设置菜单选项内容（有5种训练模式可设置）（通过curModeIndex选择，默认为0，即“标准模式”）
             "标准模式",
@@ -151,7 +150,7 @@ public class PersonalSettingActivity extends BaseActivity {
         SeekBarCartoonSetting(); //拖动条动画设置
         defaultSetting(); //控件内容的默认设置
         queryUserInfo(); //获取用户相关信息
-        isOpenFatLossModeEvent(); //减脂模式CheckBox事件监听
+//        isOpenFatLossModeEvent(); //减脂模式CheckBox事件监听
     }
 
     @Override
@@ -342,22 +341,22 @@ public class PersonalSettingActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 减脂模式 CheckBox
-     */
-    private void isOpenFatLossModeEvent() {
-        cb_isopen_fatlossmode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    isOpenFatLossMode = true;
-                } else {
-                    isOpenFatLossMode = false;
-                }
-                isSave = false;
-            }
-        });
-    }
+//    /**
+//     * 减脂模式 CheckBox
+//     */
+//    private void isOpenFatLossModeEvent() {
+//        cb_isopen_fatlossmode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    isOpenFatLossMode = true;
+//                } else {
+//                    isOpenFatLossMode = false;
+//                }
+//                isSave = false;
+//            }
+//        });
+//    }
 
     /**
      * “参数”按钮的单击事件
@@ -492,8 +491,8 @@ public class PersonalSettingActivity extends BaseActivity {
                 if (MyApplication.getInstance().getCurrentDevice().getDeviceInnerID() != null) {
                     deviceTypeValue = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()); //得到枚举量
                 }
-                //1.2.获取循环类型
-                activityTypeValue = MyApplication.getInstance().getCurrentDevice().getActivityType();
+//                //1.2.获取循环类型
+//                activityTypeValue = MyApplication.getInstance().getCurrentDevice().getActivityType();
                 //1.3.获取训练模式
                 //trainModeValue = curModeIndex
                 //1.4.获取医护设置参数
@@ -570,7 +569,7 @@ public class PersonalSettingActivity extends BaseActivity {
             //3.更新实体类User与实体类CurrentDevice
             //3.1.更新实体类User
             if (MyApplication.getInstance().getUser() != null) {
-                MyApplication.getInstance().getUser().setDefatModeEnable(isOpenFatLossMode); //更新 是否开启减脂模式
+//                MyApplication.getInstance().getUser().setDefatModeEnable(isOpenFatLossMode); //更新 是否开启减脂模式
                 MyApplication.getInstance().getUser().setTrainMode(curMode); //更新 训练模式
                 Log.e("coach_bluetooth_onClick", "更新实体类User,helperuser:" + MyApplication.getInstance().getUser().getHelperuser() == null ? "null" : "not null");
             }
@@ -595,16 +594,12 @@ public class PersonalSettingActivity extends BaseActivity {
             PersonalSettingDTO personalSettingDTO = new PersonalSettingDTO();
             if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
                 personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
-                personalSettingDTO.setDeviceTypeValue(deviceTypeValue);
-                personalSettingDTO.setActivityTypeValue(activityTypeValue);
                 personalSettingDTO.setSeatHeight(seatHeight);
                 personalSettingDTO.setBackDistance(backDistance);
-                personalSettingDTO.setLeverLength(leverLength);
                 personalSettingDTO.setLeverAngle(leverAngle);
-                personalSettingDTO.setFrontLimit(frontLimit);
+                personalSettingDTO.setForwardLimit(frontLimit);
                 personalSettingDTO.setBackLimit(backLimit);
-                personalSettingDTO.setTrainModeValue(curModeIndex);
-                personalSettingDTO.setOpenFatLossMode(isOpenFatLossMode);
+                personalSettingDTO.setTrainMode(curModeIndex);
             }
             //6.存暂存表
             Log.d("暂存业务", "保存医护设置数据至暂存表：" + personalSettingDTO.toString());
@@ -783,9 +778,9 @@ public class PersonalSettingActivity extends BaseActivity {
                 tv_cur_mode.setText(curMode); //前端显示当前训练模式
             }
 
-            //获取是否开启减脂模式
-            isOpenFatLossMode = MyApplication.getInstance().getUser().isDefatModeEnable();
-            cb_isopen_fatlossmode.setChecked(isOpenFatLossMode);
+//            //获取是否开启减脂模式
+//            isOpenFatLossMode = MyApplication.getInstance().getUser().isDefatModeEnable();
+//            cb_isopen_fatlossmode.setChecked(isOpenFatLossMode);
 
             //获取当前用户版本（普通版0/豪华版1）
             if (MyApplication.getInstance().getUser().getSysVersion() == 0) {

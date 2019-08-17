@@ -151,17 +151,15 @@ public class ReSendService extends Service {
         Type listType = new TypeToken<PersonalSettingDTO>(){}.getType();
         PersonalSettingDTO sendMsg = gson.fromJson(sendStr,listType);
 
-        Log.d("重传service","前方限制："+sendMsg.getFrontLimit());
+        Log.d("重传service","前方限制："+sendMsg.getForwardLimit());
         Log.d("重传service","数据库id："+tempStorage.getId());
         BdlProto.PersonalSetRequest request = BdlProto.PersonalSetRequest.newBuilder()
                 .setUid(sendMsg.getUid()) //用户ID
-                .setDeviceTypeValue(sendMsg.getDeviceTypeValue()) //设备类型
-                .setTrainModeValue(sendMsg.getTrainModeValue())   //训练模式
                 .setSeatHeight(sendMsg.getSeatHeight()) //座位高度
                 .setBackDistance(sendMsg.getBackDistance()) //靠背距离
                 .setFootboardDistance(sendMsg.getFootboardDistance())//踏板距离
                 .setLeverAngle(sendMsg.getLeverAngle()) //杠杆角度
-                .setForwardLimit(sendMsg.getFrontLimit()) //前方限制
+                .setForwardLimit(sendMsg.getForwardLimit()) //前方限制
                 .setBackLimit(sendMsg.getBackLimit()) //后方限制
                 .setConsequentForce(sendMsg.getConsequentForce())//顺向力
                 .setReverseForce(sendMsg.getReverseForce())

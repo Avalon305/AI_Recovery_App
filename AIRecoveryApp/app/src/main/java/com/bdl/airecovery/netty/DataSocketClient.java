@@ -134,9 +134,6 @@ public class DataSocketClient {
 			throw e;
 		}
 
-
-
-
 	}
 
 
