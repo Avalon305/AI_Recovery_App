@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.contoller.Writer;
+import com.bdl.airecovery.entity.CalibrationParameter;
 import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Setting;
@@ -108,6 +109,7 @@ public class MyApplication extends MultiDexApplication {
         } catch (DbException e) {
             e.printStackTrace();
         }
+
         setCurrentDevice();//根据数据库中存储的当前设备名称，查询出当前设备的一些固定信息
         //启动重传service。
         startReSendService();
@@ -117,8 +119,8 @@ public class MyApplication extends MultiDexApplication {
 
         //启动发卡器Service
         startCardReaderService();
-        //启动电机Service
-        startMotorService();
+//        //启动电机Service
+//        startMotorService();
         //启动静态电机Service
         startStaticMotorService();
 
@@ -247,6 +249,7 @@ public class MyApplication extends MultiDexApplication {
      * @throws DbException
      */
     private void initSetting() throws DbException {
+        //系统设置
         Setting setting = new Setting();
         if (db.findAll(Setting.class) == null){
             setting.setDeviceName("坐式划船机");
@@ -258,6 +261,17 @@ public class MyApplication extends MultiDexApplication {
             setting.setCanStrengthTest(true);
             setting.setMedicalSettingPassword("admin");
             db.save(setting);
+        }
+        //标定参数
+        CalibrationParameter calibrationParameter = new CalibrationParameter();
+        if (db.findAll(CalibrationParameter.class) == null){
+            calibrationParameter.setMinTorque(0);
+            calibrationParameter.setBackSpeed(35);
+            calibrationParameter.setNormalSpeed(5);
+            calibrationParameter.setMinBackTorque(20);
+            calibrationParameter.setBounce(10);
+            calibrationParameter.setLead(3);
+            db.save(calibrationParameter);
         }
     }
 
@@ -361,18 +375,6 @@ public class MyApplication extends MultiDexApplication {
         currentDevice.setPersonalList(newDevice.getPersonalList());
     }
 
-    /**
-     * 获得电机比率
-     */
-    /*public static double getCurrentRate() {
-        Setting setting = null;
-        try {
-            setting = MyApplication.getInstance().getDbManager().selector(Setting.class).findFirst();
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-        return Double.parseDouble(setting.getRate());
-    }*/
 
     /**
      * 自定义字体
