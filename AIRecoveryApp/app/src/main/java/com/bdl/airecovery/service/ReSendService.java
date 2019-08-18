@@ -191,7 +191,7 @@ public class ReSendService extends Service {
      * 发送肌力测试结果
      * @param tempStorage
      */
-    private void sendStrengthTestResult(TempStorage tempStorage) {
+    private void sendStrengthTestResult(TempStorage tempStorage) throws ConnectException {
         Gson gson = new Gson();
         String sendStr = tempStorage.getData();
         Type listType = new TypeToken<TrainResultDTO>() {
@@ -209,6 +209,7 @@ public class ReSendService extends Service {
         }
 
         BdlProto.Message message = DataProtoUtil.packMuscleStrengthRequest(strengthTestSeq++, request);
+        DataSocketClient.getInstance().sendMsg(message);
     }
 
 //    private  void SendErrorInfo() throws ConnectException{
