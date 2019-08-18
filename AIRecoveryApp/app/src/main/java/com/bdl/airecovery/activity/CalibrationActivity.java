@@ -17,6 +17,7 @@ import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.constant.MotorConstant;
+import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.CommonDialog;
@@ -102,6 +103,8 @@ public class CalibrationActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        timer.cancel();
+        MotorProcess.motorInitialization();
     }
 
     /**

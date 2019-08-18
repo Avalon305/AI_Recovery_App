@@ -8,9 +8,10 @@ import org.xutils.db.annotation.Table;
  */
 @Table(name = "tempStorage")
 public class TempStorage {
-    //暂定两种：重设医护设置，发送运动结果
     final static int ReSetPersonalSettinglist = 1;
     final static int SendTrainResult = 2;
+    final static int StrengthTestResult = 3;    //肌力测试结果
+    final static int ErrorCode = 4;             //错误码
 
     @Column(name = "id", isId = true)
     private int id;//主键

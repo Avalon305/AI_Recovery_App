@@ -21,14 +21,23 @@ import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LargeDialog;
+import com.bdl.airecovery.entity.DTO.StrengthTest;
+import com.bdl.airecovery.entity.TempStorage;
+import com.bdl.airecovery.entity.Upload;
+import com.bdl.airecovery.proto.BdlProto;
 import com.bdl.airecovery.service.StaticMotorService;
 import com.bdl.airecovery.widget.CircularRingPercentageView;
+import com.google.gson.Gson;
 
 import org.apache.log4j.lf5.viewer.categoryexplorer.CategoryImmediateEditor;
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,10 +49,19 @@ import static com.bdl.airecovery.contoller.Writer.setParameter;
 
 @ContentView(R.layout.activity_strength_test)
 public class StrengthTestActivity extends BaseActivity {
+
+    @ViewInject(R.id.btn_st_start)
+    private Button btnStartTest;
+
+    @ViewInject(R.id.tv_st_tip)
+    private TextView tvTip;
+
     private LargeDialog dialog_locating;
     private int count = 0;
     private int strength = 0;
     private int maxStrength = 0;
+    private CircularRingPercentageView circularRingPercentageView;
+    private DbManager db = MyApplication.getInstance().getDbManager();
 
     private Handler mHandler = new Handler() { //次数handler
         @Override
@@ -57,18 +75,10 @@ public class StrengthTestActivity extends BaseActivity {
             }
         }
     };
-    CircularRingPercentageView circularRingPercentageView;
-    @ViewInject(R.id.btn_st_start)
-    private Button btnStartTest;                   //“开始训练”按钮
-
-    @ViewInject(R.id.tv_st_tip)
-    private TextView tvTip;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         circularRingPercentageView = (CircularRingPercentageView) findViewById(R.id.process_circle);
-
-//        tvTip.setTextColor(0xff696969);
 
         try {
             LaunchDialogLocating();
@@ -85,6 +95,32 @@ public class StrengthTestActivity extends BaseActivity {
     }
 
 
+    private void uploadResult() {
+        //获取当前时间
+        Date date = new Date();
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+        String currentTime = dateFormat.format(date);
+        StrengthTest strengthTest = new StrengthTest();
+        strengthTest.setUid(MyApplication.getInstance().getUser().getUserId());
+        strengthTest.setResult("2");
+        strengthTest.setTime(currentTime);
+
+        //存暂存表
+        TempStorage tempStorage = new TempStorage();
+        Gson gson = new Gson();
+        tempStorage.setData(gson.toJson(strengthTest)); //重传数据（转换为JSON串）
+        tempStorage.setType(3); //重传类型
+        try {
+            db.saveBindingId(tempStorage);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+    }
     //点击事件
     @Event(R.id.btn_st_start)
     private void setStartTestOnClick(View v) {
@@ -117,6 +153,9 @@ public class StrengthTestActivity extends BaseActivity {
         timer.schedule(timerTask, 0, 50);
     }
 
+    private int ratingByResult(int result) {
+        return 0;
+    }
     private void showCommonDialog() {
         final CommonDialog commonDialog = new CommonDialog(StrengthTestActivity.this);
         commonDialog.setTitle("测试结果");
@@ -237,5 +276,6 @@ public class StrengthTestActivity extends BaseActivity {
         };
         timer.schedule(timerTask, 0, 20);
     }
+
 
 }
