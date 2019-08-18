@@ -22,7 +22,9 @@ import android.widget.Toast;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
+import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.contoller.MotorProcess;
+import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.TestItem;
@@ -103,6 +105,13 @@ public class LocationActivity extends BaseActivity {
         //隐藏状态栏，导航栏
         initImmersiveMode();
         //查询连测参数，进行定位显示
+        try {
+            Writer.setParameter(1, MotorConstant.MOTOR_ENABLE);
+            Thread.sleep(1000);
+            Writer.setParameter(0, MotorConstant.MOTOR_ENABLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         queryTestItem();
         //广播注册
         filterHR.addAction("location");

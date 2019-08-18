@@ -1,15 +1,22 @@
 package com.bdl.airecovery.contoller;
 
 
+import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.mao.MotorSocketClient;
 import com.bdl.airecovery.util.CodecUtils;
 import com.bdl.airecovery.util.MessageUtils;
 import com.bdl.airecovery.util.MessageUtils.*;
 
+import java.util.Calendar;
+
 
 public class Writer {
     private static final String TAG = "Writer";
+    private static int minBackTorque  = MyApplication.getInstance()
+            .getCalibrationParam()
+            .getNormalSpeed()
+            * 100;
     /**
      * 设置成功返回true
      *
@@ -33,8 +40,8 @@ public class Writer {
      * 设置初始回弹力
      */
     public static boolean setInitialBounce(int value) throws Exception {
-        if (value < MotorConstant.MIN_BACK_TORQUE) {
-            value = MotorConstant.MIN_BACK_TORQUE;
+        if (value < minBackTorque * 100) {
+            value = minBackTorque * 100;
         }
         byte[] message = MotorConstant.SET_INITIAL_BOUNCE;
         byte[] bytesValue = CodecUtils.decimalToBytes(value);
@@ -50,8 +57,8 @@ public class Writer {
      * 设置保持力臂所需力矩
      */
     public static boolean setKeepArmTorque(int value) throws Exception {
-        if (value < MotorConstant.MIN_KEEP_ARM_TORQUE) {
-            value = MotorConstant.MIN_KEEP_ARM_TORQUE;
+        if (value < minBackTorque * 100) {
+            value = minBackTorque * 100;
         }
         byte[] message = MotorConstant.SET_KEEP_ARM_TORQUE;
         byte[] bytesValue = CodecUtils.decimalToBytes(value);

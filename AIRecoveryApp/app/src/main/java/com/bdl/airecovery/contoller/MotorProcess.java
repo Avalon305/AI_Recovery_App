@@ -1,6 +1,11 @@
 package com.bdl.airecovery.contoller;
 
+import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.constant.MotorConstant;
+import com.bdl.airecovery.entity.CalibrationParameter;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,6 +14,10 @@ import static com.bdl.airecovery.contoller.Writer.setParameter;
 
 public class MotorProcess {
 
+    private static int speed = MyApplication.getInstance()
+            .getCalibrationParam()
+            .getNormalSpeed()
+            * 100;
     /**
      * 复位
      * @throws Exception
@@ -43,7 +52,7 @@ public class MotorProcess {
                     //复位来程去程速度
                     setParameter(0, MotorConstant.SET_GOING_SPEED);
                     setParameter(0, MotorConstant.SET_COMPARE_SPEED);
-                    setParameter(MotorConstant.initSpeed, MotorConstant.SET_BACK_SPEED);
+                    setParameter(speed, MotorConstant.SET_BACK_SPEED);
 
                     //复位前后方限制
                     Writer.setParameter( 200 * 4856, MotorConstant.SET_FRONTLIMIT);
@@ -80,7 +89,7 @@ public class MotorProcess {
         //复位来程去程速度
         setParameter(0, MotorConstant.SET_GOING_SPEED);
         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
-        setParameter(MotorConstant.initSpeed, MotorConstant.SET_BACK_SPEED);
+        setParameter(speed, MotorConstant.SET_BACK_SPEED);
         setParameter( position / 10000 * 4856, MotorConstant.SET_FRONTLIMIT);
         /*final Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -114,8 +123,8 @@ public class MotorProcess {
     public static void rotateAnticlockwise(final int position) throws Exception {
         setParameter(0, MotorConstant.SET_BACK_SPEED);
         //开启来程速度
-        setParameter(-MotorConstant.initSpeed, MotorConstant.SET_GOING_SPEED);
-        setParameter(-MotorConstant.initSpeed, MotorConstant.SET_COMPARE_SPEED);
+        setParameter(-speed, MotorConstant.SET_GOING_SPEED);
+        setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
         final Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override

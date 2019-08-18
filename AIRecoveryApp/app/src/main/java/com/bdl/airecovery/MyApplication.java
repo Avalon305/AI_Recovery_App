@@ -119,8 +119,8 @@ public class MyApplication extends MultiDexApplication {
 
         //启动发卡器Service
         startCardReaderService();
-//        //启动电机Service
-//        startMotorService();
+        //启动电机Service
+        startMotorService();
         //启动静态电机Service
         startStaticMotorService();
 
@@ -194,13 +194,7 @@ public class MyApplication extends MultiDexApplication {
      * 电机service,try一下，防止抛异常启动失败，影响程序的启动。
      */
     private void startMotorService() {
-        try {
-            Writer.setParameter(1, MotorConstant.MOTOR_ENABLE);
-            Thread.sleep(1000);
-            Writer.setParameter(0, MotorConstant.MOTOR_ENABLE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
         try {
             Intent intent = new Intent(this, MotorService.class);
@@ -211,6 +205,15 @@ public class MyApplication extends MultiDexApplication {
         }
     }
 
+    public CalibrationParameter getCalibrationParam() {
+        CalibrationParameter calibrationParameter = null;
+        try {
+            calibrationParameter = db.findFirst(CalibrationParameter.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        return calibrationParameter;
+    }
     /**
      * 设置当前设备类型。
      */

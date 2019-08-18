@@ -1,8 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/timg"
     android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/rl_top_title"
         android:layout_width="match_parent"
@@ -11,6 +13,7 @@
         android:layout_marginTop="-6dp"
         android:layout_marginRight="-6dp"
         android:background="@drawable/titlebg">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -20,11 +23,13 @@
             android:text="参数标定"
             android:textSize="40dp" />
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/rl_top_title"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -33,45 +38,53 @@
             android:paddingLeft="5dp"
             android:text="基本设定值"
             android:textSize="40dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="150sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="力矩值"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_toque"
-                android:layout_width="100sp"
+                android:gravity="center"
+                android:spinnerMode="dropdown"
+                android:textSize="30sp"
+                android:layout_width="wrap_content"
                 android:layout_height="50sp"></Spinner>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="前方限制"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_front_limit"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="后方限制"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_rear_limit"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -81,114 +94,128 @@
             android:paddingLeft="5dp"
             android:text="标定参数"
             android:textSize="40dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="最小力矩"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_min_torque"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="力臂返回速度"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_back_speed"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="力臂非运动状态下的速度"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_normal_speed"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="最小返回力矩"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_min_back_torque"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="初始反弹力量"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_bounce"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="提前量"
-                android:textSize="38sp"
-                android:textStyle="bold" />
+                android:textSize="38sp" />
+
             <Spinner
                 android:id="@+id/calibration_lead"
                 android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:paddingLeft="440dp">
+
         <Button
             android:id="@+id/calibration_btn_update"
             android:layout_width="wrap_content"
@@ -202,6 +229,7 @@
             android:text="保存设置"
             android:textColor="#2b2b2b"
             android:textSize="30sp" />
+
         <Button
             android:id="@+id/calibration_btn_reset"
             android:layout_width="wrap_content"
@@ -215,6 +243,7 @@
             android:text="恢复出厂设置"
             android:textColor="#2b2b2b"
             android:textSize="30sp" />
+
         <Button
             android:id="@+id/calibration_btn_return"
             android:layout_width="wrap_content"
