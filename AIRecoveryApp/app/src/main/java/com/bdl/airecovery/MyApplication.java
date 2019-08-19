@@ -261,7 +261,7 @@ public class MyApplication extends MultiDexApplication {
             setting.setCoachDeviceAddress("192.168.1.102");
             setting.setUUID(UUID.randomUUID().toString());
             setting.setCanQuickLogin(true);
-            setting.setCanStrengthTest(true);
+            setting.setCanStrengthTest(false);
             setting.setMedicalSettingPassword("admin");
             db.save(setting);
         }

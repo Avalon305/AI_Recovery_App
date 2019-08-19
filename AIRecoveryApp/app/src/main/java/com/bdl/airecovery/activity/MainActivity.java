@@ -1,5 +1,6 @@
 package com.bdl.airecovery.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -94,7 +95,7 @@ public class MainActivity extends BaseActivity {
     private int locateDone;                 //定位完成的项目数量
     private int locateTodo = 1;                 //需要定位的项目数量
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
-
+    private DbManager db = MyApplication.getInstance().getDbManager();
 
     //控件绑定
     //TextView
@@ -124,11 +125,15 @@ public class MainActivity extends BaseActivity {
     @ViewInject(R.id.iv_ms_inversusminus)
     private ImageView iv_ms_inversusminus;      //反向力的“-”按钮
     @ViewInject(R.id.iv_main_state)
-    private ImageView iv_main_state;        //登陆状态
+    private ImageView iv_main_state;            //登陆状态
+    @ViewInject(R.id.btn_enter_strength_test)
+    private Button btnEnterStrengthTest;        //进入肌力测试页面
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isBtnVisible();     //是否显示肌力测试按钮
         initImmersiveMode();//隐藏状态栏，导航栏
         initMotor();
         queryDevInfo();     //查询设备信息
@@ -145,6 +150,20 @@ public class MainActivity extends BaseActivity {
 //        testupload();
     }
 
+    private void isBtnVisible() {
+        Setting setting = new Setting();
+        try {
+            setting = db.findFirst(Setting.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        if (setting.getCanStrengthTest()) {
+            btnEnterStrengthTest.setVisibility(View.VISIBLE);
+        } else {
+            btnEnterStrengthTest.setVisibility(View.INVISIBLE);
+        }
+
+    }
     /**
      * 初始化前方限制、后方限制、设备类型
      */
@@ -266,6 +285,11 @@ public class MainActivity extends BaseActivity {
         handler_dialoglocating.sendMessage(message1);
     }
 
+    //进入肌力测试
+    @Event(R.id.btn_enter_strength_test)
+    private void setBtnEnterStrengthTestOnClick(View v) {
+        startActivity(new Intent(MainActivity.this, StrengthTestActivity.class));
+    }
     //“退出训练”
     @Event(R.id.btn_quit)
     private void setBtn_quit_onClick(View v) {

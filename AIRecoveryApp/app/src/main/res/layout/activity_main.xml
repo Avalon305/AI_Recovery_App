@@ -307,6 +307,19 @@
             android:background="@drawable/button_selector"
             android:textColor="#2b2b2b"
             android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/btn_enter_strength_test"
+            android:layout_width="200dp"
+            android:layout_height="90dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:text="肌力测试"
+            android:background="@drawable/button_selector"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -95,6 +95,9 @@ public class StrengthTestActivity extends BaseActivity {
     }
 
 
+    /**
+     * 将测试结果存暂存表
+     */
     private void uploadResult() {
         //获取当前时间
         Date date = new Date();
@@ -115,10 +118,6 @@ public class StrengthTestActivity extends BaseActivity {
         } catch (DbException e) {
             e.printStackTrace();
         }
-
-
-
-
 
     }
     //点击事件
@@ -163,7 +162,6 @@ public class StrengthTestActivity extends BaseActivity {
         commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 commonDialog.dismiss();
-                startActivity(new Intent(StrengthTestActivity.this, LocationActivity.class));
                 StrengthTestActivity.this.finish();
             }
         });
