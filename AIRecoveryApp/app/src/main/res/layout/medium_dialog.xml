@@ -30,7 +30,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="18dp"
         android:gravity="center_horizontal"
-        android:text="距离结束还剩"
+        android:text="休息时间"
         android:textColor="@color/qmui_config_color_red"
         android:textSize="30dp" />
 
