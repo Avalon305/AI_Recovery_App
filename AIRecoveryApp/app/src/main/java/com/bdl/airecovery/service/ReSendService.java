@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.bdl.airecovery.MyApplication;
+import com.bdl.airecovery.entity.DTO.ErrorMsg;
 import com.bdl.airecovery.entity.DTO.PersonalSettingDTO;
 import com.bdl.airecovery.entity.DTO.StrengthTest;
 import com.bdl.airecovery.entity.DTO.TrainResultDTO;
@@ -85,6 +86,13 @@ public class ReSendService extends Service {
                                 sendStrengthTestResult(tempStorage);
                                 Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
                                 break;
+
+                            case 4:
+                                Log.d("重传service", "准备发送错误码结果");
+                                sendStrengthTestResult(tempStorage);
+                                Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
+                                break;
+
                             default:
                                 Log.e("重传service", "暂存表数据异常，已删除异常数据");
                                 dbManager.deleteById(TempStorage.class, tempStorage.getId());
@@ -212,26 +220,30 @@ public class ReSendService extends Service {
         DataSocketClient.getInstance().sendMsg(message);
     }
 
-//    private  void SendErrorInfo() throws ConnectException{
-//
-//        BdlProto.ErrorInfoRequest request = BdlProto.ErrorInfoRequest.newBuilder()
-//                .setUid()
-//                .setDeviceTypeValue()
-//                .setTrainModeValue()
-//                .setTrainModeValue()
-//                .setError()
-//                .setErrorStartTime()
-//                .build();
-//
-//        if(ErrorInfoSeq == Integer.MAX_VALUE) {
-//            ErrorInfoSeq = 1;
-//        }
-//        BdlProto.Message message =DataProtoUtil.packErrorInfoRequest(ErrorInfoSeq++,request);
-//        Log.d("重传service","发送的请求："+message.toString());
-//        //发送Message
-//        Log.d("重传service","肌力测试");
-//        DataSocketClient.getInstance().sendMsg(message);
-//    }
+    private  void SendErrorInfo(TempStorage tempStorage) throws ConnectException{
+        Gson gson = new Gson();
+        String sendStr = tempStorage.getData();
+        Type listType = new TypeToken<TrainResultDTO>() {
+        }.getType();
+        ErrorMsg sendMsg = gson.fromJson(sendStr, listType);
+
+        BdlProto.ErrorInfoRequest request = BdlProto.ErrorInfoRequest.newBuilder()
+                .setUid(sendMsg.getUid())
+                .setDeviceTypeValue(sendMsg.getDeviceType())
+                .setTrainModeValue(sendMsg.getTrainMode())
+                .setError(sendMsg.getError())
+                .setErrorStartTime(sendMsg.getErrorStartTime())
+                .build();
+
+        if(ErrorInfoSeq == Integer.MAX_VALUE) {
+            ErrorInfoSeq = 1;
+        }
+        BdlProto.Message message =DataProtoUtil.packErrorInfoRequest(ErrorInfoSeq++,request);
+        Log.d("重传service","发送的请求："+message.toString());
+        //发送Message
+        Log.d("重传service","肌力测试");
+        DataSocketClient.getInstance().sendMsg(message);
+    }
 
     public ReSendService() {
 
