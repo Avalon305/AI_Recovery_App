@@ -26,79 +26,6 @@
             />
     </RelativeLayout>
 
-
-    <!--完成训练-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/tv_bye_complete1"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="恭喜您完成了"
-            android:textSize="60sp" />
-        <TextView
-            android:id="@+id/tv_bye_complete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/tv_bye_complete1"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/green"
-            android:text=""
-            android:textSize="60sp" />
-        <TextView
-            android:id="@+id/tv_bye_complete2"
-            android:layout_width="wrap_content"
-            android:layout_toRightOf="@+id/tv_bye_complete"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center_horizontal"
-            android:text="的训练!"
-            android:textSize="60sp" />
-        <!--奖杯图标-->
-        <ImageView
-            android:id="@+id/iv_bye_complete3"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="30dp"
-            android:layout_toRightOf="@+id/tv_bye_complete2"
-            android:src="@drawable/trophy"/>
-        <!--减脂的提示信息-->
-        <TextView
-            android:id="@+id/tv_bye_removeFat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_below="@+id/tv_bye_complete1"
-            android:layout_marginLeft="70dp"
-            android:text="您当前处于"
-            android:textSize="40sp" />
-        <TextView
-            android:id="@+id/tv_bye_removeFat1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_below="@+id/tv_bye_complete1"
-            android:layout_toRightOf="@+id/tv_bye_removeFat"
-            android:text="减脂模式"
-            android:textColor="@color/yellow"
-            android:textSize="40sp" />
-        <TextView
-            android:id="@+id/tv_bye_removeFat2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_below="@+id/tv_bye_complete1"
-            android:layout_toRightOf="@+id/tv_bye_removeFat1"
-            android:text=" , 推荐多进行有氧设备的训练!"
-            android:textSize="40sp" />
-    </RelativeLayout>
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -131,11 +58,27 @@
         <!--未完成的设备列表-->
         <ListView
             android:id="@+id/lv_bye_not"
-            android:divider="@null"
+            android:layout_width="455dp"
+            android:layout_height="520dp"
             android:layout_below="@+id/tv_bye_not1"
             android:layout_marginLeft="70dp"
-            android:layout_width="455dp"
-            android:layout_height="400dp" />
+            android:layout_marginTop="-2dp"
+            android:divider="@null" />
+
+
+        <!--快速登录按钮-->
+        <Button
+            android:id="@+id/btn_return"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lv_bye_not"
+            android:layout_marginLeft="200dp"
+            android:background="@drawable/button_selector"
+            android:text="返回待机页面"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp" />
+
+
         <ImageView
             android:id="@+id/iv_bye_res"
             android:layout_width="60dp"
@@ -167,7 +110,7 @@
         <com.bdl.airecovery.widget.PieChartView
             android:id="@+id/pie_chart"
             android:layout_width="700dp"
-            android:layout_height="400dp"
+            android:layout_height="320dp"
             android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/tv_bye_not2"
@@ -175,22 +118,32 @@
             android:paddingLeft="20dp"
             app:circleRadius="100dp"
             app:textSize="20sp" />
-    </RelativeLayout>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!--温馨提示-->
-        <TextView
-            android:id="@+id/tv_bye_tips"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:paddingBottom="20dp"
-            android:paddingLeft="70dp"
-            android:text="温馨提示：十五秒之后跳转到待机页面！"
-            android:textColor="@color/black_home"
-            android:textSize="30sp" />
+            android:layout_below="@+id/pie_chart"
+            android:layout_marginTop="0dp">
+            <!--折线图底板-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/backboard2" />
+            <!--折线图-->
+            <lecho.lib.hellocharts.view.LineChartView
+                android:id="@+id/mh_chart"
+                android:layout_width="550dp"
+                android:layout_height="280dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="77dp"
+                android:padding="10dp" />
+        </RelativeLayout>
+
     </RelativeLayout>
+
+
+
 </LinearLayout>

@@ -7,6 +7,9 @@ public class User {
     //用户标识
     private String userId ;
 
+    //用户姓名
+    private String username;
+
     //待训练设备列表
     private String deviceTypearrList;
 
@@ -45,6 +48,14 @@ public class User {
 
     //最大心率
     private int heartRatemMax;
+
+    //手环id
+
+    private String bindId;
+
+    //处方id
+    private  int dpId;
+
 
     public User() {
 
@@ -90,6 +101,10 @@ public class User {
         this.age = message.getLoginResponse().getAge();
         //最大心率
         this.heartRatemMax = 220 - this.age;
+        //处方id
+        this.dpId=message.getLoginResponse().getDpId();
+        //用户姓名
+        this.username=message.getLoginResponse().getUserName();
     }
 
     public String getUserId() {
@@ -106,6 +121,30 @@ public class User {
 
     public void setDeviceTypearrList(String deviceTypearrList) {
         this.deviceTypearrList = deviceTypearrList;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getBindId() {
+        return bindId;
+    }
+
+    public void setBindId(String bindId) {
+        this.bindId = bindId;
+    }
+
+    public int getDpId() {
+        return dpId;
+    }
+
+    public void setDpId(int dpId) {
+        this.dpId = dpId;
     }
 
     public boolean isExisitSetting() {
