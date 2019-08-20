@@ -1,5 +1,7 @@
 package com.bdl.airecovery.entity;
 
+import java.util.List;
+
 /**
  * 上传结果
  */
@@ -15,7 +17,7 @@ public class Upload {
     private int finishNum; //训练个数
 //    private double distance; //运动距离 千米，两位小数
     private double energy;//训练总耗能 单位卡路里
-    private String heartRateList;//心率集合：运动过程实时心率集合，数据之间*分割'
+    private List<Integer> heartRateList;//心率集合：运动过程实时心率集合
     private String userThoughts; //病人感想
 
     public String getUid() {
@@ -90,11 +92,11 @@ public class Upload {
         this.energy = energy;
     }
 
-    public String getHeartRateList() {
+    public List<Integer> getHeartRateList() {
         return heartRateList;
     }
 
-    public void setHeartRateList(String heartRateList) {
+    public void setHeartRateList(List<Integer> heartRateList) {
         this.heartRateList = heartRateList;
     }
 
@@ -118,7 +120,7 @@ public class Upload {
                 ", speedRank=" + speedRank +
                 ", finishNum=" + finishNum +
                 ", energy=" + energy +
-                ", heartRateList='" + heartRateList + '\'' +
+                ", heartRateList=" + heartRateList +
                 ", userThoughts='" + userThoughts + '\'' +
                 '}';
     }
