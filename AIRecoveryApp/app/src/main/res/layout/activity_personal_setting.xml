@@ -178,28 +178,6 @@
                 android:layout_toRightOf="@id/tv_mode_note"
                 android:textSize="30sp"/>
         </RelativeLayout>
-        <!--是否开启减脂模式-->
-        <RelativeLayout
-            android:id="@+id/rl_fatlossmode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-            <CheckBox
-                android:id="@+id/cb_isopen_fatlossmode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleX="1.6"
-                android:scaleY="1.6"
-                android:layout_marginRight="10dp"
-                android:textSize="30sp"/>
-            <TextView
-                android:id="@+id/tv_fatloss_note"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/cb_isopen_fatlossmode"
-                android:text="减脂模式"
-                android:textSize="30sp"/>
-        </RelativeLayout>
 
     </LinearLayout>
 
