@@ -74,7 +74,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="80dp"
-            android:layout_marginTop="25dp"
             android:orientation="vertical">
             <!--帮助图标-->
             <ImageView
@@ -115,69 +114,82 @@
                     android:text="--" />
             </RelativeLayout>
 
-            <!--次数-->
-            <RelativeLayout
-                android:id="@+id/rl_targetnum"
+            <!--组数-->
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp">
                 <ImageView
-                    android:id="@+id/iv_map_number"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginTop="20dp"
                     android:src="@drawable/mode_number"/>
                 <TextView
-                    android:id="@+id/tv_map_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/iv_map_number"
                     android:layout_marginLeft="10dp"
-                    android:layout_alignTop="@+id/iv_map_number"
                     android:textSize="40sp"
-                    android:text="剩余运动次数: " />
-                <!--获取次数值显示此文本-->
+                    android:text="组数: " />
                 <TextView
-                    android:id="@+id/tv_map_getnumber"
+                    android:id="@+id/tv_curr_groupcount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/tv_map_number"
                     android:layout_marginLeft="10dp"
-                    android:layout_alignTop="@+id/iv_map_number"
                     android:textSize="40sp"
                     android:text="0" />
-            </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="40sp"
+                    android:text="/" />
+                <TextView
+                    android:id="@+id/tv_target_groupcount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="40sp"
+                    android:text="0" />
+            </LinearLayout>
 
-            <!--训练倒计时-->
-            <RelativeLayout
-                android:id="@+id/rl_timecount"
+            <!--次数-->
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
                 <ImageView
-                    android:id="@+id/iv_map_time"
+                    android:id="@+id/iv_ms_time"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginTop="20dp"
                     android:src="@drawable/mode_hourglass"/>
                 <TextView
-                    android:id="@+id/tv_map_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/iv_map_time"
                     android:layout_marginLeft="10dp"
-                    android:layout_alignTop="@+id/iv_map_time"
                     android:textSize="40sp"
-                    android:text="训练倒计时: " />
-                <!--倒计时文本-->
+                    android:text="次数: " />
                 <TextView
-                    android:id="@+id/tv_map_gettime"
+                    android:id="@+id/tv_curr_groupnum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/tv_map_time"
                     android:layout_marginLeft="10dp"
-                    android:layout_alignTop="@+id/iv_map_time"
                     android:textSize="40sp"
-                    android:text="--" />
-            </RelativeLayout>
+                    android:text="0" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="40sp"
+                    android:text="/" />
+                <TextView
+                    android:id="@+id/tv_target_groupnum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="40sp"
+                    android:text="0" />
+            </LinearLayout>
+
         </LinearLayout>
     </RelativeLayout>
 

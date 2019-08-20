@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -74,11 +73,26 @@ public class ActivePassiveModeActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            int arg1 = msg.arg1;
+            //当前组 = 总次数整除每组个数
+            int currGroup = 1 + msg.arg1 / MyApplication.getInstance().getUser().getGroupCount();
+            //当前组的次数 = 总次数取余每组个数
+            int currGroupNum = msg.arg1 % MyApplication.getInstance().getUser().getGroupNum();
             switch (msg.what) {
                 case 1:
-                    getnumber.setText(String.valueOf(arg1));
+                    tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
+                    tv_curr_groupcount.setText(String.valueOf(currGroup)); //当前组
                     break;
+            }
+            //如果当前组做完，进入组间休息
+            if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
+                CreatelocalCountDownTheard(); //创建倒计时线程
+                allowRecordNum = false; //期间不允许计数
+                currGroupNum = 0;
+                currGroup++;
+            }
+            //如果所有组做完，结束
+            if (currGroup == 1+MyApplication.getInstance().getUser().getGroupCount()) {
+                allowRecordNum = false;
             }
         }
     };
@@ -106,6 +120,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private Upload upload = new Upload();
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
     private double weight;
+    Timer timer = new Timer();
 
     /**
      * 获取控件
@@ -151,6 +166,15 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private com.bdl.airecovery.widget.MySeekBar sp_scope;//活动范围seekbar
 
     private TextView medium_dialog_msg;     //最后5秒模态框 时间文本
+
+    @ViewInject(R.id.tv_curr_groupcount)
+    private TextView tv_curr_groupcount; //当前组数
+    @ViewInject(R.id.tv_target_groupcount)
+    private TextView tv_target_groupcount; //目标组数
+    @ViewInject(R.id.tv_curr_groupnum)
+    private TextView tv_curr_groupnum; //当前次数
+    @ViewInject(R.id.tv_target_groupnum)
+    private TextView tv_target_groupnum; //每组次数
 
 
 //    //顺向力反向力handler
@@ -556,6 +580,10 @@ public class ActivePassiveModeActivity extends BaseActivity {
             seekBarThread.interrupt();
             seekBarThread = null;
         }
+        if (localCountDownThread != null) {
+            localCountDownThread.interrupt();
+            localCountDownThread = null;
+        }
     }
 
     //卸载广播
@@ -587,21 +615,15 @@ public class ActivePassiveModeActivity extends BaseActivity {
         if (MyApplication.getInstance().getUser() == null) {
             return;
         }
-        person.setText(MyApplication.getInstance().getUser().getUsername()); //用户名
+        person.setText(MyApplication.getInstance().getUser().getUserId()); //用户名
         weight = MyApplication.getInstance().getUser().getWeight(); //体重
+
+        //设置目标组数与次数
+        //目标组数
+        tv_target_groupcount.setText(MyApplication.getInstance().getUser().getGroupCount());
+        //每组个数
+        tv_target_groupnum.setText(MyApplication.getInstance().getUser().getGroupNum());
     }
-
-    //扫描教练的定时任务
-    Timer timer = new Timer();
-    TimerTask task = new TimerTask() {
-        @Override
-        public void run() {
-            Intent intent = new Intent(ActivePassiveModeActivity.this, BluetoothService.class);
-            intent.putExtra("command", CommonCommand.SECOND__LOGIN.value());
-            startService(intent);
-
-        }
-    };
 
     DbManager dbManager = MyApplication.getInstance().getDbManager();
     Setting setting;
@@ -684,10 +706,10 @@ public class ActivePassiveModeActivity extends BaseActivity {
             public void onClick(View v) {
                 //请求退出登录
                 Intent intentLog2 = new Intent(ActivePassiveModeActivity.this, CardReaderService.class);
-                intentLog2.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+                intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
                 startService(intentLog2);
                 Intent intentLog = new Intent(ActivePassiveModeActivity.this, BluetoothService.class);
-                intentLog.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+                intentLog.putExtra("command", CommonCommand.LOGOUT.value());
                 startService(intentLog);
                 Log.d("StandardModeActivity", "request to logout");
 
@@ -834,35 +856,17 @@ public class ActivePassiveModeActivity extends BaseActivity {
             CommonMessage commonMessage = transfer(messageJson);
             Log.e("BtTest", "收到message：" + commonMessage.toString());
             switch (commonMessage.getMsgType()) {
-                //第一用户登录成功
-                case CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.FIRST__LOGIN_REGISTER_ONLINE:
-                case CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE:
+                //用户登录成功
+                case CommonMessage.LOGIN_REGISTER_OFFLINE:
+                case CommonMessage.LOGIN_REGISTER_ONLINE:
+                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
+                case CommonMessage.LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
                     break;
-                //第一用户下线成功
-                case CommonMessage.FIRST__LOGOUT:
-                case CommonMessage.FIRST__DISCONNECTED:
+                //用户下线成功
+                case CommonMessage.LOGOUT:
+                case CommonMessage.DISCONNECTED:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    break;
-                //第二用户登录成功
-                case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    //如果连接成功，跳转医护设置界面
-                    Log.e("MainActivity", "login successfully");
-                    Intent activityintent = new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
-                    startActivity(activityintent); //启动
-                    ActivePassiveModeActivity.this.finish(); //结束当前Activity
-                    break;
-                //第二用户下线成功
-                case CommonMessage.SECOND__DISCONNECTED:
-                case CommonMessage.SECOND__LOGOUT:
-                    LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    //刷新主界面
-                    needAfterMotion = false;
-                    ActivePassiveModeActivity.this.recreate();
                     break;
                 //获得心率
                 case CommonMessage.HEART_BEAT:
@@ -875,16 +879,19 @@ public class ActivePassiveModeActivity extends BaseActivity {
         }
     }
 
-    MediumDialog mediumDialog;
+    MediumDialog restDialog;
+    private TextView rest_dialog_msg; //休息倒计时模态框 时间文本
     /**
-     * 最后5秒倒计时 模态框
+     * 休息指定时间的 倒计时模态框
      */
-    private void Last5sAlertDialog() {
-        mediumDialog = new MediumDialog((ActivePassiveModeActivity.this));
-        mediumDialog.setTime("0:05");
+    private void openRestDialog() {
+        restDialog = new MediumDialog((ActivePassiveModeActivity.this));
+        int time = MyApplication.getInstance().getUser().getRelaxTime(); //获取组间休息间隔
+        restDialog.setTime("休息时间：" + String.valueOf(time) + "秒");
+
         //模态框隐藏导航栏
-        mediumDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        mediumDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+        restDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        restDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
                 int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -900,17 +907,17 @@ public class ActivePassiveModeActivity extends BaseActivity {
                 } else {
                     uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
                 }
-                mediumDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                restDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
             }
         });
-        mediumDialog.show();
+        restDialog.show();
 
         //找到CommonDialog内容控件
-        medium_dialog_msg = mediumDialog.findViewById(R.id.medium_dialog_time);
+        rest_dialog_msg = restDialog.findViewById(R.id.medium_dialog_time);
     }
 
     /**
-     * 创建本机倒计时线程（如果时间显示器宕机，需要用到该倒计时）
+     * 创建组间休息时间倒计时线程
      */
     private void CreatelocalCountDownTheard() {
         //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
@@ -920,29 +927,18 @@ public class ActivePassiveModeActivity extends BaseActivity {
                 super.handleMessage(msg);
                 //获取倒计时秒数
                 int arg1 = msg.arg1;
-                //如果倒计时秒数小于等于5秒，弹模态框
-                if (!isAlert && arg1 <= 5 && msg.what == 0) {
-                    Last5sAlertDialog();
+                if (!isAlert) {
+                    openRestDialog();
                     isAlert = true;
-                }
-                if (isAlert) {
-                    medium_dialog_msg.setText("0:0" + arg1);
-                }
-                //设置文本内容（有两种特殊情况，单独设置合适的文本格式）
-                int minutes = arg1 / 60;
-                int remainSeconds = arg1 % 60;
-                if (remainSeconds < 10) {
-                    tv_map_gettime.setText(minutes + ":0" + remainSeconds);
                 } else {
-                    tv_map_gettime.setText(minutes + ":" + remainSeconds);
+                    rest_dialog_msg.setText("休息时间：" + arg1 + "秒");
                 }
             }
         };
         localCountDownThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                //训练时间60s倒计时
-                localCountDown = 60;
+                localCountDown = MyApplication.getInstance().getUser().getRelaxTime(); //获取组间休息间隔
                 while (!localCountDownThread.isInterrupted() && localCountDown > 0) {
                     //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
                     Message message = handler.obtainMessage();
@@ -957,38 +953,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                         e.printStackTrace();
                         return;
                     }
-
                 }
-
-                //设置训练结果
-                //1.获取当前次数
-                upload.setFinishCount_(Integer.parseInt(getnumber.getText().toString()));
-                upload.setCalorie_(countEnergy(Integer.parseInt(getnumber.getText().toString()),positiveTorqueLimited));
-
-                //2.获取训练时长
-                //已经在第一次校准时间处获取
-                //3.最终顺向力
-                upload.setForwardForce_(positiveTorqueLimited);
-                //4.最终反向力
-                upload.setReverseForce_(negativeTorqueLimited);
-                MyApplication.setUpload(upload);
-
-                //倒计时结束，跳转再见界面
-                //新建一个跳转到再见界面Activity的显式意图
-                if (mediumDialog != null && mediumDialog.isShowing()) {
-                    mediumDialog.dismiss();
-                }
-                if (commonDialog != null && commonDialog.isShowing()) {
-                    commonDialog.dismiss();
-                }
-                if (helpDialog != null && helpDialog.isShowing()) {
-                    helpDialog.dismiss();
-                }
-                Intent intent = new Intent(ActivePassiveModeActivity.this, ByeActivity.class);
-                //启动
-//                startActivity(intent); //TODO 注释后不会跳转到再见界面
-                //结束当前Activity
-//                StandardModeActivity.this.finish(); //TODO 注释后不会跳转到再见界面
             }
         });
     }
