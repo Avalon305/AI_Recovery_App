@@ -7,6 +7,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -119,6 +120,7 @@ public class SystemSettingActivity extends BaseActivity {
                         status = DataSocketClient.getInstance().status ? "联通" : "未联通";
                     }
                     setTextView(tvConnectStatus, status);
+                    tvConnectStatus.setTextColor(Color.parseColor("#00EE00"));
                 }
             });
         }
