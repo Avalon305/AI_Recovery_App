@@ -31,7 +31,6 @@ import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.LargeDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
-import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.MotorService;
@@ -265,7 +264,7 @@ public class MainActivity extends BaseActivity {
         //判空，如果非空是正常登陆
         if(MyApplication.getInstance().getUser() != null) {
             //非空的情况下，把第一用户的名字进行设置到指定位置
-            tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
+            tv_user_name.setText(MyApplication.getInstance().getUser().getUserId());
             //界面左上角模式标题
             tv_title.setText("      " + MyApplication.getInstance().getUser().getTrainMode());
         }else{
@@ -296,10 +295,10 @@ public class MainActivity extends BaseActivity {
 
         //退出登录请求
         Intent intentLog2 = new Intent(this, CardReaderService.class);
-        intentLog2.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+        intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog2);
         Intent intentLog = new Intent(this, BluetoothService.class);
-        intentLog.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+        intentLog.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog);
         Log.d("MainActivity","request to logout");
 
@@ -314,7 +313,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void run() {
             Intent intent = new Intent(MainActivity.this, BluetoothService.class);
-            intent.putExtra("command", CommonCommand.SECOND__LOGIN.value());
+            intent.putExtra("command", CommonCommand.LOGIN.value());
             startService(intent);
 
         }
@@ -760,33 +759,16 @@ public class MainActivity extends BaseActivity {
             CommonMessage commonMessage = transfer(messageJson);
             switch (commonMessage.getMsgType()){
                 //第一用户登录成功
-                case CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.FIRST__LOGIN_REGISTER_ONLINE:
-                case CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE:
+                case CommonMessage.LOGIN_REGISTER_OFFLINE:
+                case CommonMessage.LOGIN_REGISTER_ONLINE:
+                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
+                case CommonMessage.LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
                     break;
                 //第一用户下线成功
-                case CommonMessage.FIRST__LOGOUT:
-                case CommonMessage.FIRST__DISCONNECTED:
+                case CommonMessage.LOGOUT:
+                case CommonMessage.DISCONNECTED:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
-                //第二用户登录成功
-                case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    //如果连接成功，跳转医护设置界面
-                    Log.e("MainActivity","login successfully");
-                    Intent activityintent = new Intent(MainActivity.this,PersonalSettingActivity.class); //新建一个跳转到医护设置界面Activity的显式意图
-                    startActivity(activityintent); //启动
-                    MainActivity.this.finish(); //结束当前Activity
-                    break;
-                //第二用户下线成功
-                case CommonMessage.SECOND__DISCONNECTED:
-                case CommonMessage.SECOND__LOGOUT:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    //刷新主界面
-                    MainActivity.this.recreate();
                     break;
                 //获得心率
                 case CommonMessage.HEART_BEAT:

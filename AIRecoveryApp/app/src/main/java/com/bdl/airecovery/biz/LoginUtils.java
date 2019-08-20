@@ -117,8 +117,6 @@ public class LoginUtils {
         }
 //        LogUtil.d("开始同步个人信息");
         //输出角色
-        LogUtil.d(" 角色ID：" + user.getRole());
-        LogUtil.d(" 用户标识：" + user.getUserId());
         /*
         处理步骤：
         1.如果教练机查有此人，直接存个人信息存库
@@ -165,9 +163,6 @@ public class LoginUtils {
                     int power = Integer.parseInt(String.valueOf((int)message.getLoginResponse().getPower()));
                     LogUtil.e("初始功率");
                     personal.setValue(String.valueOf(power));
-                }else if (personal.getName().equals("杠杆长度")){
-//                    personal.setValue(String.valueOf(message.getLoginResponse().getLeverLength()));
-                    LogUtil.e("杠杆长度");
                 }
             }
         }
@@ -184,20 +179,19 @@ public class LoginUtils {
                     temp.add(BdlProto.DeviceType.forNumber(i));
                 }
             }
-            user.setHelperuser(null);
-            user.setPhone(message.getLoginResponse().getUid().substring(message.getLoginResponse().getUid().length()-4,message.getLoginResponse().getUid().length()));
-            user.setRole("trainee");
-            user.setUsername(message.getLoginResponse().getUid().substring(0,message.getLoginResponse().getUid().length()-4));
             user.setUserId(message.getLoginResponse().getUid());
-            user.setSysVersion(0);
-            user.setWeight(80);
-            user.setAge(25);
-            user.setTrainMode("标准模式");
-            user.setHeartRatemMax(140);
+            user.setUserId("离线用户");
+            user.setExisitSetting(false);
+            user.setMoveWay(0);
+            user.setGroupCount(5);
+            user.setGroupNum(10);
+            user.setRelaxTime(30);
+            user.setSpeedRank(1);
+            user.setAge(30);
+            user.setWeight(60);
+            user.setHeartRatemMax(190);
+            user.setTrainMode("康复模式");
             user.setDeviceTypearrList(String.valueOf(temp));
-            user.setActivityId(1);
-            user.setCourseId(1);
-            user.setActivityRecordId(1);
         }
         //TODO 查无此人被吃了
         //第一用户为空，初始化第一用户
@@ -227,40 +221,23 @@ public class LoginUtils {
             }
         }
 
-        //第一用户非空，初始化第二用户
-        else if(MyApplication.getInstance().getUser() != null &&
-                MyApplication.getInstance().getUser().getHelperuser() == null
-                && user.getRole().equals("coach")){
-            //初始化第二用户
-            Helperuser helperuser = new Helperuser();
-            //设置登录类型
-            helperuser.setType("bluetooth");
-            //设置手机号
-            helperuser.setPhone(message.getLoginResponse().getUid().substring(message.getLoginResponse().getUid().length()-4));
-            //设置用户标识
-            helperuser.setUserid(message.getLoginResponse().getUid());
-            //设置用户名
-            helperuser.setUsername(message.getLoginResponse().getUid().substring(0,message.getLoginResponse().getUid().length()-4));
-            //初始化全局Helperuser
-            MyApplication.getInstance().getUser().setHelperuser(helperuser);
-            LogUtil.e("初始化的全局Helperuser对象：" + MyApplication.getInstance().getUser().getHelperuser().getUserid());
-            //存入暂存表
-            personalInfoDAO personalInfoDAO = com.bdl.airecovery.personalInfoDAO.getInstance();
-            try {
-                device.setPersonalList(personalList);
-                personalInfoDAO.SavrOrUpdata(message.getLoginResponse().getUid(),BdlProto.DeviceType.getDescriptor().getName(),user,device);
-                for (Personal personal:MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
-                    if (personal.getName().equals("前方限制")) {
-                        LogUtil.e("前方限制" + String.valueOf(personal));
-                    } else if (personal.getName().equals("后方限制")) {
-                        LogUtil.e("后方限制" + String.valueOf(personal));
-                    }
+        //存入暂存表
+        personalInfoDAO personalInfoDAO = com.bdl.airecovery.personalInfoDAO.getInstance();
+        try {
+            device.setPersonalList(personalList);
+            personalInfoDAO.SavrOrUpdata(message.getLoginResponse().getUid(),BdlProto.DeviceType.getDescriptor().getName(),user,device);
+            for (Personal personal:MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
+                if (personal.getName().equals("前方限制")) {
+                    LogUtil.e("前方限制" + String.valueOf(personal));
+                } else if (personal.getName().equals("后方限制")) {
+                    LogUtil.e("后方限制" + String.valueOf(personal));
                 }
-            } catch (DbException e) {
-                e.printStackTrace();
-                LogUtil.e("数据库更新失败");
-                return;
             }
+        } catch (DbException e) {
+            e.printStackTrace();
+            LogUtil.e("数据库更新失败");
+            return;
         }
+
     }
 }

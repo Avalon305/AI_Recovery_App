@@ -124,17 +124,17 @@ public class LoginActivity extends BaseActivity {
 
         //执行待机页面的大退逻辑-发卡器大退
         Intent intent = new Intent(this, CardReaderService.class);
-        intent.putExtra("command", CommonCommand.ALL__LOGOUT.value());
+        intent.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intent);
         //执行待机页面的大退逻辑-蓝牙大退
         Intent intent2 = new Intent(this, BluetoothService.class);
-        intent2.putExtra("command", CommonCommand.ALL__LOGOUT.value());
+        intent2.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intent2);
         MyApplication.getInstance().setUser(null);
 
         //启动发卡器扫描
         Intent intent3 = new Intent(this, CardReaderService.class);
-        intent3.putExtra("command", CommonCommand.FIRST__LOGIN.value());
+        intent3.putExtra("command", CommonCommand.LOGIN.value());
         startService(intent3);
         LogUtil.d("发出了启动卡扫描的命令");
     }
@@ -234,7 +234,7 @@ public class LoginActivity extends BaseActivity {
 
         //启动蓝牙扫描
         Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("command", CommonCommand.FIRST__LOGIN.value());
+        intent.putExtra("command", CommonCommand.LOGIN.value());
         startService(intent);
         LogUtil.d("发出了启动蓝牙扫描的命令");
 
@@ -384,27 +384,17 @@ public class LoginActivity extends BaseActivity {
             LogUtil.d("收到广播："+messageJson);
             switch (commonMessage.getMsgType()){
                 //第一用户登录成功
-                case CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.FIRST__LOGIN_REGISTER_ONLINE:
-                case CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE:
+                case CommonMessage.LOGIN_REGISTER_OFFLINE:
+                case CommonMessage.LOGIN_REGISTER_ONLINE:
+                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
+                case CommonMessage.LOGIN_SUCCESS_ONLINE:
                     LogUtil.d("loginactivity广播接收器收到："+ commonMessage.toString());
                     //登录成功时，执行跳转的逻辑
                     loginSuccessed();
                     break;
                 //第一用户下线成功
-                case CommonMessage.FIRST__LOGOUT:
-                case CommonMessage.FIRST__DISCONNECTED:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
-                //第二用户登录成功
-                case CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
-                //第二用户下线成功
-                case CommonMessage.SECOND__DISCONNECTED:
-                case CommonMessage.SECOND__LOGOUT:
+                case CommonMessage.LOGOUT:
+                case CommonMessage.DISCONNECTED:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
                     break;
                 //获得心率

@@ -86,34 +86,15 @@ public class CardReaderService extends Service {
         LogUtil.d("command ！= null ");
         CommonCommand commonCommand = CommonCommand.getEnumByString(command);
         switch (commonCommand){
-            case SECOND__LOGIN: whoLogin = 2;
+            case LOGIN:  whoLogin = 1;
                 //设置为开始接受
                 isAccepted = true;
                 startRead();
                 break;
-            case FIRST__LOGIN:  whoLogin = 1;
-                //设置为开始接受
-                isAccepted = true;
-                startRead();
-                break;
-            case SECOND__LOGOUT:whoLogout = 2;
+            case LOGOUT: whoLogout = 1;
                 isAccepted = false;
                 logout();
                 //下线所有设备
-                break;
-            case FIRST__LOGOUT: whoLogout = 1;
-                isAccepted = false;
-                logout();
-                //下线所有设备
-                break;
-            case ALL__LOGOUT:
-                //下线所有设备
-                MyApplication.getInstance().setUser(null);
-                isAccepted = false;
-                break;
-            case CARD_STOP_ACCEPT:
-                //接收来自蓝牙的命令
-                isAccepted = false;
                 break;
         }
         return super.onStartCommand(intent, flags, startId);
@@ -122,11 +103,7 @@ public class CardReaderService extends Service {
     private void logout() {
         if (whoLogout == 1){
             MyApplication.getInstance().setUser(null);
-            sendBroadcastMsg(CommonMessage.FIRST__LOGOUT);
-        }else if(whoLogout == 2 && MyApplication.getInstance().getUser()!=null
-                && MyApplication.getInstance().getUser().getHelperuser()!=null){
-            MyApplication.getInstance().getUser().setHelperuser(null);
-            sendBroadcastMsg(CommonMessage.SECOND__LOGOUT);
+            sendBroadcastMsg(CommonMessage.LOGOUT);
         }
     }
 
@@ -145,31 +122,14 @@ public class CardReaderService extends Service {
                     return;
                 }
                 //针对第一用户的 ：有医护设置（在线，离线） 无医护设置（在线，离线） 的情况 设置为蓝牙登陆
-                if (loginResult == CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE ||
-                        loginResult == CommonMessage.FIRST__LOGIN_REGISTER_ONLINE ||
-                        loginResult == CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE ||
-                        loginResult == CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE ){
-                    MyApplication.getInstance().getUser().setType("serialport");
+                if (loginResult == CommonMessage.LOGIN_SUCCESS_ONLINE ||
+                        loginResult == CommonMessage.LOGIN_REGISTER_ONLINE ||
+                        loginResult == CommonMessage.LOGIN_SUCCESS_OFFLINE ||
+                        loginResult == CommonMessage.LOGIN_REGISTER_OFFLINE){
+                    //MyApplication.getInstance().getUser().setType("serialport");
                     isAccepted = false;
                     //先发出广播让界面登录，后台慢慢连接蓝牙
                     sendBroadcastMsg(loginResult);
-                }
-                //针对第二用户 本地+远程登陆成功，设置为蓝牙登陆方式
-                else if (loginResult == CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE ||
-                        loginResult == CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE){
-                    MyApplication.getInstance().getUser().getHelperuser().setType("serialport");
-                    isAccepted = false;
-                    //先发出广播让界面登录，后台慢慢连接蓝牙
-                    sendBroadcastMsg(loginResult);
-                }
-                //针对第二用户 本地+远程 不存在该用户或者存在的用户不是教练，则不连接手环，并且设置蓝牙状态为未连接
-                else if (loginResult == CommonMessage.SECOND__LOGIN_FAILE ){
-                    //先发出广播让界面登录，不用连接这个蓝牙
-                    sendBroadcastMsg(loginResult);
-                    //只有正常退出的时候才会设置为null
-                    MyApplication.getInstance().getUser().setHelperuser(null);
-                    isAccepted = false;
-                    LogUtil.d("扫描到的第二用户非教练，不允许登陆！");
                 }
                 else{
                     //对上面未考虑到的情况做广播。
