@@ -5,167 +5,121 @@ package com.bdl.airecovery.entity;
  */
 
 public class Upload {
-    private String uid_ = ""; //用户ID
-    private int trainMode_ = 0; //训练模式名称
-    private long courseId_ = 0L; //训练课程ID
-    private long activityId_ = 0L; //训练活动ID
-    private long  activityRecordId_ = 0L; //训练活动记录ID
-    private int deviceType_ = 0; //设备名
-    private int activityType_ = 0; //循环名称
-    private boolean defatModeEnable_ =false; //是否开启减脂模式状态
-    private double reverseForce_ = 0D; //最终反向力
-    private double forwardForce_ = 0D; //最终顺向力
-    private double  power_ = 0D; //最终功率
-    private int finishCount_ = 0; //训练个数
-    private double finalDistance_ = 0D; //运动距离
-    private double calorie_ = 0D; //耗能（卡路里）
-    private int trainTime_ = 0; //训练时间
-    private int heartRateAvg_ = 0; //运动过程中的平均心率
-    private int heartRateMax_ = 0; //运动过程中的最大心率
-    private int heartRateMin_ = 0; //运动过程中的最小心率
+    private String uid; //用户ID
+    private int deviceType; //设备类型
+    private int trainMode; //训练模式
+    private double consequentForce; //最终顺向力
+    private double reverseForce; //最终反向力
+    private double power; //最终功率
+    private int speedRank; //运动速度
+    private int finishNum; //训练个数
+//    private double distance; //运动距离 千米，两位小数
+    private double energy;//训练总耗能 单位卡路里
+    private String heartRateList;//心率集合：运动过程实时心率集合，数据之间*分割'
+    private String userThoughts; //病人感想
 
-    public String getUid_() {
-        return uid_;
+    public String getUid() {
+        return uid;
     }
 
-    public void setUid_(String uid_) {
-        this.uid_ = uid_;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public int getTrainMode_() {
-        return trainMode_;
+    public int getDeviceType() {
+        return deviceType;
     }
 
-    public void setTrainMode_(int trainMode_) {
-        this.trainMode_ = trainMode_;
+    public void setDeviceType(int deviceType) {
+        this.deviceType = deviceType;
     }
 
-    public long getCourseId_() {
-        return courseId_;
+    public int getTrainMode() {
+        return trainMode;
     }
 
-    public void setCourseId_(long courseId_) {
-        this.courseId_ = courseId_;
+    public void setTrainMode(int trainMode) {
+        this.trainMode = trainMode;
     }
 
-    public long getActivityId_() {
-        return activityId_;
+    public double getConsequentForce() {
+        return consequentForce;
     }
 
-    public void setActivityId_(long activityId_) {
-        this.activityId_ = activityId_;
+    public void setConsequentForce(double consequentForce) {
+        this.consequentForce = consequentForce;
     }
 
-    public long getActivityRecordId_() {
-        return activityRecordId_;
+    public double getReverseForce() {
+        return reverseForce;
     }
 
-    public void setActivityRecordId_(long activityRecordId_) {
-        this.activityRecordId_ = activityRecordId_;
+    public void setReverseForce(double reverseForce) {
+        this.reverseForce = reverseForce;
     }
 
-    public int getDeviceType_() {
-        return deviceType_;
+    public double getPower() {
+        return power;
     }
 
-    public void setDeviceType_(int deviceType_) {
-        this.deviceType_ = deviceType_;
+    public void setPower(double power) {
+        this.power = power;
     }
 
-    public int getActivityType_() {
-        return activityType_;
+    public int getSpeedRank() {
+        return speedRank;
     }
 
-    public void setActivityType_(int activityType_) {
-        this.activityType_ = activityType_;
+    public void setSpeedRank(int speedRank) {
+        this.speedRank = speedRank;
     }
 
-    public boolean isDefatModeEnable_() {
-        return defatModeEnable_;
+    public int getFinishNum() {
+        return finishNum;
     }
 
-    public void setDefatModeEnable_(boolean defatModeEnable_) {
-        this.defatModeEnable_ = defatModeEnable_;
+    public void setFinishNum(int finishNum) {
+        this.finishNum = finishNum;
     }
 
-    public double getReverseForce_() {
-        return reverseForce_;
+    public double getEnergy() {
+        return energy;
     }
 
-    public void setReverseForce_(double reverseForce_) {
-        this.reverseForce_ = reverseForce_;
+    public void setEnergy(double energy) {
+        this.energy = energy;
     }
 
-    public double getForwardForce_() {
-        return forwardForce_;
+    public String getHeartRateList() {
+        return heartRateList;
     }
 
-    public void setForwardForce_(double forwardForce_) {
-        this.forwardForce_ = forwardForce_;
+    public void setHeartRateList(String heartRateList) {
+        this.heartRateList = heartRateList;
     }
 
-    public double getPower_() {
-        return power_;
+    public String getUserThoughts() {
+        return userThoughts;
     }
 
-    public void setPower_(double power_) {
-        this.power_ = power_;
+    public void setUserThoughts(String userThoughts) {
+        this.userThoughts = userThoughts;
     }
 
-    public int getFinishCount_() {
-        return finishCount_;
+    @Override
+    public String toString() {
+        return "Upload{" +
+                "uid='" + uid + '\'' +
+                ", deviceType=" + deviceType +
+                ", trainMode=" + trainMode +
+                ", consequentForce=" + consequentForce +
+                ", reverseForce=" + reverseForce +
+                ", power=" + power +
+                ", speedRank=" + speedRank +
+                ", finishNum=" + finishNum +
+                ", energy=" + energy +
+                ", heartRateList='" + heartRateList + '\'' +
+                ", userThoughts='" + userThoughts + '\'' +
+                '}';
     }
-
-    public void setFinishCount_(int finishCount_) {
-        this.finishCount_ = finishCount_;
-    }
-
-    public double getFinalDistance_() {
-        return finalDistance_;
-    }
-
-    public void setFinalDistance_(double finalDistance_) {
-        this.finalDistance_ = finalDistance_;
-    }
-
-    public double getCalorie_() {
-        return calorie_;
-    }
-
-    public void setCalorie_(double calorie_) {
-        this.calorie_ = calorie_;
-    }
-
-    public int getTrainTime_() {
-        return trainTime_;
-    }
-
-    public void setTrainTime_(int trainTime_) {
-        this.trainTime_ = trainTime_;
-    }
-
-    public int getHeartRateAvg_() {
-        return heartRateAvg_;
-    }
-
-    public void setHeartRateAvg_(int heartRateAvg_) {
-        this.heartRateAvg_ = heartRateAvg_;
-    }
-
-    public int getHeartRateMax_() {
-        return heartRateMax_;
-    }
-
-    public void setHeartRateMax_(int heartRateMax_) {
-        this.heartRateMax_ = heartRateMax_;
-    }
-
-    public int getHeartRateMin_() {
-        return heartRateMin_;
-    }
-
-    public void setHeartRateMin_(int heartRateMin_) {
-        this.heartRateMin_ = heartRateMin_;
-    }
-
 }
