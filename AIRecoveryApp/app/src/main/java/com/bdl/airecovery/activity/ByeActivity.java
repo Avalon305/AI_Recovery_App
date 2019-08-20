@@ -394,14 +394,9 @@ public class ByeActivity extends BaseActivity{
                 //断开蓝牙连接
                 if (MyApplication.getInstance().getUser() != null){
                     Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
                     startService(intentLog);
                     LogUtil.e("再见页面结束时，蓝牙第一用户退出");
-                }else if (MyApplication.getInstance().getUser() != null){
-                    Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
-                    startService(intentLog);
-                    LogUtil.e("再见页面结束时，蓝牙第二用户退出");
                 }
                 //置空用户
                 MyApplication.getInstance().setUser(null);
@@ -425,14 +420,9 @@ public class ByeActivity extends BaseActivity{
                 //断开蓝牙连接
                 if (MyApplication.getInstance().getUser() != null){
                     Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
                     startService(intentLog);
                     LogUtil.e("再见页面结束时，蓝牙第一用户退出");
-                }else if (MyApplication.getInstance().getUser() != null){
-                    Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.SECOND__LOGOUT.value());
-                    startService(intentLog);
-                    LogUtil.e("再见页面结束时，蓝牙第二用户退出");
                 }
                 //置空用户
                 MyApplication.getInstance().setUser(null);
