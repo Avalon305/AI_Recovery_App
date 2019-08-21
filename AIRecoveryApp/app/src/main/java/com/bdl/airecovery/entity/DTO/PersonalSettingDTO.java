@@ -2,7 +2,8 @@ package com.bdl.airecovery.entity.DTO;
 
 public class PersonalSettingDTO {
     String uid = ""; //用户ID
-    boolean exisitSetting = true; //是否存在个人设置
+    String bind_id="";//手环id
+    int deviceTypeValue_ = 0; //设备名
     int trainMode = 0; //训练模式:主被动，康复模式
     int seatHeight = 0; //座椅高度
     int backDistance = 0; //靠背距离
@@ -25,12 +26,20 @@ public class PersonalSettingDTO {
         this.uid = uid;
     }
 
-    public boolean isExisitSetting() {
-        return exisitSetting;
+    public String getBind_id() {
+        return bind_id;
     }
 
-    public void setExisitSetting(boolean exisitSetting) {
-        this.exisitSetting = exisitSetting;
+    public void setBind_id(String bind_id) {
+        this.bind_id = bind_id;
+    }
+
+    public int getDeviceTypeValue_() {
+        return deviceTypeValue_;
+    }
+
+    public void setDeviceTypeValue_(int deviceTypeValue_) {
+        this.deviceTypeValue_ = deviceTypeValue_;
     }
 
     public int getTrainMode() {
@@ -117,7 +126,8 @@ public class PersonalSettingDTO {
     public String toString() {
         return "PersonalSettingDTO{" +
                 "uid='" + uid + '\'' +
-                ", exisitSetting=" + exisitSetting +
+                ", bind_id='" + bind_id + '\'' +
+                ", deviceTypeValue_=" + deviceTypeValue_ +
                 ", trainMode=" + trainMode +
                 ", seatHeight=" + seatHeight +
                 ", backDistance=" + backDistance +
