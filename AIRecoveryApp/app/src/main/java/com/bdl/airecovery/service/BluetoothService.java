@@ -41,7 +41,7 @@ public class BluetoothService extends Service {
     private enum Status{
         NORMAL(1), //正常
         SCANNING(2), //扫描
-        CONNECTING(3), //连接中，
+        CONNECTING(3), //连接中
         TRY_CONNECTING(4);// 尝试连接
 
         private int value = 0;
@@ -95,9 +95,9 @@ public class BluetoothService extends Service {
             LogUtil.d("bluetooth is started");
         }
     }
-    //第一用户登录指令的变量
+    //用户登录指令的变量
     private volatile int whoLogin = 0;
-    //第一用户登录指令的变量
+    //用户登录指令的变量
     private volatile int whoLogout = 0;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

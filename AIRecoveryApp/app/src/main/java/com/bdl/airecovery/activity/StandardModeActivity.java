@@ -784,7 +784,7 @@ public class StandardModeActivity extends BaseActivity {
         if (MyApplication.getInstance().getUser() == null) {
             return;
         }
-        person.setText(MyApplication.getInstance().getUser().getUserId()); //用户名
+        person.setText(MyApplication.getInstance().getUser().getUsername()); //用户名
         weight = MyApplication.getInstance().getUser().getWeight(); //体重
 
         //设置目标组数与次数
