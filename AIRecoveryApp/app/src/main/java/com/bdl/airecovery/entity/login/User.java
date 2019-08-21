@@ -56,6 +56,9 @@ public class User {
     //处方id
     private  int dpId;
 
+    //客户端时间戳
+    private String clientTime ;
+
 
     public User() {
 
@@ -105,6 +108,9 @@ public class User {
         this.dpId=message.getLoginResponse().getDpId();
         //用户姓名
         this.username=message.getLoginResponse().getUserName();
+        //客户端时间
+        this.clientTime=message.getLoginResponse().getClientTime();
+
     }
 
     public String getUserId() {
@@ -243,10 +249,19 @@ public class User {
         this.heartRatemMax = heartRatemMax;
     }
 
+    public String getClientTime() {
+        return clientTime;
+    }
+
+    public void setClientTime(String clientTime) {
+        this.clientTime = clientTime;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
                 ", deviceTypearrList='" + deviceTypearrList + '\'' +
                 ", exisitSetting=" + exisitSetting +
                 ", trainMode='" + trainMode + '\'' +
@@ -260,6 +275,9 @@ public class User {
                 ", weight=" + weight +
                 ", age=" + age +
                 ", heartRatemMax=" + heartRatemMax +
+                ", bindId='" + bindId + '\'' +
+                ", dpId=" + dpId +
+                ", clientTime='" + clientTime + '\'' +
                 '}';
     }
 }
