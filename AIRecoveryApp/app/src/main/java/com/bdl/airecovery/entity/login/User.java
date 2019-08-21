@@ -59,6 +59,7 @@ public class User {
     //客户端时间戳
     private String clientTime ;
 
+    private int infoResponse; // 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划
 
     public User() {
 
@@ -257,6 +258,14 @@ public class User {
         this.clientTime = clientTime;
     }
 
+    public int getInfoResponse() {
+        return infoResponse;
+    }
+
+    public void setInfoResponse(int infoResponse) {
+        this.infoResponse = infoResponse;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -278,6 +287,7 @@ public class User {
                 ", bindId='" + bindId + '\'' +
                 ", dpId=" + dpId +
                 ", clientTime='" + clientTime + '\'' +
+                ", infoResponse=" + infoResponse +
                 '}';
     }
 }

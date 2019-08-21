@@ -96,6 +96,7 @@ message LoginResponse{
 	int32 age = 26 ;//年龄
 	double weight = 27;//体重
 	string userName = 28;//姓名
+	int32  info_response = 29; // 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划，做完了
 }
 
 // 结果上传请求

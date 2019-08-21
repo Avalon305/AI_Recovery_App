@@ -4066,6 +4066,15 @@ public final class BdlProto {
      */
     com.google.protobuf.ByteString
         getUserNameBytes();
+
+    /**
+     * <pre>
+     * 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划，做完了
+     * </pre>
+     *
+     * <code>int32 info_response = 29;</code>
+     */
+    int getInfoResponse();
   }
   /**
    * <pre>
@@ -4276,6 +4285,11 @@ public final class BdlProto {
               java.lang.String s = input.readStringRequireUtf8();
 
               userName_ = s;
+              break;
+            }
+            case 232: {
+
+              infoResponse_ = input.readInt32();
               break;
             }
             default: {
@@ -4904,6 +4918,19 @@ public final class BdlProto {
       }
     }
 
+    public static final int INFO_RESPONSE_FIELD_NUMBER = 29;
+    private int infoResponse_;
+    /**
+     * <pre>
+     * 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划，做完了
+     * </pre>
+     *
+     * <code>int32 info_response = 29;</code>
+     */
+    public int getInfoResponse() {
+      return infoResponse_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -5003,6 +5030,9 @@ public final class BdlProto {
       }
       if (!getUserNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 28, userName_);
+      }
+      if (infoResponse_ != 0) {
+        output.writeInt32(29, infoResponse_);
       }
       unknownFields.writeTo(output);
     }
@@ -5123,6 +5153,10 @@ public final class BdlProto {
       if (!getUserNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(28, userName_);
       }
+      if (infoResponse_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(29, infoResponse_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -5195,6 +5229,8 @@ public final class BdlProto {
               other.getWeight())) return false;
       if (!getUserName()
           .equals(other.getUserName())) return false;
+      if (getInfoResponse()
+          != other.getInfoResponse()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5268,6 +5304,8 @@ public final class BdlProto {
           java.lang.Double.doubleToLongBits(getWeight()));
       hash = (37 * hash) + USERNAME_FIELD_NUMBER;
       hash = (53 * hash) + getUserName().hashCode();
+      hash = (37 * hash) + INFO_RESPONSE_FIELD_NUMBER;
+      hash = (53 * hash) + getInfoResponse();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5459,6 +5497,8 @@ public final class BdlProto {
 
         userName_ = "";
 
+        infoResponse_ = 0;
+
         return this;
       }
 
@@ -5518,6 +5558,7 @@ public final class BdlProto {
         result.age_ = age_;
         result.weight_ = weight_;
         result.userName_ = userName_;
+        result.infoResponse_ = infoResponse_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -5660,6 +5701,9 @@ public final class BdlProto {
         if (!other.getUserName().isEmpty()) {
           userName_ = other.userName_;
           onChanged();
+        }
+        if (other.getInfoResponse() != 0) {
+          setInfoResponse(other.getInfoResponse());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7174,6 +7218,44 @@ public final class BdlProto {
   checkByteStringIsUtf8(value);
         
         userName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int infoResponse_ ;
+      /**
+       * <pre>
+       * 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划，做完了
+       * </pre>
+       *
+       * <code>int32 info_response = 29;</code>
+       */
+      public int getInfoResponse() {
+        return infoResponse_;
+      }
+      /**
+       * <pre>
+       * 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划，做完了
+       * </pre>
+       *
+       * <code>int32 info_response = 29;</code>
+       */
+      public Builder setInfoResponse(int value) {
+        
+        infoResponse_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划，做完了
+       * </pre>
+       *
+       * <code>int32 info_response = 29;</code>
+       */
+      public Builder clearInfoResponse() {
+        
+        infoResponse_ = 0;
         onChanged();
         return this;
       }
@@ -20309,89 +20391,90 @@ public final class BdlProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016src/BdlProto.proto\"Y\n\020KeepaliveRequest\022\020\n\010" +
-      "deviceId\030\001 \001(\t\022\037\n\ndeviceType\030\002 \001(\0162\013.Dev" +
-      "iceType\022\022\n\nclientTime\030\003 \001(\t\"n\n\021Keepalive" +
-      "Response\022\020\n\010deviceId\030\001 \001(\t\022\037\n\ndeviceType" +
-      "\030\002 \001(\0162\013.DeviceType\022\022\n\nclientTime\030\003 \001(\t\022" +
-      "\022\n\nserverTime\030\004 \001(\t\"a\n\014LoginRequest\022\013\n\003u" +
-      "id\030\001 \001(\t\022\017\n\007bind_id\030\002 \001(\t\022\037\n\ndeviceType\030" +
-      "\003 \001(\0162\013.DeviceType\022\022\n\nclientTime\030\004 \001(\t\"\272" +
-      "\004\n\rLoginResponse\022\013\n\003uid\030\001 \001(\t\022\"\n\rdeviceT" +
-      "ypeArr\030\002 \003(\0162\013.DeviceType\022\025\n\rexisitSetti" +
-      "ng\030\004 \001(\010\022\035\n\ttrainMode\030\005 \001(\0162\n.TrainMode\022" +
-      "\022\n\nseatHeight\030\007 \001(\005\022\024\n\014backDistance\030\010 \001(" +
-      "\005\022\031\n\021footboardDistance\030\t \001(\005\022\022\n\nleverAng" +
-      "le\030\n \001(\001\022\024\n\014forwardLimit\030\013 \001(\005\022\021\n\tbackLi" +
-      "mit\030\014 \001(\005\022\027\n\017consequentForce\030\r \001(\001\022\024\n\014re" +
-      "verseForce\030\016 \001(\001\022\r\n\005power\030\017 \001(\001\022\020\n\010dpSta" +
-      "tus\030\020 \001(\005\022\021\n\tdpMoveway\030\021 \001(\005\022\016\n\006dpMemo\030\022" +
-      " \001(\t\022\025\n\rdp_groupcount\030\023 \001(\005\022\023\n\013dp_groupn" +
-      "um\030\024 \001(\005\022\024\n\014dp_relaxtime\030\003 \001(\005\022\022\n\nspeed_" +
-      "rank\030\025 \001(\005\022\022\n\nsysVersion\030\026 \001(\t\022\014\n\004dpId\030\027" +
-      " \001(\005\022\022\n\nclientTime\030\030 \001(\t\022\022\n\nserverTime\030\031" +
-      " \001(\t\022\013\n\003age\030\032 \001(\005\022\016\n\006weight\030\033 \001(\001\022\020\n\010use" +
-      "rName\030\034 \001(\t\"\302\002\n\rUploadRequest\022\013\n\003uid\030\001 \001" +
-      "(\t\022\037\n\ndeviceType\030\002 \001(\0162\013.DeviceType\022\035\n\tt" +
-      "rainMode\030\004 \001(\0162\n.TrainMode\022\027\n\017consequent" +
-      "Force\030\005 \001(\001\022\024\n\014reverseForce\030\006 \001(\001\022\r\n\005pow" +
-      "er\030\007 \001(\001\022\021\n\tspeedRank\030\010 \001(\005\022\021\n\tfinishNum" +
-      "\030\t \001(\005\022\020\n\010distance\030\013 \001(\001\022\016\n\006energy\030\014 \001(\001" +
-      "\022\027\n\017heart_rate_list\030\r \001(\t\022\027\n\017pr_userthou" +
-      "ghts\030\003 \001(\t\022\016\n\006dataId\030\016 \001(\t\022\016\n\006bindId\030\017 \001" +
-      "(\t\022\014\n\004dpId\030\020 \001(\005\"q\n\016UploadResponse\022\013\n\003ui" +
-      "d\030\001 \001(\t\022\037\n\ndeviceType\030\002 \001(\0162\013.DeviceType" +
-      "\022\020\n\010finished\030\004 \001(\010\022\017\n\007success\030\005 \001(\010\022\016\n\006d" +
-      "ataId\030\006 \001(\t\"\302\002\n\022PersonalSetRequest\022\013\n\003ui" +
-      "d\030\001 \001(\t\022\017\n\007bind_id\030\002 \001(\t\022\037\n\ndeviceType\030\003" +
-      " \001(\0162\013.DeviceType\022\035\n\ttrainMode\030\004 \001(\0162\n.T" +
-      "rainMode\022\022\n\nseatHeight\030\007 \001(\005\022\024\n\014backDist" +
-      "ance\030\010 \001(\005\022\031\n\021footboardDistance\030\t \001(\005\022\022\n" +
-      "\nleverAngle\030\n \001(\001\022\024\n\014forwardLimit\030\013 \001(\005\022" +
-      "\021\n\tbackLimit\030\014 \001(\005\022\027\n\017consequentForce\030\r " +
-      "\001(\001\022\024\n\014reverseForce\030\016 \001(\001\022\r\n\005power\030\017 \001(\001" +
-      "\022\016\n\006dataId\030\020 \001(\t\"\203\001\n\023PersonalSetResponse" +
-      "\022\037\n\ndeviceType\030\001 \001(\0162\013.DeviceType\022\035\n\ttra" +
-      "inMode\030\002 \001(\0162\n.TrainMode\022\013\n\003uid\030\003 \001(\t\022\017\n" +
-      "\007success\030\004 \001(\010\022\016\n\006dataId\030\005 \001(\t\"V\n\025Muscle" +
-      "StrengthRequest\022\013\n\003uid\030\001 \001(\t\022\027\n\017muscleTe" +
-      "stValue\030\002 \001(\t\022\027\n\017muscleCreatTime\030\003 \001(\t\"6" +
-      "\n\026MuscleStrengthResponse\022\013\n\003uid\030\001 \001(\t\022\017\n" +
-      "\007success\030\002 \001(\010\"\206\001\n\020ErrorInfoRequest\022\013\n\003u" +
-      "id\030\001 \001(\t\022\037\n\ndeviceType\030\002 \001(\0162\013.DeviceTyp" +
-      "e\022\035\n\ttrainMode\030\003 \001(\0162\n.TrainMode\022\r\n\005erro" +
-      "r\030\005 \001(\t\022\026\n\016errorStartTime\030\006 \001(\t\"q\n\021Error" +
-      "InfoResponse\022\013\n\003uid\030\001 \001(\t\022\037\n\ndeviceType\030" +
-      "\002 \001(\0162\013.DeviceType\022\035\n\ttrainMode\030\003 \001(\0162\n." +
-      "TrainMode\022\017\n\007success\030\005 \001(\010\"\334\004\n\007Message\022\027" +
-      "\n\004type\030\001 \001(\0162\t.HeadType\022\020\n\010sequence\030\002 \001(" +
-      "\005\022+\n\020keepaliveRequest\030\003 \001(\0132\021.KeepaliveR" +
-      "equest\022-\n\021keepaliveResponse\030\004 \001(\0132\022.Keep" +
-      "aliveResponse\022#\n\014loginRequest\030\005 \001(\0132\r.Lo" +
-      "ginRequest\022%\n\rloginResponse\030\006 \001(\0132\016.Logi" +
-      "nResponse\022%\n\ruploadRequest\030\007 \001(\0132\016.Uploa" +
-      "dRequest\022\'\n\016uploadResponse\030\010 \001(\0132\017.Uploa" +
-      "dResponse\022/\n\022personalSetRequest\030\t \001(\0132\023." +
-      "PersonalSetRequest\0221\n\023personalSetRespons" +
-      "e\030\n \001(\0132\024.PersonalSetResponse\0225\n\025muscleS" +
-      "trengthRequest\030\013 \001(\0132\026.MuscleStrengthReq" +
-      "uest\0227\n\026muscleStrengthResponse\030\014 \001(\0132\027.M" +
-      "uscleStrengthResponse\022+\n\020errorInfoReques" +
-      "t\030\r \001(\0132\021.ErrorInfoRequest\022-\n\021errorInfoR" +
-      "esponse\030\016 \001(\0132\022.ErrorInfoResponse*\244\002\n\010He" +
-      "adType\022\025\n\021Keepalive_Request\020\000\022\026\n\022Keepali" +
-      "ve_Response\020\001\022\021\n\rLogin_Request\020\002\022\022\n\016Logi" +
-      "n_Response\020\003\022\022\n\016Upload_Request\020\004\022\023\n\017Uplo" +
-      "ad_Response\020\005\022\027\n\023PersonalSet_Request\020\006\022\030" +
-      "\n\024PersonalSet_Response\020\007\022\032\n\026MuscleStreng" +
-      "th_Request\020\010\022\033\n\027MuscleStrength_Response\020" +
-      "\t\022\025\n\021ErrorInfo_Request\020\n\022\026\n\022ErrorInfo_Re" +
-      "sponse\020\013*G\n\tTrainMode\022\027\n\023RehabilitationM" +
-      "odel\020\000\022\017\n\013ActiveModel\020\001\022\020\n\014PassiveModel\020" +
-      "\002*f\n\nDeviceType\022\007\n\003P00\020\000\022\007\n\003P01\020\001\022\007\n\003P02" +
-      "\020\002\022\007\n\003P03\020\003\022\007\n\003P04\020\004\022\007\n\003P05\020\005\022\007\n\003P06\020\006\022\007" +
-      "\n\003P07\020\007\022\007\n\003P08\020\010\022\007\n\003P09\020\tB&\n\030com.bdl.air" +
-      "ecovery.protoB\010BdlProtoH\001b\006proto3"
+      "\n\022src/BdlProto.proto\"Y\n\020KeepaliveRequest" +
+      "\022\020\n\010deviceId\030\001 \001(\t\022\037\n\ndeviceType\030\002 \001(\0162\013" +
+      ".DeviceType\022\022\n\nclientTime\030\003 \001(\t\"n\n\021Keepa" +
+      "liveResponse\022\020\n\010deviceId\030\001 \001(\t\022\037\n\ndevice" +
+      "Type\030\002 \001(\0162\013.DeviceType\022\022\n\nclientTime\030\003 " +
+      "\001(\t\022\022\n\nserverTime\030\004 \001(\t\"a\n\014LoginRequest\022" +
+      "\013\n\003uid\030\001 \001(\t\022\017\n\007bind_id\030\002 \001(\t\022\037\n\ndeviceT" +
+      "ype\030\003 \001(\0162\013.DeviceType\022\022\n\nclientTime\030\004 \001" +
+      "(\t\"\321\004\n\rLoginResponse\022\013\n\003uid\030\001 \001(\t\022\"\n\rdev" +
+      "iceTypeArr\030\002 \003(\0162\013.DeviceType\022\025\n\rexisitS" +
+      "etting\030\004 \001(\010\022\035\n\ttrainMode\030\005 \001(\0162\n.TrainM" +
+      "ode\022\022\n\nseatHeight\030\007 \001(\005\022\024\n\014backDistance\030" +
+      "\010 \001(\005\022\031\n\021footboardDistance\030\t \001(\005\022\022\n\nleve" +
+      "rAngle\030\n \001(\001\022\024\n\014forwardLimit\030\013 \001(\005\022\021\n\tba" +
+      "ckLimit\030\014 \001(\005\022\027\n\017consequentForce\030\r \001(\001\022\024" +
+      "\n\014reverseForce\030\016 \001(\001\022\r\n\005power\030\017 \001(\001\022\020\n\010d" +
+      "pStatus\030\020 \001(\005\022\021\n\tdpMoveway\030\021 \001(\005\022\016\n\006dpMe" +
+      "mo\030\022 \001(\t\022\025\n\rdp_groupcount\030\023 \001(\005\022\023\n\013dp_gr" +
+      "oupnum\030\024 \001(\005\022\024\n\014dp_relaxtime\030\003 \001(\005\022\022\n\nsp" +
+      "eed_rank\030\025 \001(\005\022\022\n\nsysVersion\030\026 \001(\t\022\014\n\004dp" +
+      "Id\030\027 \001(\005\022\022\n\nclientTime\030\030 \001(\t\022\022\n\nserverTi" +
+      "me\030\031 \001(\t\022\013\n\003age\030\032 \001(\005\022\016\n\006weight\030\033 \001(\001\022\020\n" +
+      "\010userName\030\034 \001(\t\022\025\n\rinfo_response\030\035 \001(\005\"\302" +
+      "\002\n\rUploadRequest\022\013\n\003uid\030\001 \001(\t\022\037\n\ndeviceT" +
+      "ype\030\002 \001(\0162\013.DeviceType\022\035\n\ttrainMode\030\004 \001(" +
+      "\0162\n.TrainMode\022\027\n\017consequentForce\030\005 \001(\001\022\024" +
+      "\n\014reverseForce\030\006 \001(\001\022\r\n\005power\030\007 \001(\001\022\021\n\ts" +
+      "peedRank\030\010 \001(\005\022\021\n\tfinishNum\030\t \001(\005\022\020\n\010dis" +
+      "tance\030\013 \001(\001\022\016\n\006energy\030\014 \001(\001\022\027\n\017heart_rat" +
+      "e_list\030\r \001(\t\022\027\n\017pr_userthoughts\030\003 \001(\t\022\016\n" +
+      "\006dataId\030\016 \001(\t\022\016\n\006bindId\030\017 \001(\t\022\014\n\004dpId\030\020 " +
+      "\001(\005\"q\n\016UploadResponse\022\013\n\003uid\030\001 \001(\t\022\037\n\nde" +
+      "viceType\030\002 \001(\0162\013.DeviceType\022\020\n\010finished\030" +
+      "\004 \001(\010\022\017\n\007success\030\005 \001(\010\022\016\n\006dataId\030\006 \001(\t\"\302" +
+      "\002\n\022PersonalSetRequest\022\013\n\003uid\030\001 \001(\t\022\017\n\007bi" +
+      "nd_id\030\002 \001(\t\022\037\n\ndeviceType\030\003 \001(\0162\013.Device" +
+      "Type\022\035\n\ttrainMode\030\004 \001(\0162\n.TrainMode\022\022\n\ns" +
+      "eatHeight\030\007 \001(\005\022\024\n\014backDistance\030\010 \001(\005\022\031\n" +
+      "\021footboardDistance\030\t \001(\005\022\022\n\nleverAngle\030\n" +
+      " \001(\001\022\024\n\014forwardLimit\030\013 \001(\005\022\021\n\tbackLimit\030" +
+      "\014 \001(\005\022\027\n\017consequentForce\030\r \001(\001\022\024\n\014revers" +
+      "eForce\030\016 \001(\001\022\r\n\005power\030\017 \001(\001\022\016\n\006dataId\030\020 " +
+      "\001(\t\"\203\001\n\023PersonalSetResponse\022\037\n\ndeviceTyp" +
+      "e\030\001 \001(\0162\013.DeviceType\022\035\n\ttrainMode\030\002 \001(\0162" +
+      "\n.TrainMode\022\013\n\003uid\030\003 \001(\t\022\017\n\007success\030\004 \001(" +
+      "\010\022\016\n\006dataId\030\005 \001(\t\"V\n\025MuscleStrengthReque" +
+      "st\022\013\n\003uid\030\001 \001(\t\022\027\n\017muscleTestValue\030\002 \001(\t" +
+      "\022\027\n\017muscleCreatTime\030\003 \001(\t\"6\n\026MuscleStren" +
+      "gthResponse\022\013\n\003uid\030\001 \001(\t\022\017\n\007success\030\002 \001(" +
+      "\010\"\206\001\n\020ErrorInfoRequest\022\013\n\003uid\030\001 \001(\t\022\037\n\nd" +
+      "eviceType\030\002 \001(\0162\013.DeviceType\022\035\n\ttrainMod" +
+      "e\030\003 \001(\0162\n.TrainMode\022\r\n\005error\030\005 \001(\t\022\026\n\016er" +
+      "rorStartTime\030\006 \001(\t\"q\n\021ErrorInfoResponse\022" +
+      "\013\n\003uid\030\001 \001(\t\022\037\n\ndeviceType\030\002 \001(\0162\013.Devic" +
+      "eType\022\035\n\ttrainMode\030\003 \001(\0162\n.TrainMode\022\017\n\007" +
+      "success\030\005 \001(\010\"\334\004\n\007Message\022\027\n\004type\030\001 \001(\0162" +
+      "\t.HeadType\022\020\n\010sequence\030\002 \001(\005\022+\n\020keepaliv" +
+      "eRequest\030\003 \001(\0132\021.KeepaliveRequest\022-\n\021kee" +
+      "paliveResponse\030\004 \001(\0132\022.KeepaliveResponse" +
+      "\022#\n\014loginRequest\030\005 \001(\0132\r.LoginRequest\022%\n" +
+      "\rloginResponse\030\006 \001(\0132\016.LoginResponse\022%\n\r" +
+      "uploadRequest\030\007 \001(\0132\016.UploadRequest\022\'\n\016u" +
+      "ploadResponse\030\010 \001(\0132\017.UploadResponse\022/\n\022" +
+      "personalSetRequest\030\t \001(\0132\023.PersonalSetRe" +
+      "quest\0221\n\023personalSetResponse\030\n \001(\0132\024.Per" +
+      "sonalSetResponse\0225\n\025muscleStrengthReques" +
+      "t\030\013 \001(\0132\026.MuscleStrengthRequest\0227\n\026muscl" +
+      "eStrengthResponse\030\014 \001(\0132\027.MuscleStrength" +
+      "Response\022+\n\020errorInfoRequest\030\r \001(\0132\021.Err" +
+      "orInfoRequest\022-\n\021errorInfoResponse\030\016 \001(\013" +
+      "2\022.ErrorInfoResponse*\244\002\n\010HeadType\022\025\n\021Kee" +
+      "palive_Request\020\000\022\026\n\022Keepalive_Response\020\001" +
+      "\022\021\n\rLogin_Request\020\002\022\022\n\016Login_Response\020\003\022" +
+      "\022\n\016Upload_Request\020\004\022\023\n\017Upload_Response\020\005" +
+      "\022\027\n\023PersonalSet_Request\020\006\022\030\n\024PersonalSet" +
+      "_Response\020\007\022\032\n\026MuscleStrength_Request\020\010\022" +
+      "\033\n\027MuscleStrength_Response\020\t\022\025\n\021ErrorInf" +
+      "o_Request\020\n\022\026\n\022ErrorInfo_Response\020\013*G\n\tT" +
+      "rainMode\022\027\n\023RehabilitationModel\020\000\022\017\n\013Act" +
+      "iveModel\020\001\022\020\n\014PassiveModel\020\002*f\n\nDeviceTy" +
+      "pe\022\007\n\003P00\020\000\022\007\n\003P01\020\001\022\007\n\003P02\020\002\022\007\n\003P03\020\003\022\007" +
+      "\n\003P04\020\004\022\007\n\003P05\020\005\022\007\n\003P06\020\006\022\007\n\003P07\020\007\022\007\n\003P0" +
+      "8\020\010\022\007\n\003P09\020\tB&\n\030com.bdl.airecovery.proto" +
+      "B\010BdlProtoH\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -20428,7 +20511,7 @@ public final class BdlProto {
     internal_static_LoginResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoginResponse_descriptor,
-        new java.lang.String[] { "Uid", "DeviceTypeArr", "ExisitSetting", "TrainMode", "SeatHeight", "BackDistance", "FootboardDistance", "LeverAngle", "ForwardLimit", "BackLimit", "ConsequentForce", "ReverseForce", "Power", "DpStatus", "DpMoveway", "DpMemo", "DpGroupcount", "DpGroupnum", "DpRelaxtime", "SpeedRank", "SysVersion", "DpId", "ClientTime", "ServerTime", "Age", "Weight", "UserName", });
+        new java.lang.String[] { "Uid", "DeviceTypeArr", "ExisitSetting", "TrainMode", "SeatHeight", "BackDistance", "FootboardDistance", "LeverAngle", "ForwardLimit", "BackLimit", "ConsequentForce", "ReverseForce", "Power", "DpStatus", "DpMoveway", "DpMemo", "DpGroupcount", "DpGroupnum", "DpRelaxtime", "SpeedRank", "SysVersion", "DpId", "ClientTime", "ServerTime", "Age", "Weight", "UserName", "InfoResponse", });
     internal_static_UploadRequest_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_UploadRequest_fieldAccessorTable = new
