@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,9 +25,12 @@ import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import com.bdl.airecovery.MyApplication;
+import com.bdl.airecovery.biz.LoginBiz;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.CommonDialog;
+import com.bdl.airecovery.dialog.LoginDialog;
+import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.google.gson.Gson;
@@ -51,9 +55,14 @@ public class LoginActivity extends BaseActivity {
     private int clickCount = 0;                         //ID 点击计数器
     private Thread clearClickCountThread;               //清空点击计数器线程
     private CommonDialog commonDialog;                  //ShowTips弹模态框
-    private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
+    //private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
 
     private eStopBroadcastReceiver eStopReceiver; //急停广播
+
+    private NfcReceiver nfcReceiver;//接收NFC标签信息的广播
+    private BluetoothReceiver bluetoothReceiver;//蓝牙广播接收器，监听用户的登录广播
+    private String nfcMessage;//NFC标签
+    private LoginDialog loginDialog;                  //ShowLogin弹模态框
 
     /**
      * 控件绑定
@@ -67,6 +76,10 @@ public class LoginActivity extends BaseActivity {
     @ViewInject(R.id.iv_muscle_image)
     private ImageView iv_muscle_image;  //锻炼肌肉图
 
+    //Button
+    @ViewInject(R.id.btn_quick_login)
+    private Button btn_quick_login;
+
 
     Timer timer = new Timer();
     TimerTask task = new TimerTask() {
@@ -75,6 +88,148 @@ public class LoginActivity extends BaseActivity {
             startBlueAndCardScan();
         }
     };
+
+
+    //按钮监听事件，快速登录点击跳转训练模块
+    @Event(R.id.btn_quick_login)
+    private void setBtn_quick_login(View v) {
+        User user = new User();
+        //初始化待训练设备
+        String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09,E10,E11,E12,E13,E14,E15,E16,E28,E10]";
+        user.setDeviceTypearrList(str1);
+        user.setUsername("体验者");
+        user.setExisitSetting(false);
+        user.setMoveWay(0);
+        user.setGroupCount(5);
+        user.setGroupNum(10);
+        user.setRelaxTime(30);
+        user.setSpeedRank(1);
+        user.setAge(30);
+        user.setWeight(60);
+        user.setHeartRatemMax(190);
+        user.setTrainMode("康复模式");
+        MyApplication.getInstance().setUser(user);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);//新建一个跳转到主界面Activity的显式意图
+        startActivity(intent); //启动
+        LoginActivity.this.finish(); //结束当前Activity
+    }
+
+
+    /**
+     * NFC标签广播接受的注册
+     */
+    private void registerNfcReceiver() {
+        //注册登录广播监听器
+        nfcReceiver = new NfcReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.bdl.airecovery.service.UsbService");
+        registerReceiver(nfcReceiver,intentFilter);
+    }
+    /**
+     * 蓝牙返回信息的注册
+     */
+    private void registerBluetoothReceiver(){
+        //注册蓝牙广播监听器
+        bluetoothReceiver=new BluetoothReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.bdl.bluetoothmessage");
+        registerReceiver(bluetoothReceiver,intentFilter);
+    }
+
+    /**
+     * 接收NFC标签广播
+     */
+    private class NfcReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            nfcMessage=intent.getStringExtra("bind_id");
+            showLogin();//弹出登录模态框
+            startBluetooth();//开启蓝牙扫描
+        }
+    }
+    /**
+     * 启动蓝牙扫描
+     */
+    private void startBluetooth(){
+        //启动蓝牙扫描
+        Intent intent = new Intent(this, BluetoothService.class);
+        intent.putExtra("command", nfcMessage);
+        startService(intent);
+        LogUtil.d("发出了启动蓝牙扫描的命令");
+    }
+
+    /**
+     * 用于界面提示，在用户连接蓝牙的时间段里，弹出正在登录模态框
+     */
+    private void showLogin() {
+        //弹出对话框之前，先检查当前界面是否存在对话框，如果存在，先关闭，在执行下方的逻辑
+        if (loginDialog != null && loginDialog.isShowing()) {
+            return;
+        }
+        loginDialog = new LoginDialog(LoginActivity.this);
+        loginDialog.setTitle("温馨提示");
+        loginDialog.setMessage("正在登录");
+        loginDialog.setCancelable(false);//设置点击空白处模态框不消失
+        loginDialog.show();
+        //当接收到成功广播之后关闭模态框
+        //loginDialog.dismiss();
+    }
+    /**
+     * 接收蓝牙连接成功返回广播
+     */
+    private class BluetoothReceiver extends BroadcastReceiver{
+        private Gson gson = new Gson();
+
+        private CommonMessage transfer(String json){
+            return gson.fromJson(json,CommonMessage.class);
+        }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String messageJson = intent.getStringExtra("message");
+            CommonMessage commonMessage = transfer(messageJson);
+            LogUtil.d("收到广播："+messageJson);
+            switch (commonMessage.getMsgType()) {
+                //第一用户登录成功
+                case CommonMessage.LOGIN_REGISTER_OFFLINE:
+                case CommonMessage.LOGIN_REGISTER_ONLINE:
+                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
+                case CommonMessage.LOGIN_SUCCESS_ONLINE:
+                    LogUtil.d("loginActivity广播接收器收到："+ commonMessage.toString());
+                    //登录成功时，执行跳转的逻辑
+                    loginSuccessed();
+            }
+        }
+    }
+
+
+    //跳转主页面
+    private void loginSuccess(){
+        //用户已登录，执行跳转主界面逻辑
+        LogUtil.d("loginactivity广播接收器收到---跳转");
+        Intent skipIntent = new Intent(LoginActivity.this,MainActivity.class); //新建一个跳转到主界面Activity的显式意图
+        startActivity(skipIntent); //启动
+        LoginActivity.this.finish(); //结束当前Activity
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 接收广播
@@ -86,6 +241,9 @@ public class LoginActivity extends BaseActivity {
             if (state != null && state.equals("1")) {
                 startActivity(new Intent(LoginActivity.this, ScramActivity.class));
                 LoginActivity.this.finish();
+
+
+
             }
         }
     }
@@ -369,42 +527,42 @@ public class LoginActivity extends BaseActivity {
     /**
      * 广播接收器
      */
-    private class BluetoothReceiver extends BroadcastReceiver {
-
-        private Gson gson = new Gson();
-
-        private CommonMessage transfer(String json){
-            return gson.fromJson(json,CommonMessage.class);
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String messageJson = intent.getStringExtra("message");
-            CommonMessage commonMessage = transfer(messageJson);
-            LogUtil.d("收到广播："+messageJson);
-            switch (commonMessage.getMsgType()){
-                //第一用户登录成功
-                case CommonMessage.LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.LOGIN_REGISTER_ONLINE:
-                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("loginactivity广播接收器收到："+ commonMessage.toString());
-                    //登录成功时，执行跳转的逻辑
-                    loginSuccessed();
-                    break;
-                //第一用户下线成功
-                case CommonMessage.LOGOUT:
-                case CommonMessage.DISCONNECTED:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
-                //获得心率
-                case CommonMessage.HEART_BEAT:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
-                default:
-                    LogUtil.e("未知广播，收到message：" + commonMessage.getMsgType());
-            }
-        }
-    }
+//    private class BluetoothReceiver extends BroadcastReceiver {
+//
+//        private Gson gson = new Gson();
+//
+//        private CommonMessage transfer(String json){
+//            return gson.fromJson(json,CommonMessage.class);
+//        }
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String messageJson = intent.getStringExtra("message");
+//            CommonMessage commonMessage = transfer(messageJson);
+//            LogUtil.d("收到广播："+messageJson);
+//            switch (commonMessage.getMsgType()){
+//                //第一用户登录成功
+//                case CommonMessage.LOGIN_REGISTER_OFFLINE:
+//                case CommonMessage.LOGIN_REGISTER_ONLINE:
+//                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
+//                case CommonMessage.LOGIN_SUCCESS_ONLINE:
+//                    LogUtil.d("loginactivity广播接收器收到："+ commonMessage.toString());
+//                    //登录成功时，执行跳转的逻辑
+//                    loginSuccessed();
+//                    break;
+//                //第一用户下线成功
+//                case CommonMessage.LOGOUT:
+//                case CommonMessage.DISCONNECTED:
+//                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
+//                    break;
+//                //获得心率
+//                case CommonMessage.HEART_BEAT:
+//                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
+//                    break;
+//                default:
+//                    LogUtil.e("未知广播，收到message：" + commonMessage.getMsgType());
+//            }
+//        }
+//    }
 
 }

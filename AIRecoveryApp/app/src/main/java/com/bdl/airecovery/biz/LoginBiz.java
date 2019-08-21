@@ -17,7 +17,9 @@ import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 
 import java.net.ConnectException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +33,7 @@ public class LoginBiz {
 
     private volatile static LoginBiz instance = new LoginBiz();
 
-    private LoginBiz(){
+    public LoginBiz(){
 
     }
 
@@ -273,12 +275,17 @@ public class LoginBiz {
      * @param name
      */
     private AtomicInteger Seq = new AtomicInteger(1);
-    private void sendLoginRequest(String name) {
+    private void sendLoginRequest(String bind_value) {
 
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+        String nowDate = df.format(new Date());// new Date()为获取当前系统时间
         //生成请求
         BdlProto.LoginRequest request =
-                BdlProto.LoginRequest.newBuilder().setDeviceType(CommonUtils.getDeviceType())
-                        .setUid(name).build();
+                BdlProto.LoginRequest.newBuilder()
+                        .setDeviceType(CommonUtils.getDeviceType())
+                        .setBindId(bind_value)
+                        .setClientTime(nowDate)
+                        .setUid("").build();
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         final BdlProto.Message message = DataProtoUtil.packLoginRequest(Seq.get(),request);
         LogUtil.i("Message : " + message);
