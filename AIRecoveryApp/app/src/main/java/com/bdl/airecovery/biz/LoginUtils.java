@@ -3,7 +3,6 @@ package com.bdl.airecovery.biz;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Personal;
-import com.bdl.airecovery.entity.login.Helperuser;
 import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.personalInfoDAO;
 import com.bdl.airecovery.proto.BdlProto;
