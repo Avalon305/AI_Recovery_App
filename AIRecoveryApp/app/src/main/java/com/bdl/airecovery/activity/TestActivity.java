@@ -143,7 +143,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             startActivity(new Intent(TestActivity.this, MainActivity.class));
         } else if (view == test_ShutDown) {
             Intent intent = new Intent(TestActivity.this, BluetoothService.class);
-            intent.putExtra("command", CommonCommand.FIRST__LOGOUT.value());
+            intent.putExtra("command", CommonCommand.LOGOUT.value());
             startService(intent);
             stopService(new Intent(this, BluetoothService.class));
             System.exit(0);

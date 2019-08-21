@@ -67,13 +67,9 @@ public class PersonalSettingActivity extends BaseActivity {
     private int curModeIndex = 0;               //选择模式的索引值（默认为0，即“标准模式”）
     private Boolean isSave = true;              //标识用户是否保存医护设置（一旦对 参数/模式 进行修改，则为false）
     String[] modeItems = new String[]{          //设置菜单选项内容（有5种训练模式可设置）（通过curModeIndex选择，默认为0，即“标准模式”）
-            "标准模式",
-            "适应性模式",
-            "等速模式",
-            "心率模式",
-            "增肌模式",
             "主被动模式",
-            "被动模式"};
+            "被动模式",
+            "康复模式"};
     //发送保存医护设置请求需要打包的参数
     private int deviceTypeValue;            //设备类型
     private int activityTypeValue;          //循环类型
@@ -563,19 +559,13 @@ public class PersonalSettingActivity extends BaseActivity {
             if (MyApplication.getInstance().getUser() != null) {
 //                MyApplication.getInstance().getUser().setDefatModeEnable(isOpenFatLossMode); //更新 是否开启减脂模式
                 MyApplication.getInstance().getUser().setTrainMode(curMode); //更新 训练模式
-                Log.e("coach_bluetooth_onClick", "更新实体类User,helperuser:" + MyApplication.getInstance().getUser().getHelperuser() == null ? "null" : "not null");
             }
             //3.2.更新实体类CurrentDevice（已实时更新）
 
             //4.保存数据到本地PersonalInfo表
             try {
                 if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null && MyApplication.getInstance().getCurrentDevice() != null) {
-                    //更新Info表时，清空了HelperUser
-                    if (MyApplication.getInstance().getUser().getHelperuser() != null) {
-                        helperuser = MyApplication.getInstance().getUser().getHelperuser();
-                    }
                     personalInfoDAO.getInstance().SavrOrUpdata(MyApplication.getInstance().getUser().getUserId(),BdlProto.DeviceType.getDescriptor().getName(),MyApplication.getInstance().getUser(), MyApplication.getInstance().getCurrentDevice());
-                    MyApplication.getInstance().getUser().setHelperuser(helperuser);
                 }
             } catch (DbException e) {
                 e.printStackTrace();
@@ -760,8 +750,8 @@ public class PersonalSettingActivity extends BaseActivity {
         }
 
         //获取用户名
-        if (MyApplication.getInstance().getUser().getUsername() != null && !MyApplication.getInstance().getUser().getUsername().equals("")) {
-            tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
+        if (MyApplication.getInstance().getUser().getUserId() != null && !MyApplication.getInstance().getUser().getUserId().equals("")) {
+            tv_user_name.setText(MyApplication.getInstance().getUser().getUserId());
             iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.yonghu1));
         }
 
@@ -775,11 +765,6 @@ public class PersonalSettingActivity extends BaseActivity {
             }
             tv_cur_mode.setText(curMode); //前端显示当前训练模式
         }
-
-        modeItems = new String[]{    //有3种训练模式可设置，有减脂模式
-                "主被动模式",
-                "被动模式",
-                "康复模式"};
     }
 
     /**

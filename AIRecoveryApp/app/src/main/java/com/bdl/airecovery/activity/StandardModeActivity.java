@@ -20,8 +20,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,10 +40,13 @@ import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LargeDialogHelp;
 import com.bdl.airecovery.dialog.MediumDialog;
+import com.bdl.airecovery.dialog.RatingDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.CalibrationParameter;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.Upload;
+import com.bdl.airecovery.entity.login.User;
+import com.bdl.airecovery.proto.BdlProto;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
@@ -57,6 +62,8 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -86,27 +93,7 @@ public class StandardModeActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            //当前组 = 总次数整除每组个数
-            int currGroup = 1 + msg.arg1 / MyApplication.getInstance().getUser().getGroupCount();
-            //当前组的次数 = 总次数取余每组个数
-            int currGroupNum = msg.arg1 % MyApplication.getInstance().getUser().getGroupNum();
-            switch (msg.what) {
-                case 1:
-                    tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
-                    tv_curr_groupcount.setText(String.valueOf(currGroup)); //当前组
-                    break;
-            }
-            //如果当前组做完，进入组间休息
-            if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
-                CreatelocalCountDownTheard(); //创建倒计时线程
-                allowRecordNum = false; //期间不允许计数
-                currGroupNum = 0;
-                currGroup++;
-            }
-            //如果所有组做完，结束
-            if (currGroup == 1+MyApplication.getInstance().getUser().getGroupCount()) {
-                allowRecordNum = false;
-            }
+            //TODO
         }
     };
     private boolean needAfterMotion = true;
@@ -118,11 +105,6 @@ public class StandardModeActivity extends BaseActivity {
      * 类成员
      */
     private int flag_dialog;                //警告模态框弹出标志位
-    private Thread localCountDownThread;    //本机倒计时线程
-    private int localCountDown = 60;        //本机倒计时（单位：秒）
-    private int localCountDownType = 0;     //本机倒计时类型（0运动，1休息）
-    private Handler handler;                //用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-    private Handler handler_dialog;         //用于模态框ui线程中获取倒计时线程创建的Message对象
     private Boolean isAlert = false;        //标识是否弹5s倒计时模态框
     private locationReceiver LocationReceiver = new locationReceiver();       //广播监听类
     private IntentFilter filterHR = new IntentFilter();                       //广播过滤器
@@ -179,10 +161,13 @@ public class StandardModeActivity extends BaseActivity {
     @ViewInject(R.id.tv_target_groupnum)
     private TextView tv_target_groupnum; //每组次数
 
+    @ViewInject(R.id.btn_ms_pause)
+    private Button btn_ms_pause; //暂停按钮
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //test(); //测试训练场景
         needAfterMotion = true;
         initImmersiveMode(); //隐藏状态栏，导航栏
         initCalibrationParam();
@@ -197,8 +182,80 @@ public class StandardModeActivity extends BaseActivity {
         bluetoothReceiver = new BluetoothReceiver();
         IntentFilter intentFilter = new IntentFilter("com.bdl.bluetoothmessage");
         registerReceiver(bluetoothReceiver, intentFilter);
-
     }
+
+    int currGroup;
+    int currGroupNum;
+    boolean canOpenRestDialog = false;
+
+    /*private Handler testHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.arg1 == 0) {
+                return;
+            }
+            if (msg.arg1 % MyApplication.getInstance().getUser().getGroupNum() == 0) {
+                currGroupNum = MyApplication.getInstance().getUser().getGroupNum();
+                currGroup = msg.arg1 / MyApplication.getInstance().getUser().getGroupNum();
+            } else {
+                currGroupNum = msg.arg1 % MyApplication.getInstance().getUser().getGroupNum();
+                currGroup = 1 + msg.arg1 / MyApplication.getInstance().getUser().getGroupNum();
+            }
+
+            if (currGroup == MyApplication.getInstance().getUser().getGroupCount() &&
+                    currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
+                tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
+                allowRecordNum = false;
+                btn_ms_pause.setText("结束"); //暂停按钮修改为结束按钮
+                return ;
+            }
+
+            tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
+            tv_curr_groupcount.setText(String.valueOf(currGroup)); //当前组
+
+            //如果当前组做完，进入组间休息
+            if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
+                canOpenRestDialog = true;
+                allowRecordNum = false; //期间不允许计数
+                currGroupNum = 0;
+                currGroup++;
+            }
+        }
+    };*/
+
+    /**
+     * 测试训练场景
+     */
+    /*private void test() {
+        User newUser = new User();
+        newUser.setUserId("离线用户");
+        newUser.setExisitSetting(false);
+        newUser.setMoveWay(0);
+        newUser.setGroupCount(3);
+        newUser.setGroupNum(5);
+        newUser.setRelaxTime(10);
+        newUser.setSpeedRank(1);
+        newUser.setAge(30);
+        newUser.setWeight(60);
+        newUser.setHeartRatemMax(190);
+        newUser.setTrainMode("康复模式");
+        MyApplication.getInstance().setUser(newUser);
+
+        Timer testTimer = new Timer();
+        TimerTask testTask = new TimerTask() {
+            @Override
+            public void run() {
+                Message message = testHandler.obtainMessage();
+                if (allowRecordNum) {
+                    num++;
+                    message.arg1 = num;
+                    testHandler.sendMessage(message);
+                }
+            }
+        };
+        testTimer.schedule(testTask, 5*1000, 2*1000);
+    }*/
 
     /**
      * 心率分析
@@ -340,6 +397,9 @@ public class StandardModeActivity extends BaseActivity {
         seekBarThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                if (true) {
+                    return;
+                }
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         //获取推拉位移
@@ -403,6 +463,9 @@ public class StandardModeActivity extends BaseActivity {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
+                if (true) {
+                    return;
+                }
                 Message message = countHandler.obtainMessage();
                 message.what = 1;
                 try {
@@ -449,6 +512,9 @@ public class StandardModeActivity extends BaseActivity {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
+                if (true) {
+                    return;
+                }
                 try {
                     //发送消息到handler
                     Message message = countHandler.obtainMessage();
@@ -622,6 +688,10 @@ public class StandardModeActivity extends BaseActivity {
             SeekBarSetting(); //速度、运动范围的SeekBar设置
             seekBarThread.start();
         }
+        if (countDownThread == null) {
+            createCountDownTheard(); //创建休息倒计时线程
+            countDownThread.start(); //启动休息倒计时线程
+        }
 
         //注册广播
         filterHR.addAction("heartrate");
@@ -646,9 +716,10 @@ public class StandardModeActivity extends BaseActivity {
             seekBarThread.interrupt();
             seekBarThread = null;
         }
-        if (localCountDownThread != null) {
-            localCountDownThread.interrupt();
-            localCountDownThread = null;
+        //本机倒计时线程
+        if (countDownThread != null) {
+            countDownThread.interrupt(); //中断线程
+            countDownThread = null;
         }
     }
 
@@ -718,9 +789,9 @@ public class StandardModeActivity extends BaseActivity {
 
         //设置目标组数与次数
         //目标组数
-        tv_target_groupcount.setText(MyApplication.getInstance().getUser().getGroupCount());
+        tv_target_groupcount.setText(String.valueOf(MyApplication.getInstance().getUser().getGroupCount()));
         //每组个数
-        tv_target_groupnum.setText(MyApplication.getInstance().getUser().getGroupNum());
+        tv_target_groupnum.setText(String.valueOf(MyApplication.getInstance().getUser().getGroupNum()));
     }
 
     //扫描教练的定时任务
@@ -807,49 +878,128 @@ public class StandardModeActivity extends BaseActivity {
     @Event(R.id.btn_ms_pause)
     private void pauseClick(View v) {
         allowRecordNum = false;
-        commonDialog = new CommonDialog(StandardModeActivity.this);
-        commonDialog.setTitle("温馨提示");
-        commonDialog.setMessage("您确定要放弃本次训练吗？");
-        commonDialog.setNegativeBtnText("结束");
-        commonDialog.setPositiveBtnText("继续");
-        //“结束”按钮 监听，点击跳转到待机界面
-        commonDialog.setOnNegativeClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //请求退出登录
-                Intent intentLog2 = new Intent(StandardModeActivity.this, CardReaderService.class);
-                intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
-                startService(intentLog2);
-                Intent intentLog = new Intent(StandardModeActivity.this, BluetoothService.class);
-                intentLog.putExtra("command", CommonCommand.LOGOUT.value());
-                startService(intentLog);
-                Log.d("StandardModeActivity", "request to logout");
+        if (btn_ms_pause.getText().equals("暂停")) {
+            commonDialog = new CommonDialog(StandardModeActivity.this);
+            commonDialog.setTitle("温馨提示");
+            commonDialog.setMessage("您确定要放弃本次训练吗？");
+            commonDialog.setNegativeBtnText("结束");
+            commonDialog.setPositiveBtnText("继续");
+            //“结束”按钮 监听，点击跳转到待机界面
+            commonDialog.setOnNegativeClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //请求退出登录
+                    Intent intentLog2 = new Intent(StandardModeActivity.this, CardReaderService.class);
+                    intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
+                    startService(intentLog2);
+                    Intent intentLog = new Intent(StandardModeActivity.this, BluetoothService.class);
+                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
+                    startService(intentLog);
+                    Log.d("StandardModeActivity", "request to logout");
 
-                commonDialog.dismiss();
-                //新建一个跳转到待机界面Activity的显式意图
-                Intent intent = new Intent(StandardModeActivity.this, LoginActivity.class);
+                    commonDialog.dismiss();
+                    //新建一个跳转到待机界面Activity的显式意图
+                    Intent intent = new Intent(StandardModeActivity.this, LoginActivity.class);
+                    //启动
+                    startActivity(intent);
+                    //结束当前Activity
+                    StandardModeActivity.this.finish();
+                }
+            });
+            //“继续”按钮 监听
+            commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    commonDialog.dismiss();
+                    allowRecordNum = true;
+                }
+            });
+            //模态框隐藏导航栏
+            commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                            //布局位于状态栏下方
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                            //全屏
+                            //                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                            //隐藏导航栏
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        uiOptions |= 0x00001000;
+                    } else {
+                        uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                    }
+                    commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                }
+            });
+            commonDialog.show();
+        } else if (btn_ms_pause.getText().equals("结束")) {
+            //评级，病人感想
+            openRatingDialog(); //打开评级模态框
+        }
+
+    }
+
+    RatingDialog ratingDialog;
+    //打开评级模态框
+    private void openRatingDialog() {
+        ratingDialog = new RatingDialog(StandardModeActivity.this);
+        ratingDialog.setTitle("完成训练");
+        ratingDialog.setMessage("本次训练感受？");
+        ratingDialog.setPositiveBtnText("确定");
+
+        //评级 监听
+        ratingDialog.setRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                upload.setUserThoughts(String.valueOf((int) rating));
+            }
+        });
+        //“确定”按钮 监听
+        ratingDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //设置Upload类
+                int currGroup = Integer.parseInt(tv_curr_groupcount.getText().toString());
+                int currGroupNum = Integer.parseInt(tv_curr_groupnum.getText().toString());
+                int targetGroupNum = MyApplication.getInstance().getUser().getGroupNum();
+                int sumNum = (currGroup-1) * targetGroupNum + currGroupNum;
+                upload.setFinishNum(sumNum); //计算训练个数
+                upload.setConsequentForce(Integer.parseInt(positivenumber.getText().toString())); //最终顺向力
+                upload.setReverseForce(Integer.parseInt(inversusnumber.getText().toString())); //最终反向力
+                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
+                upload.setHeartRateList(heartRateList);
+                MyApplication.getInstance().setUpload(upload);
+
+                //关闭可能存在的模态框
+                if (commonDialog != null && commonDialog.isShowing()) {
+                    commonDialog.dismiss();
+                }
+                if (helpDialog != null && helpDialog.isShowing()) {
+                    helpDialog.dismiss();
+                }
+
+                ratingDialog.dismiss();
+
+                //跳转再见页面
+                Intent intent = new Intent(StandardModeActivity.this, ByeActivity.class);
                 //启动
                 startActivity(intent);
                 //结束当前Activity
                 StandardModeActivity.this.finish();
             }
         });
-        //“继续”按钮 监听
-        commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                commonDialog.dismiss();
-                allowRecordNum = true;
-            }
-        });
         //模态框隐藏导航栏
-        commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+        ratingDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        ratingDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
                 int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                         //布局位于状态栏下方
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
                         //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //                        View.SYSTEM_UI_FLAG_FULLSCREEN |
                         //隐藏导航栏
                         View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
@@ -858,11 +1008,10 @@ public class StandardModeActivity extends BaseActivity {
                 } else {
                     uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
                 }
-                commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                ratingDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
             }
         });
-        commonDialog.show();
-
+        ratingDialog.show();
     }
 
     //运动过程中改变顺反向力
@@ -1123,7 +1272,7 @@ public class StandardModeActivity extends BaseActivity {
             }
         }
     }
-
+    private List<Integer> heartRateList = new ArrayList<>();
     /**
      * 蓝牙广播专用接收器
      */
@@ -1156,6 +1305,7 @@ public class StandardModeActivity extends BaseActivity {
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
                     getrate.setText(commonMessage.getAttachment()); //心率数值
+                    heartRateList.add(Integer.parseInt(commonMessage.getAttachment()));
                     //心率分析
                     Pair<String, String> res = heartRateAnalysis(Integer.parseInt(commonMessage.getAttachment()));
                     if (res != null) {
@@ -1169,16 +1319,14 @@ public class StandardModeActivity extends BaseActivity {
         }
     }
 
-    MediumDialog restDialog;
+    private MediumDialog restDialog;
     private TextView rest_dialog_msg; //休息倒计时模态框 时间文本
     /**
      * 休息指定时间的 倒计时模态框
      */
     private void openRestDialog() {
-        restDialog = new MediumDialog((StandardModeActivity.this));
-        int time = MyApplication.getInstance().getUser().getRelaxTime(); //获取组间休息间隔
-        restDialog.setTime("休息时间：" + String.valueOf(time) + "秒");
-
+        restDialog = new MediumDialog(StandardModeActivity.this);
+        restDialog.setTime(String.valueOf(MyApplication.getInstance().getUser().getRelaxTime()) + "秒");
         //模态框隐藏导航栏
         restDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         restDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
@@ -1202,65 +1350,60 @@ public class StandardModeActivity extends BaseActivity {
         });
         restDialog.show();
 
-        //找到CommonDialog内容控件
         rest_dialog_msg = restDialog.findViewById(R.id.medium_dialog_time);
     }
 
+    private Thread countDownThread;    //休息倒计时线程
+    private Handler restHandler;
+    private int countDown = 0;
     /**
-     * 创建组间休息时间倒计时线程
+     * 休息倒计时线程
      */
-    private void CreatelocalCountDownTheard() {
-        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-        handler = new Handler() {
+    private void createCountDownTheard() {
+        restHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                //获取倒计时秒数
-                int arg1 = msg.arg1;
+                if (!canOpenRestDialog) return;
                 if (!isAlert) {
                     openRestDialog();
+                    tv_curr_groupcount.setText(String.valueOf(currGroup));
+                    tv_curr_groupnum.setText("0");
                     isAlert = true;
                 } else {
-                    rest_dialog_msg.setText("休息时间：" + arg1 + "秒");
+                    rest_dialog_msg.setText(msg.arg1 + "秒");
                 }
             }
         };
-        localCountDownThread = new Thread(new Runnable() {
+        countDownThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                localCountDown = MyApplication.getInstance().getUser().getRelaxTime(); //获取组间休息间隔
-                while (!localCountDownThread.isInterrupted() && localCountDown > 0) {
-                    //将当前倒计时数值存储在Message对象中，通过Handler将消息发送给UI线程，更新UI
-                    Message message = handler.obtainMessage();
-                    message.arg1 = localCountDown; //arg1属性指定为当前时间的秒数
-                    handler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (!canOpenRestDialog) continue;
 
-                    //线程睡眠1s
-                    try {
-                        Thread.sleep(1000);
-                        localCountDown--;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        return;
+                    //休息倒计时
+                    countDown = MyApplication.getInstance().getUser().getRelaxTime();
+                    while(countDown != 0) {
+                        try {
+                            Message message = restHandler.obtainMessage();
+                            message.arg1 = countDown; //arg1属性指定为当前时间的秒数
+                            restHandler.sendMessage(message); //把一个包含消息数据的Message对象压入到消息队列中
+                            Thread.sleep(1000);
+                            countDown--;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            return;
+                        }
                     }
 
+                    //休息倒计时结束
+                    canOpenRestDialog = false;
+                    allowRecordNum = true;
+                    isAlert = false;
+                    restDialog.dismiss();
                 }
-
-                /*
-                if (commonDialog != null && commonDialog.isShowing()) {
-                    commonDialog.dismiss();
-                }
-                if (helpDialog != null && helpDialog.isShowing()) {
-                    helpDialog.dismiss();
-                }*/
-                /*Intent intent = new Intent(StandardModeActivity.this, ByeActivity.class);
-                //启动
-                startActivity(intent);
-                //结束当前Activity
-                StandardModeActivity.this.finish();*/
             }
         });
     }
-
 
 }

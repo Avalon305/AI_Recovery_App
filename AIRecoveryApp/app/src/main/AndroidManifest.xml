@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bdl.airecovery">
 
     <!-- xutils3 需要的存储和联网权限 -->
@@ -12,6 +13,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!--usb权限设置-->
+    <uses-permission android:name="android.permission.HARDWARE_TEST"
+        tools:ignore="ProtectedPermissions" />
 
     <!-- 蓝牙权限 -->
     <uses-feature
@@ -101,7 +106,11 @@
             android:exported="false" />
         <service android:name=".service.MotorService" />
         <service android:name=".service.BluetoothService" />
-
+        <service android:name=".service.UsbService">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+        </service>
         <activity android:name=".activity.AdvancedSettingActivity"></activity>
     </application>
 

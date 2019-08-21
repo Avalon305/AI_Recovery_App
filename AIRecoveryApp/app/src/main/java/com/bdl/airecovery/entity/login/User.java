@@ -7,6 +7,9 @@ public class User {
     //用户标识
     private String userId ;
 
+    //用户姓名
+    private String username;
+
     //待训练设备列表
     private String deviceTypearrList;
 
@@ -45,6 +48,17 @@ public class User {
 
     //最大心率
     private int heartRatemMax;
+
+    //手环id
+
+    private String bindId;
+
+    //处方id
+    private  int dpId;
+
+    //客户端时间戳
+    private String clientTime ;
+
 
     public User() {
 
@@ -90,6 +104,13 @@ public class User {
         this.age = message.getLoginResponse().getAge();
         //最大心率
         this.heartRatemMax = 220 - this.age;
+        //处方id
+        this.dpId=message.getLoginResponse().getDpId();
+        //用户姓名
+        this.username=message.getLoginResponse().getUserName();
+        //客户端时间
+        this.clientTime=message.getLoginResponse().getClientTime();
+
     }
 
     public String getUserId() {
@@ -106,6 +127,30 @@ public class User {
 
     public void setDeviceTypearrList(String deviceTypearrList) {
         this.deviceTypearrList = deviceTypearrList;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getBindId() {
+        return bindId;
+    }
+
+    public void setBindId(String bindId) {
+        this.bindId = bindId;
+    }
+
+    public int getDpId() {
+        return dpId;
+    }
+
+    public void setDpId(int dpId) {
+        this.dpId = dpId;
     }
 
     public boolean isExisitSetting() {
@@ -204,10 +249,19 @@ public class User {
         this.heartRatemMax = heartRatemMax;
     }
 
+    public String getClientTime() {
+        return clientTime;
+    }
+
+    public void setClientTime(String clientTime) {
+        this.clientTime = clientTime;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
                 ", deviceTypearrList='" + deviceTypearrList + '\'' +
                 ", exisitSetting=" + exisitSetting +
                 ", trainMode='" + trainMode + '\'' +
@@ -221,6 +275,9 @@ public class User {
                 ", weight=" + weight +
                 ", age=" + age +
                 ", heartRatemMax=" + heartRatemMax +
+                ", bindId='" + bindId + '\'' +
+                ", dpId=" + dpId +
+                ", clientTime='" + clientTime + '\'' +
                 '}';
     }
 }

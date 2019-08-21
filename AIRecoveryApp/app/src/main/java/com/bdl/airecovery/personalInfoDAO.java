@@ -42,11 +42,6 @@ public class personalInfoDAO {
      * @throws DbException
      */
     public void SavrOrUpdata(String userId,String deviceType, User loginUser, Device currentDevice) throws DbException {
-         //1.清除教练用户
-         if (loginUser.getHelperuser() != null){
-             loginUser.setHelperuser(null);
-         }
-
          //转换JOSN
          Gson gson = new Gson();
          String infoJson = gson.toJson(loginUser);

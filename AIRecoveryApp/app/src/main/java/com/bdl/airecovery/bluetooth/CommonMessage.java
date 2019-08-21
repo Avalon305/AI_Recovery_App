@@ -6,21 +6,14 @@ package com.bdl.airecovery.bluetooth;
 public class CommonMessage {
     //心率类型
     public static final int HEART_BEAT = 1;
-    //第一用户登录的反馈：在线登录，离线登录，远程无此人登录，本地无此人登录
-    public static final int FIRST__LOGIN_SUCCESS_ONLINE = 2;
-    public static final int FIRST__LOGIN_SUCCESS_OFFLINE = 3;
-    public static final int FIRST__LOGIN_REGISTER_ONLINE = 4;
-    public static final int FIRST__LOGIN_REGISTER_OFFLINE = 5;
-    //第二用户登录的反馈，因为必须是教练，所以身份必须存在，登录成功一定是远程或者本地有，都没有就是失败登录
-    public static final int SECOND__LOGIN_SUCCESS_ONLINE = 6; //远程登录成功
-    public static final int SECOND__LOGIN_SUCCESS_OFFLINE = 7;//本地登录成功
-    public static final int SECOND__LOGIN_FAILE = 8;          //教练登录失败
-    //第一用户掉线与退出的广播,掉线是蓝牙专用，目前掉线仅监听，并无发送
-    public static final int FIRST__DISCONNECTED = 9;
-    public static final int FIRST__LOGOUT = 10;
-    //第二用户掉线与退出广播,掉线是蓝牙专用，目前掉线仅监听，并无发送
-    public static final int SECOND__DISCONNECTED = 11;
-    public static final int SECOND__LOGOUT = 12;
+    //用户登录的反馈：在线登录，离线登录，远程无此人登录，本地无此人登录
+    public static final int LOGIN_SUCCESS_ONLINE = 2;
+    public static final int LOGIN_SUCCESS_OFFLINE = 3;
+    public static final int LOGIN_REGISTER_ONLINE = 4;
+    public static final int LOGIN_REGISTER_OFFLINE = 5;
+    //用户掉线与退出的广播,掉线是蓝牙专用，目前掉线仅监听，并无发送
+    public static final int DISCONNECTED = 9;
+    public static final int LOGOUT = 10;
 
 
     public CommonMessage(int msgType, String attachment) {

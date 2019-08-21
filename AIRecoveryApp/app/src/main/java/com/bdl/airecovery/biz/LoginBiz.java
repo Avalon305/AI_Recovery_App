@@ -5,7 +5,6 @@ import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Personal;
 import com.bdl.airecovery.entity.PersonalInfo;
-import com.bdl.airecovery.entity.login.Helperuser;
 import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.netty.DataSocketClient;
 import com.bdl.airecovery.proto.BdlProto;
@@ -109,10 +108,6 @@ public class LoginBiz {
                 if (who == 1){
                     //如果远程有此人
                     if (resPerson != null && resPerson.size() != 0){
-                        LogUtil.e("当前用户是否有教练？");
-                        if (MyApplication.getInstance().getUser() != null){
-                            LogUtil.e(MyApplication.getInstance().getUser().getHelperuser() == null ? "没有" : "有");
-                        }
                         for (Personal personal:MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
                             if (personal.getName().equals("前方限制")) {
                                 LogUtil.e("前方限制" + String.valueOf(personal));
@@ -120,35 +115,14 @@ public class LoginBiz {
                                 LogUtil.e("后方限制" + String.valueOf(personal));
                             }
                         }
-                        return CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE;
+                        return CommonMessage.LOGIN_SUCCESS_ONLINE;
                     }
                     //如果远程无此人
                     else {
-                        return CommonMessage.FIRST__LOGIN_REGISTER_ONLINE;
+                        return CommonMessage.LOGIN_REGISTER_ONLINE;
                     }
                 }
-                //第二用户
-                else if (who == 2){
-                    //如果远程有此人
-                    if (resPerson != null && resPerson.size() != 0){
-
-                        LogUtil.e("第二用户登录");
-                        for (Personal personal:MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
-                            if (personal.getName().equals("前方限制")) {
-                                LogUtil.e("前方限制" + String.valueOf(personal));
-                            } else if (personal.getName().equals("后方限制")) {
-                                LogUtil.e("后方限制" + String.valueOf(personal));
-                            }
-                        }
-
-                        return CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE;
-                    }
-                    //如果远程无此人
-                    else {
-                        return CommonMessage.SECOND__LOGIN_FAILE;
-                    }
-                }
-            }else{
+            } else {
                 LogUtil.e("离线登录");
                 //2.连不上教练机，处理有此人，无此人。 区分第一第二用户
                  Object obj = getByName(name);
@@ -182,26 +156,9 @@ public class LoginBiz {
                             String deviceJSON = resPerson.get(0).getDevicePersonalList();
                             MyApplication.getInstance().UserUpdateDevice(gson.fromJson(deviceJSON,Device.class));
                         }
-                        return CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE;
+                        return CommonMessage.LOGIN_SUCCESS_OFFLINE;
                     }
-                    //如果第一用户非空，则初始化第二用户（判断是否为教练）
-                    else {
-                        //如果是教练初始化全局变量
-                        if (((User) obj).getRole().equals("coach")){
-                            MyApplication.getInstance().getUser().setHelperuser(new Helperuser(
-                                    ((User) obj).getType(),
-                                    ((User) obj).getPhone(),
-                                    ((User) obj).getUsername(),
-                                    ((User) obj).getUserId()
-                            ));
-                            return CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE;
-                        }
-                        //如果不是教练
-                        else {
-                            return CommonMessage.SECOND__LOGIN_FAILE;
-                        }
-                    }
-                }else{
+                } else {
                     //2.2 执行本地登录的逻辑  设置默认对象（包括登录类型-本地无此人）
                     List<BdlProto.DeviceType> temp = new ArrayList<>();
                     //0为力量循环，1为耐力循环
@@ -214,27 +171,20 @@ public class LoginBiz {
                             temp.add(BdlProto.DeviceType.forNumber(i));
                         }
                     }
-                    MyApplication.getInstance().setUser(new User(
-                            null,
-                            "trainee",
-                            "bluetooth",
-                            name.substring(name.length()-4,name.length()),
-                            name.substring(0,name.length()-4),
-                            name,
-                            0,
-                            80,
-                            25,
-                            false,
-                            "标准模式",
-                            140,
-                            String.valueOf(temp),
-                            1,
-                            1,
-                            1,
-                            false
-
-                    ));
-                    return CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE;
+                    User newUser = new User();
+                    newUser.setUserId("离线用户");
+                    newUser.setExisitSetting(false);
+                    newUser.setMoveWay(0);
+                    newUser.setGroupCount(5);
+                    newUser.setGroupNum(10);
+                    newUser.setRelaxTime(30);
+                    newUser.setSpeedRank(1);
+                    newUser.setAge(30);
+                    newUser.setWeight(60);
+                    newUser.setHeartRatemMax(190);
+                    newUser.setTrainMode("康复模式");
+                    MyApplication.getInstance().setUser(newUser);
+                    return CommonMessage.LOGIN_REGISTER_OFFLINE;
                 }
             }
 
@@ -306,19 +256,10 @@ public class LoginBiz {
         boolean result = false;
         if (who == 1){
             if (MyApplication.getInstance().getUser() == null){
-                LogUtil.e("一、第一用户未初始化");
+                LogUtil.e("用户未初始化");
                 result = false;
             }else {
-                LogUtil.e("一、第一用户初始化");
-                result = true;
-            }
-        }
-        if (who == 2){
-            if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getHelperuser() == null){
-                LogUtil.e("二、第二用户初始化");
-                result = false;
-            }else {
-                LogUtil.e("二、第二用户未初始化");
+                LogUtil.e("用户初始化");
                 result = true;
             }
         }
@@ -367,11 +308,6 @@ public class LoginBiz {
         //如果是第一用户
         if (who == 1 && MyApplication.getInstance().getUser() != null){
                result = true;
-        }
-        //如果是第二用户
-        if(who == 2 && MyApplication.getInstance().getUser() != null
-                && MyApplication.getInstance().getUser().getHelperuser() != null){
-                result = true;
         }
         return result;
     }

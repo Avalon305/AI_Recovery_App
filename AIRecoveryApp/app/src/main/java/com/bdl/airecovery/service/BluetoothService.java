@@ -95,9 +95,9 @@ public class BluetoothService extends Service {
             LogUtil.d("bluetooth is started");
         }
     }
-    //第一用户还是第二用户登录指令的变量
+    //第一用户登录指令的变量
     private volatile int whoLogin = 0;
-    //第一用户还是第二用户登录指令的变量
+    //第一用户登录指令的变量
     private volatile int whoLogout = 0;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -113,29 +113,15 @@ public class BluetoothService extends Service {
         LogUtil.d("command ！= null status =" + this.status.value());
         CommonCommand commonCommand = CommonCommand.getEnumByString(command);
         switch (commonCommand){
-            case SECOND__LOGIN: whoLogin = 2;
-                //第二用户要想登录，必须第一个用户不是蓝牙登录的。一个工控机只能连接一个手环。
-                if (MyApplication.getInstance().getUser()!=null &&
-                        !MyApplication.getInstance().getUser().getType().equals("bluetooth")) {
-                    scanDevice();
-                    break;
-                }
-            case FIRST__LOGIN:  whoLogin = 1;
+            case LOGIN:  whoLogin = 1;
                 scanDevice();
                 break;
-            case SECOND__LOGOUT:whoLogout = 2;
+            case LOGOUT: whoLogout = 1;
                 //下线所有设备
                 disConnect(whoLogout);
                 break;
-            case FIRST__LOGOUT: whoLogout = 1;
-                //下线所有设备
-                disConnect(whoLogout);
+            default:
                 break;
-            case ALL__LOGOUT:
-                //下线所有设备
-                loginInitBluetooth();
-                break;
-
         }
         return super.onStartCommand(intent, flags, startId);
 
@@ -144,13 +130,13 @@ public class BluetoothService extends Service {
     /**
      * 待机页面的大退逻辑
      */
-    private void loginInitBluetooth() {
+    /*private void loginInitBluetooth() {
         BleManager.getInstance().disconnectAllDevice();
         //只有正常退出的时候才会设置为null
         this.status = Status.NORMAL;
         //根据whoLogout参数置空对应的登录对象，然后发送广播
         setNullLoginUser(1);
-    }
+    }*/
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -179,11 +165,11 @@ public class BluetoothService extends Service {
     /**
      * 停止发卡器接收,用于登录逻辑结束，决定连接的场景。
      */
-    private void stopCardAccept(){
+    /*private void stopCardAccept(){
         Intent intent = new Intent(this,CardReaderService.class);
         intent.putExtra("command",CommonCommand.CARD_STOP_ACCEPT.value());
         startService(intent);
-    }
+    }*/
     //private ExecutorService executorService = Executors.newCachedThreadPool();
 
     private void loginExecute(final  String name,final String mac){
@@ -200,13 +186,13 @@ public class BluetoothService extends Service {
                     return;
                 }
                 //针对第一用户的 ：有医护设置（在线，离线） 无医护设置（在线，离线） 的情况 设置为蓝牙登陆
-                if (loginResult == CommonMessage.FIRST__LOGIN_SUCCESS_ONLINE ||
-                        loginResult == CommonMessage.FIRST__LOGIN_REGISTER_ONLINE ||
-                              loginResult == CommonMessage.FIRST__LOGIN_SUCCESS_OFFLINE ||
-                                     loginResult == CommonMessage.FIRST__LOGIN_REGISTER_OFFLINE ){
+                if (loginResult == CommonMessage.LOGIN_SUCCESS_ONLINE ||
+                        loginResult == CommonMessage.LOGIN_REGISTER_ONLINE ||
+                              loginResult == CommonMessage.LOGIN_SUCCESS_OFFLINE ||
+                                     loginResult == CommonMessage.LOGIN_REGISTER_OFFLINE){
                     //蓝牙第一用户登录成功，停止发卡器的读取
-                    stopCardAccept();
-                    MyApplication.getInstance().getUser().setType("bluetooth");
+                    //stopCardAccept();
+                    //MyApplication.getInstance().getUser().setType("bluetooth");
                     //原想法：先发出广播让界面登录，后台慢慢连接蓝牙
                     //注释原因：会出现多台机子同时扫描到的情况，然后同时登录
                     //sendBroadcastMsg(loginResult);
@@ -214,33 +200,7 @@ public class BluetoothService extends Service {
                     BluetoothService.this.status = Status.TRY_CONNECTING;
                     //如果附近没有合法的设备那么这次扫描结果凉凉！
                     tryConnectMAC(mac,loginResult);
-                }
-                //针对第二用户 本地+远程登陆成功，设置为蓝牙登陆方式
-                else if (loginResult == CommonMessage.SECOND__LOGIN_SUCCESS_ONLINE ||
-                        loginResult == CommonMessage.SECOND__LOGIN_SUCCESS_OFFLINE){
-                    //蓝牙第二用户登录成功，停止发卡器的读取
-                    stopCardAccept();
-                    MyApplication.getInstance().getUser().getHelperuser().setType("bluetooth");
-                    //原想法：先发出广播让界面登录，后台慢慢连接蓝牙
-                    //注释原因：会出现多台机子同时扫描到的情况，然后同时登录
-                    //sendBroadcastMsg(loginResult);
-                    //扫描到合法设备了，更改连接状态。可能又会被scan方法改成nomal，需要在那里处理一下。
-                    BluetoothService.this.status = Status.TRY_CONNECTING;
-                    //如果附近没有合法的设备那么这次扫描结果凉凉！
-                    tryConnectMAC(mac,loginResult);
-                }
-                //针对第二用户 本地+远程 不存在该用户或者存在的用户不是教练，则不连接手环，并且设置蓝牙状态为未连接
-                else if (loginResult == CommonMessage.SECOND__LOGIN_FAILE ){
-                    //原想法：先发出广播让界面登录，后台慢慢连接蓝牙
-                    //注释原因：会出现多台机子同时扫描到的情况，然后同时登录
-                    sendBroadcastMsg(loginResult);
-                    LogUtil.d("第二用户登录失败");
-                    //只有正常退出的时候才会设置为null
-                    BluetoothService.this.status = Status.NORMAL;
-                    //根据whoLogout参数置空对应的2号对象，以防万一的
-                    MyApplication.getInstance().getUser().setHelperuser(null);
-                    LogUtil.d("扫描到的第二用户非教练，不允许登陆！");
-                }else{
+                } else {
                     //对上面未考虑到的情况做处理。
                     sendBroadcastMsg(loginResult);
                     LogUtil.d("未考虑到的情况...");
@@ -266,8 +226,8 @@ public class BluetoothService extends Service {
      */
     public void connectMAC(final String mac, final int loginResp){
         if(MyApplication.getInstance().getUser() != null){
-            LogUtil.d("打印当前用户："+MyApplication.getInstance().getUser().getUsername());
-            LogUtil.d("打印用户登陆方式："+MyApplication.getInstance().getUser().getType());
+            LogUtil.d("打印当前用户："+MyApplication.getInstance().getUser().getUserId());
+            //LogUtil.d("打印用户登陆方式："+MyApplication.getInstance().getUser().getType());
         }
 
 
@@ -563,10 +523,12 @@ public class BluetoothService extends Service {
         setNullLoginUser(whoLogout);
 
         //如果是连接失败的那种掉线 TODO 两个掉线的广播不发
-        if(whoLogout == 0) return;
+        if (whoLogout == 0) return;
         //发送指令离线广播
-        int msgType = whoLogout==1? CommonMessage.FIRST__LOGOUT: CommonMessage.SECOND__LOGOUT;
-        sendBroadcastMsg(msgType);
+        if (whoLogout == 1) {
+            int msgType = CommonMessage.LOGOUT;
+            sendBroadcastMsg(msgType);
+        }
     }
 
     /**
@@ -586,10 +548,7 @@ public class BluetoothService extends Service {
     private void setNullLoginUser(int whoLogout) {
         if (whoLogout == 1){
             MyApplication.getInstance().setUser(null);
-        }else if(whoLogout == 2 && MyApplication.getInstance().getUser()!=null
-                && MyApplication.getInstance().getUser().getHelperuser()!=null){
-            MyApplication.getInstance().getUser().setHelperuser(null);
-        }else{
+        } else {
             LogUtil.d("掉线重连或者尝试连接失败了");
         }
     }
@@ -630,10 +589,8 @@ public class BluetoothService extends Service {
 
 
                         //发心率广播，在第一用户是蓝牙手环的情况下
-                        if(MyApplication.getInstance().getUser()!=null &&
-                                MyApplication.getInstance().getUser().getType().equals("bluetooth") ){
-                            LogUtil.d("打印当前用户："+MyApplication.getInstance().getUser().getUsername());
-                            LogUtil.d("打印用户登陆方式："+MyApplication.getInstance().getUser().getType());
+                        if(MyApplication.getInstance().getUser()!=null){
+                            LogUtil.d("打印当前用户："+MyApplication.getInstance().getUser().getUserId());
                             LogUtil.d("打印用户心率："+result);
                             Intent intent = new Intent("com.bdl.bluetoothmessage");
                             CommonMessage message = CommonMessage.heartBeatMsg(result);
