@@ -18,6 +18,7 @@ import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.service.MotorService;
 import com.bdl.airecovery.service.ReSendService;
 import com.bdl.airecovery.service.StaticMotorService;
+import com.bdl.airecovery.service.UsbService;
 import com.bdl.airecovery.util.JsonFileUtil;
 import com.bdl.airecovery.util.WifiUtils;
 import com.clj.fastble.BleManager;
@@ -123,7 +124,8 @@ public class MyApplication extends MultiDexApplication {
         startMotorService();
         //启动静态电机Service
         startStaticMotorService();
-
+        //启动usb的service
+        startUsbService();
         //初始化需要的字体样式
         //typefaceChar = Typeface.createFromAsset(getAssets(),"fonts/NotoSansHans_Light.otf");
         typefaceNum = Typeface.createFromAsset(getAssets(), "fonts/Arvo-Bold.ttf");
@@ -189,6 +191,22 @@ public class MyApplication extends MultiDexApplication {
             Log.e("App.startCRService",e.getMessage());
         }
     }
+
+    /**
+     *  @author zfc
+     *  @time 2019/8/21  15:50
+     *  @describe usb service
+     */
+    private  void startUsbService(){
+        try {
+            Intent intent = new Intent(getApplicationContext(),UsbService.class);
+            startService(intent);
+        }catch (Exception e){
+            Log.e("App.startUsbService",e.getMessage());
+        }
+    }
+
+
 
     /**
      * 电机service,try一下，防止抛异常启动失败，影响程序的启动。
