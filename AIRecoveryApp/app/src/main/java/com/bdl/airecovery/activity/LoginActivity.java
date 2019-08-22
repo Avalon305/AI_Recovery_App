@@ -23,6 +23,7 @@ import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
+import org.xutils.x;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.biz.LoginBiz;
@@ -35,6 +36,10 @@ import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,17 +57,15 @@ public class LoginActivity extends BaseActivity {
     /**
      * 类成员
      */
-    private int clickCount = 0;                         //ID 点击计数器
-    private Thread clearClickCountThread;               //清空点击计数器线程
-    private CommonDialog commonDialog;                  //ShowTips弹模态框
-    //private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
-
-    private eStopBroadcastReceiver eStopReceiver; //急停广播
-
     private NfcReceiver nfcReceiver;//接收NFC标签信息的广播
     private BluetoothReceiver bluetoothReceiver;//蓝牙广播接收器，监听用户的登录广播
     private String nfcMessage;//NFC标签
     private LoginDialog loginDialog;                  //ShowLogin弹模态框
+    private CommonDialog commonDialog;                  //ShowTips弹模态框
+    //第一用户登录指令的变量
+    private volatile int whoLogin = 0;
+    //设置全局当前时间变量
+    private String nowDate;
 
     /**
      * 控件绑定
@@ -80,14 +83,6 @@ public class LoginActivity extends BaseActivity {
     @ViewInject(R.id.btn_quick_login)
     private Button btn_quick_login;
 
-
-    Timer timer = new Timer();
-    TimerTask task = new TimerTask() {
-        @Override
-        public void run() {
-            startBlueAndCardScan();
-        }
-    };
 
 
     //按钮监听事件，快速登录点击跳转训练模块
@@ -144,6 +139,7 @@ public class LoginActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             nfcMessage=intent.getStringExtra("bind_id");
             showLogin();//弹出登录模态框
+            loginExecute(nfcMessage);//请求登录
             startBluetooth();//开启蓝牙扫描
         }
     }
@@ -171,15 +167,15 @@ public class LoginActivity extends BaseActivity {
         loginDialog.setMessage("正在登录");
         loginDialog.setCancelable(false);//设置点击空白处模态框不消失
         loginDialog.show();
-        //当接收到成功广播之后关闭模态框
-        //loginDialog.dismiss();
     }
     /**
      * 接收蓝牙连接成功返回广播
      */
     private class BluetoothReceiver extends BroadcastReceiver{
-        private Gson gson = new Gson();
 
+        private long interval;
+        private long second;
+        private Gson gson = new Gson();
         private CommonMessage transfer(String json){
             return gson.fromJson(json,CommonMessage.class);
         }
@@ -188,233 +184,59 @@ public class LoginActivity extends BaseActivity {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             LogUtil.d("收到广播："+messageJson);
-            switch (commonMessage.getMsgType()) {
-                //第一用户登录成功
-                case CommonMessage.LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.LOGIN_REGISTER_ONLINE:
-                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("loginActivity广播接收器收到："+ commonMessage.toString());
-                    //登录成功时，执行跳转的逻辑
-                    loginSuccessed();
+            //计算蓝牙登录时间差
+            SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
+            myFmt.setTimeZone(timeZoneChina);//设置系统时区
+            try {
+                Date startDate =myFmt.parse(nowDate);
+                Date endDate = myFmt.parse(MyApplication.getInstance().getUser().getClientTime());
+                interval=(endDate.getTime()-startDate.getTime())/1000;//秒
+                second=interval%60;//秒
+                System.out.println(second);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if(commonMessage.getMsgType()==CommonMessage.LOGIN_SUCCESS_ONLINE &&
+                    MyApplication.getInstance().getUser()!=null && second<=6){
+                //关闭模态框
+                loginDialog.dismiss();
+                //登录成功时，执行跳转的逻辑
+                loginSuccess();
+            }
+            if(second>6){
+                //提示登录失败
+                if (commonDialog != null && commonDialog.isShowing()) {
+                    return;
+                }
+                commonDialog = new CommonDialog(LoginActivity.this);
+                commonDialog.setMessage("登录失败");
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() { commonDialog.dismiss();
+                    }
+                },2000); // 延时2秒
+            }else {
+                //此处为离线登录，虽然代码很无聊，但是还是要写的
+                //离线登录时，执行跳转的逻辑
+                loginSuccess();
             }
         }
     }
-
-
     //跳转主页面
     private void loginSuccess(){
         //用户已登录，执行跳转主界面逻辑
-        LogUtil.d("loginactivity广播接收器收到---跳转");
+        LogUtil.d("loginActivity广播接收器收到---跳转");
         Intent skipIntent = new Intent(LoginActivity.this,MainActivity.class); //新建一个跳转到主界面Activity的显式意图
         startActivity(skipIntent); //启动
         LoginActivity.this.finish(); //结束当前Activity
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 接收广播
-     */
-    private class eStopBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String state = intent.getStringExtra("state");
-            if (state != null && state.equals("1")) {
-                startActivity(new Intent(LoginActivity.this, ScramActivity.class));
-                LoginActivity.this.finish();
-
-
-
-            }
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initImmersiveMode(); //隐藏状态栏与导航栏
-        queryDevInfo(); //查询设备信息
-
-
-        //重回页面重新登录
-        //resetBt();
-        //resetCR();
-
-        timer.schedule(task,200,500);
-
-        registerLoginReceiver(); //登录监听广播接收器的注册
-
-        createClearClickCountThread(); //清空计数器线程
-        clearClickCountThread.start();
-
-    }
-
-    /**
-     * 当Activity准备好和用户进行交互时，调用onResume()
-     * 此时Activity处于【运行状态】
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("E-STOP");
-        eStopReceiver = new eStopBroadcastReceiver();
-        registerReceiver(eStopReceiver, filter);
-
-        //执行待机页面的大退逻辑-发卡器大退
-        Intent intent = new Intent(this, CardReaderService.class);
-        intent.putExtra("command", CommonCommand.LOGOUT.value());
-        startService(intent);
-        //执行待机页面的大退逻辑-蓝牙大退
-        Intent intent2 = new Intent(this, BluetoothService.class);
-        intent2.putExtra("command", CommonCommand.LOGOUT.value());
-        startService(intent2);
-        MyApplication.getInstance().setUser(null);
-
-        //启动发卡器扫描
-        Intent intent3 = new Intent(this, CardReaderService.class);
-        intent3.putExtra("command", CommonCommand.LOGIN.value());
-        startService(intent3);
-        LogUtil.d("发出了启动卡扫描的命令");
-    }
-
-    /**
-     * 当Activity已经完全不可见时，调用onStop()
-     * 此时Activity处于【停止状态】
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        task.cancel();
-        //解注册广播
-        if(bluetoothReceiver != null) {
-            try {
-                unregisterReceiver(bluetoothReceiver);
-                Log.e("LoginActivity", "解注册广播");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        unregisterReceiver(eStopReceiver);
-    }
-
-    /**
-     * 重启APP
-     *
-     */
-    private void restartApp() {
-        Intent intent = new Intent(getBaseContext(), SelfUpdatingActivity.class);
-        @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(getBaseContext(), 0, intent, Intent.FLAG_ACTIVITY_NEW_TASK);
-        AlarmManager mgr = (AlarmManager) getBaseContext().getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, restartIntent);
-        android.os.Process.killProcess(android.os.Process.myPid());
-    }
-
-    /**
-     * 中上方body strong ID 点击事件
-     * 一定时间内点击5次，重启程序
-     * 计数器clickCount
-     */
-    @Event(R.id.tv_dev_id)
-    private void tv_dev_id_onClick(View v) {
-        if(clickCount < 5) {
-            ++clickCount;
-        } else {
-            //点击5次，重启程序
-            restartApp();
-        }
-    }
-
-    /**
-     * 清空计数器线程
-     */
-    private void createClearClickCountThread() {
-        clearClickCountThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //如果计数器不为空
-                if(clickCount != 0) {
-                    //3秒后清空计数器
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                    clickCount = 0;
-                }
-            }
-        });
-    }
-
-
-    /**
-     * 启动蓝牙与发卡器扫描
-     */
-    private void startBlueAndCardScan() {
-
-//        //如果登录成功了，则不会继续发消息了，这里必须被注释掉，否则等不到发广播就直接跳转了
-//        if (MyApplication.getInstance().getUser()!=null) {
-//
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            loginSuccessed();
-//            return;
-//        }
-
-
-        //启动蓝牙扫描
-        Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("command", CommonCommand.LOGIN.value());
-        startService(intent);
-        LogUtil.d("发出了启动蓝牙扫描的命令");
-
-    }
-
-    /**
-     * 登录监听广播接收器的注册
-     */
-    private void registerLoginReceiver() {
-        //注册登录广播监听器
-        bluetoothReceiver = new BluetoothReceiver();
-        IntentFilter intentFilter = new IntentFilter("com.bdl.bluetoothmessage");
-        registerReceiver(bluetoothReceiver,intentFilter);
     }
 
     /**
      * 查询设备信息，包括设备ID与设备名称，传给前端
      */
     private void queryDevInfo() {
-        if(MyApplication.getCurrentTime() == null) {
-            return;
-        }
         //判断是否获取到设备信息
         if(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID() != null && !MyApplication.getInstance().getCurrentDevice().getDeviceInnerID().equals("")) {
             int deviceId = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID());
@@ -442,127 +264,50 @@ public class LoginActivity extends BaseActivity {
             iv_muscle_image.setImageResource(getResources().getIdentifier(MyApplication.getInstance().getCurrentDevice().getMuscleImg(),"drawable",getPackageName()));
         }
     }
-
     /**
-     * 用于界面提示，主要是连接不上教练机与查询不到登录用户的信息
-     * @param value
+     * 登录请求
+     * @param name
      */
-    private void showTips(String value) {
-        //弹出对话框之前，先检查当前界面是否存在对话框，如果存在，先关闭，在执行下方的逻辑
-        if (commonDialog != null && commonDialog.isShowing()) {
-            return;
-        }
-        commonDialog = new CommonDialog(LoginActivity.this);
-        commonDialog.setTitle("温馨提示");
-        commonDialog.setMessage(value);
-        commonDialog.setPositiveBtnText("我知道了");
-        commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                commonDialog.dismiss();
-            }
-        });
-        //模态框隐藏导航栏
-        commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        commonDialog.show();
+    private void loginExecute(final  String name){
+                //获取当前时间
+                SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
+                myFmt.setTimeZone(timeZoneChina);//设置系统时区
+                nowDate=myFmt.format(new Date());
+                //执行业务
+                LogUtil.d("蓝牙执行LoginBiz！！！！！！！！");
+                int loginResult = LoginBiz.getInstance().loginBiz(name,LoginActivity.this.whoLogin,nowDate);
+                LogUtil.d("登陆方法回调的结果：" + loginResult);
     }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        queryDevInfo(); //查询设备信息
+        registerBluetoothReceiver();//蓝牙监听广播接收器的注册
+        registerNfcReceiver();//nfc标签广播接收器的注册
 
-    private void loginSuccessed() {
-        //用户已登录，执行跳转主界面逻辑
-        LogUtil.d("loginactivity广播接收器收到---跳转");
-        Intent skipIntent = new Intent(LoginActivity.this,MainActivity.class); //新建一个跳转到主界面Activity的显式意图
-        startActivity(skipIntent); //启动
-        LoginActivity.this.finish(); //结束当前Activity
     }
 
     /**
-     * 隐藏状态栏，导航栏
+     * 当Activity准备好和用户进行交互时，调用onResume()
+     * 此时Activity处于【运行状态】
      */
-    @SuppressLint("NewApi")
-    private void initImmersiveMode() {
-        if (Build.VERSION.SDK_INT >= 19) {
-            View.OnSystemUiVisibilityChangeListener listener = new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                        enterImmersiveMode();
-                    }
-                }
-            };
-            getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(listener);
-            enterImmersiveMode();
-        }
-    }
-    @SuppressLint("NewApi")
-    private void enterImmersiveMode() {
-        if (Build.VERSION.SDK_INT >= 19) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            );
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
     /**
-     * 广播接收器
+     * 当Activity已经完全不可见时，调用onStop()
+     * 此时Activity处于【停止状态】
      */
-//    private class BluetoothReceiver extends BroadcastReceiver {
-//
-//        private Gson gson = new Gson();
-//
-//        private CommonMessage transfer(String json){
-//            return gson.fromJson(json,CommonMessage.class);
-//        }
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String messageJson = intent.getStringExtra("message");
-//            CommonMessage commonMessage = transfer(messageJson);
-//            LogUtil.d("收到广播："+messageJson);
-//            switch (commonMessage.getMsgType()){
-//                //第一用户登录成功
-//                case CommonMessage.LOGIN_REGISTER_OFFLINE:
-//                case CommonMessage.LOGIN_REGISTER_ONLINE:
-//                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
-//                case CommonMessage.LOGIN_SUCCESS_ONLINE:
-//                    LogUtil.d("loginactivity广播接收器收到："+ commonMessage.toString());
-//                    //登录成功时，执行跳转的逻辑
-//                    loginSuccessed();
-//                    break;
-//                //第一用户下线成功
-//                case CommonMessage.LOGOUT:
-//                case CommonMessage.DISCONNECTED:
-//                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-//                    break;
-//                //获得心率
-//                case CommonMessage.HEART_BEAT:
-//                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-//                    break;
-//                default:
-//                    LogUtil.e("未知广播，收到message：" + commonMessage.getMsgType());
-//            }
-//        }
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(nfcReceiver);
+    }
 }

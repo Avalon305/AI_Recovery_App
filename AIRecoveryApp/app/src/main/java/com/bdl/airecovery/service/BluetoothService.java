@@ -178,7 +178,7 @@ public class BluetoothService extends Service {
             public void run() {
                 //执行业务
                 LogUtil.d("蓝牙执行LoginBiz！！！！！！！！");
-                int loginResult = LoginBiz.getInstance().loginBiz(name,BluetoothService.this.whoLogin);
+                int loginResult = LoginBiz.getInstance().loginBiz(name,BluetoothService.this.whoLogin,null);
                 LogUtil.d("登陆方法回调的结果：" + loginResult);
                 if (loginResult == 0){
                     //登录被打回，蓝牙模块应该重新属于可扫描的状态。
