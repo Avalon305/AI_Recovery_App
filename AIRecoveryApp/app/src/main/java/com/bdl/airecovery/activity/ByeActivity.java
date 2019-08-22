@@ -60,9 +60,8 @@ public class ByeActivity extends BaseActivity{
     //ListView
     @ViewInject(R.id.lv_bye_not)       //未完成的设备列表
     private ListView listView;
-    //TextView
-    @ViewInject(R.id.pie_chart)        //训练结果
-    private PieChartView pieChartView;
+    @ViewInject(R.id.lv_analysis)       //训练结果分析
+    private ListView listAnalysis;
     List<TestItem> testItemList;       //连测参数列表
     private Thread locateThread;       //电机连测线程
 
@@ -185,7 +184,7 @@ public class ByeActivity extends BaseActivity{
         Upload upload = MyApplication.getUpload();
         MyApplication.setUpload(null);
         //获取训练结果，显示在页面
-        List<PieChartView.PieceDataHolder> pieceDataHolders = new ArrayList<>();
+        //List<PieChartView.PieceDataHolder> pieceDataHolders = new ArrayList<>();
         //在页面显示训练结果
         //测试用可注掉
         //
@@ -200,7 +199,7 @@ public class ByeActivity extends BaseActivity{
 //        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFFF4040, "最小心率" + upload.getHeartRateMin_()));
 //        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFFF3030, "平均心率:" + upload.getHeartRateAvg_()));
         //实际用下方的
-        if (upload.getFinishNum()!= 0){
+        /*if (upload.getFinishNum()!= 0){
             pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00FF00, "训练个数:" + upload.getFinishNum()));
         }
         if (upload.getEnergy() != 0D){
@@ -217,8 +216,28 @@ public class ByeActivity extends BaseActivity{
         }
         if (upload.getSpeedRank() != 0){
             pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00688B, "运动速度:" + (int)upload.getSpeedRank()));
+        }*/
+        //pieChartView.setData(pieceDataHolders);
+
+        //训练结果分析
+        //将字符串转为集合
+        List<String> result = new ArrayList<>();
+        if (MyApplication.getInstance().getUser() != null) {
+            if (MyApplication.getInstance().getUser().getTrainMode().equals("康复模式")) {
+                result.add("最终顺向力：" + upload.getConsequentForce());
+                result.add("最终反向力：" + upload.getReverseForce());
+            } else {
+                result.add("运动速度：" + upload.getSpeedRank());
+            }
         }
-        pieChartView.setData(pieceDataHolders);
+        result.add("训练个数：" + upload.getFinishNum());
+        result.add("训练时长：" + upload.getFinishTime());
+        result.add("训练耗能：" + upload.getEnergy());
+
+        //将待训练设备信息设置在页面上
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
+        listAnalysis.setAdapter(adapter);
+
         //从user获取上传的信息
         if (MyApplication.getInstance().getUser() != null){
             upload.setUid(MyApplication.getInstance().getUser().getUserId());;
@@ -387,7 +406,7 @@ public class ByeActivity extends BaseActivity{
         //TODO：给电机发送复位指令
         init();
         //十五秒之后跳转到待机页面
-        final Timer t = new Timer();
+        /*final Timer t = new Timer();
         t.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -404,7 +423,7 @@ public class ByeActivity extends BaseActivity{
                 t.cancel();
                 finish(); //关闭本activity
             }
-        } , 15000);
+        } , 15000);*/
     }
 
     //按钮监听事件，返回待机页面
