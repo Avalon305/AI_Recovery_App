@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -920,49 +921,49 @@ public class PassiveModeActivity extends BaseActivity {
         ratingDialog = new RatingDialog(PassiveModeActivity.this);
         ratingDialog.setTitle("完成训练");
         ratingDialog.setMessage("本次训练感受？");
+        ratingDialog.setMessage2(" ");
         ratingDialog.setPositiveBtnText("确定");
-        ratingDialog.setCanceledOnTouchOutside(true);
-
+        ratingDialog.setCanceledOnTouchOutside(false);
         //评级 监听
         ratingDialog.setRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                upload.setUserThoughts(String.valueOf((int) rating));
-            }
-        });
-        //“确定”按钮 监听
-        ratingDialog.setOnPositiveClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                //设置Upload类
-                int currGroup = Integer.parseInt(tv_curr_groupcount.getText().toString());
-                int currGroupNum = Integer.parseInt(tv_curr_groupnum.getText().toString());
-                int targetGroupNum = MyApplication.getInstance().getUser().getGroupNum();
-                int sumNum = (currGroup-1) * targetGroupNum + currGroupNum;
-                upload.setFinishNum(sumNum); //计算训练个数
-                long trainTime = (System.currentTimeMillis() - startTime) / 1000;
-                //TODO 上传统计训练时间 trainTime
-                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
-                upload.setHeartRateList(heartRateList);
-                upload.setSpeedRank(Integer.parseInt(getSpeed.getText().toString()));
-                MyApplication.getInstance().setUpload(upload);
-
-                //关闭可能存在的模态框
-                if (commonDialog != null && commonDialog.isShowing()) {
-                    commonDialog.dismiss();
+                int ratingInt = (int)rating;
+                TextView ratingNote = ratingDialog.getTextMsg2();
+                switch (ratingInt) {
+                    case 1:
+                    case 2:
+                        ratingNote.setText("非常轻松");
+                        ratingNote.setTextColor(Color.parseColor("#424088"));
+                        upload.setUserThoughts("非常轻松");
+                        break;
+                    case 3:
+                    case 4:
+                        ratingNote.setText("很轻松");
+                        ratingNote.setTextColor(Color.parseColor("#007cb9"));
+                        upload.setUserThoughts("很轻松");
+                        break;
+                    case 5:
+                    case 6:
+                        ratingNote.setText("轻松");
+                        ratingNote.setTextColor(Color.parseColor("#00a03e"));
+                        upload.setUserThoughts("轻松");
+                        break;
+                    case 7:
+                    case 8:
+                        ratingNote.setText("有点儿困难");
+                        ratingNote.setTextColor(Color.parseColor("#ff6c01"));
+                        upload.setUserThoughts("有点儿困难");
+                        break;
+                    case 9:
+                    case 10:
+                        ratingNote.setText("困难");
+                        ratingNote.setTextColor(Color.parseColor("#fa1f55"));
+                        upload.setUserThoughts("困难");
+                        break;
+                    default:
+                        break;
                 }
-                if (helpDialog != null && helpDialog.isShowing()) {
-                    helpDialog.dismiss();
-                }
-
-                ratingDialog.dismiss();
-
-                //跳转再见页面
-                Intent intent = new Intent(PassiveModeActivity.this, ByeActivity.class);
-                //启动
-                startActivity(intent);
-                //结束当前Activity
-                PassiveModeActivity.this.finish();
             }
         });
         //模态框隐藏导航栏

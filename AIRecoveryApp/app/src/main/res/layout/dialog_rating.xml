@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="500dp"
+    android:layout_width="600dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/dialog_shape">
@@ -28,12 +28,24 @@
         android:textSize="25sp"
         android:textColor="#2F2F2F"/>
 
+    <TextView
+        android:id="@+id/common_dialog_msg2"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginRight="55dp"
+        android:textSize="25sp"
+        android:textColor="#2F2F2F"/>
+
     <RatingBar
         android:id="@+id/rb_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:numStars="5"
+        android:numStars="10"
         android:rating="0.0"
         android:stepSize="1.0"/>
 
