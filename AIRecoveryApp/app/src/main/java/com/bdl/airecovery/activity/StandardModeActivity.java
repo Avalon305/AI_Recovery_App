@@ -93,7 +93,37 @@ public class StandardModeActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            //TODO
+            if (msg.arg1 == 0) {
+                return;
+            }
+            if (msg.arg1 % MyApplication.getInstance().getUser().getGroupNum() == 0) {
+                currGroupNum = MyApplication.getInstance().getUser().getGroupNum();
+                currGroup = msg.arg1 / MyApplication.getInstance().getUser().getGroupNum();
+            } else {
+                currGroupNum = msg.arg1 % MyApplication.getInstance().getUser().getGroupNum();
+                currGroup = 1 + msg.arg1 / MyApplication.getInstance().getUser().getGroupNum();
+            }
+
+            if (currGroup == MyApplication.getInstance().getUser().getGroupCount() &&
+                    currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
+                tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
+                allowRecordNum = false;
+                //btn_ms_pause.setText("结束"); //暂停按钮修改为结束按钮
+                //弹出评级模态框
+                openRatingDialog();
+                return ;
+            }
+
+            tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
+            tv_curr_groupcount.setText(String.valueOf(currGroup)); //当前组
+
+            //如果当前组做完，进入组间休息
+            if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
+                canOpenRestDialog = true;
+                allowRecordNum = false; //期间不允许计数
+                currGroupNum = 0;
+                currGroup++;
+            }
         }
     };
     private boolean needAfterMotion = true;
@@ -115,6 +145,7 @@ public class StandardModeActivity extends BaseActivity {
     private Upload upload = new Upload();
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
     private double weight;
+    private long startTime; //开始时间
 
     /**
      * 获取控件
@@ -182,6 +213,8 @@ public class StandardModeActivity extends BaseActivity {
         bluetoothReceiver = new BluetoothReceiver();
         IntentFilter intentFilter = new IntentFilter("com.bdl.bluetoothmessage");
         registerReceiver(bluetoothReceiver, intentFilter);
+
+        startTime = System.currentTimeMillis(); //开始时间
     }
 
     int currGroup;
@@ -873,72 +906,66 @@ public class StandardModeActivity extends BaseActivity {
     CommonDialog commonDialog;
 
     /**
-     * 暂停按钮    暂停后不计个数 TODO：发送训练结果（要发送的内容）
+     * 暂停按钮 暂停后不计个数
      */
     @Event(R.id.btn_ms_pause)
     private void pauseClick(View v) {
         allowRecordNum = false;
-        if (btn_ms_pause.getText().equals("暂停")) {
-            commonDialog = new CommonDialog(StandardModeActivity.this);
-            commonDialog.setTitle("温馨提示");
-            commonDialog.setMessage("您确定要放弃本次训练吗？");
-            commonDialog.setNegativeBtnText("结束");
-            commonDialog.setPositiveBtnText("继续");
-            //“结束”按钮 监听，点击跳转到待机界面
-            commonDialog.setOnNegativeClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    //请求退出登录
-                    Intent intentLog2 = new Intent(StandardModeActivity.this, CardReaderService.class);
-                    intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
-                    startService(intentLog2);
-                    Intent intentLog = new Intent(StandardModeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
-                    startService(intentLog);
-                    Log.d("StandardModeActivity", "request to logout");
+        commonDialog = new CommonDialog(StandardModeActivity.this);
+        commonDialog.setTitle("温馨提示");
+        commonDialog.setMessage("您确定要放弃本次训练吗？");
+        commonDialog.setNegativeBtnText("结束");
+        commonDialog.setPositiveBtnText("继续");
+        //“结束”按钮 监听，点击跳转到待机界面
+        commonDialog.setOnNegativeClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //请求退出登录
+                Intent intentLog2 = new Intent(StandardModeActivity.this, CardReaderService.class);
+                intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
+                startService(intentLog2);
+                Intent intentLog = new Intent(StandardModeActivity.this, BluetoothService.class);
+                intentLog.putExtra("command", CommonCommand.LOGOUT.value());
+                startService(intentLog);
+                Log.d("StandardModeActivity", "request to logout");
 
-                    commonDialog.dismiss();
-                    //新建一个跳转到待机界面Activity的显式意图
-                    Intent intent = new Intent(StandardModeActivity.this, LoginActivity.class);
-                    //启动
-                    startActivity(intent);
-                    //结束当前Activity
-                    StandardModeActivity.this.finish();
+                commonDialog.dismiss();
+                //新建一个跳转到待机界面Activity的显式意图
+                Intent intent = new Intent(StandardModeActivity.this, LoginActivity.class);
+                //启动
+                startActivity(intent);
+                //结束当前Activity
+                StandardModeActivity.this.finish();
+            }
+        });
+        //“继续”按钮 监听
+        commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog.dismiss();
+                allowRecordNum = true;
+            }
+        });
+        //模态框隐藏导航栏
+        commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+                        //                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
                 }
-            });
-            //“继续”按钮 监听
-            commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    commonDialog.dismiss();
-                    allowRecordNum = true;
-                }
-            });
-            //模态框隐藏导航栏
-            commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-            commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                            //布局位于状态栏下方
-                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                            //全屏
-                            //                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                            //隐藏导航栏
-                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        uiOptions |= 0x00001000;
-                    } else {
-                        uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                    }
-                    commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-                }
-            });
-            commonDialog.show();
-        } else if (btn_ms_pause.getText().equals("结束")) {
-            //评级，病人感想
-            openRatingDialog(); //打开评级模态框
-        }
-
+                commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        commonDialog.show();
     }
 
     RatingDialog ratingDialog;
@@ -948,7 +975,7 @@ public class StandardModeActivity extends BaseActivity {
         ratingDialog.setTitle("完成训练");
         ratingDialog.setMessage("本次训练感受？");
         ratingDialog.setPositiveBtnText("确定");
-
+        ratingDialog.setCanceledOnTouchOutside(true);
         //评级 监听
         ratingDialog.setRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -966,6 +993,8 @@ public class StandardModeActivity extends BaseActivity {
                 int targetGroupNum = MyApplication.getInstance().getUser().getGroupNum();
                 int sumNum = (currGroup-1) * targetGroupNum + currGroupNum;
                 upload.setFinishNum(sumNum); //计算训练个数
+                long trainTime = (System.currentTimeMillis() - startTime) / 1000;
+                //TODO 上传统计训练时间 trainTime
                 upload.setConsequentForce(Integer.parseInt(positivenumber.getText().toString())); //最终顺向力
                 upload.setReverseForce(Integer.parseInt(inversusnumber.getText().toString())); //最终反向力
                 upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
