@@ -7,9 +7,14 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,6 +33,7 @@ import com.bdl.airecovery.widget.PieChartView;
 import com.google.gson.Gson;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.DensityUtil;
 import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
@@ -58,8 +64,8 @@ public class ByeActivity extends BaseActivity{
      * 获取控件
      */
     //ListView
-    @ViewInject(R.id.lv_bye_not)       //未完成的设备列表
-    private ListView listView;
+    /*@ViewInject(R.id.lv_bye_not)       //未完成的设备列表
+    private ListView listView;*/
     @ViewInject(R.id.lv_analysis)       //训练结果分析
     private ListView listAnalysis;
     List<TestItem> testItemList;       //连测参数列表
@@ -72,6 +78,11 @@ public class ByeActivity extends BaseActivity{
     //Button
     @ViewInject(R.id.btn_return)
     private Button btn_return;
+
+    @ViewInject(R.id.horizontalScrollView)
+    private HorizontalScrollView horizontalScrollView;
+    @ViewInject(R.id.horizontalScrollViewItemContainer)
+    private LinearLayout container;
 
     /*折线图相关变量*/
     List<PointValue> mPointValues = new ArrayList<PointValue>();
@@ -184,42 +195,8 @@ public class ByeActivity extends BaseActivity{
         Upload upload = MyApplication.getUpload();
         MyApplication.setUpload(null);
         //获取训练结果，显示在页面
-        //List<PieChartView.PieceDataHolder> pieceDataHolders = new ArrayList<>();
-        //在页面显示训练结果
-        //测试用可注掉
-        //
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200,0xFF00CD00, "训练时间:" + upload.getTrainTime_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00FF00, "训练个数:" + upload.getFinishCount_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFFF901E, "耗能:" + upload.getCalorie_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00BFFF, "最终顺向力:" + (int)upload.getForwardForce_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00B2EE, "运动距离:" + upload.getFinalDistance_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF009ACD, "最终反向力:" + (int)upload.getReverseForce_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00688B, "最终功率:" + upload.getPower_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFCD2626, "最大心率:" + upload.getHeartRateMax_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFFF4040, "最小心率" + upload.getHeartRateMin_()));
-//        pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFFF3030, "平均心率:" + upload.getHeartRateAvg_()));
-        //实际用下方的
-        /*if (upload.getFinishNum()!= 0){
-            pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00FF00, "训练个数:" + upload.getFinishNum()));
-        }
-        if (upload.getEnergy() != 0D){
-            pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFFFF901E, "总耗能:" + (int)upload.getEnergy()));
-        }
-        if (upload.getConsequentForce() != 0D){
-            pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00BFFF, "最终顺向力:" + (int)upload.getConsequentForce()));
-        }
-        if (upload.getReverseForce() != 0D){
-            pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF009ACD, "最终反向力:" + (int)upload.getReverseForce()));
-        }
-        if (upload.getPower() != 0D){
-            pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00688B, "最终功率:" + (int)upload.getPower()));
-        }
-        if (upload.getSpeedRank() != 0){
-            pieceDataHolders.add(new PieChartView.PieceDataHolder(1200, 0xFF00688B, "运动速度:" + (int)upload.getSpeedRank()));
-        }*/
-        //pieChartView.setData(pieceDataHolders);
 
-        //训练结果分析
+        //训练结果展示
         //将字符串转为集合
         List<String> result = new ArrayList<>();
         if (MyApplication.getInstance().getUser() != null) {
@@ -227,12 +204,30 @@ public class ByeActivity extends BaseActivity{
                 result.add("最终顺向力：" + upload.getConsequentForce());
                 result.add("最终反向力：" + upload.getReverseForce());
             } else {
-                result.add("运动速度：" + upload.getSpeedRank());
+                result.add("运动速度等级：" + upload.getSpeedRank() + "级");
             }
         }
-        result.add("训练个数：" + upload.getFinishNum());
-        result.add("训练时长：" + upload.getFinishTime());
-        result.add("训练耗能：" + upload.getEnergy());
+        result.add("训练个数：" + upload.getFinishNum() + "个");
+        result.add("训练时长：" + upload.getFinishTime() + "秒");
+        result.add("训练耗能：" + upload.getEnergy() + "卡路里");
+        int minHeartRate = Integer.MAX_VALUE;
+        int maxHeartRate = Integer.MIN_VALUE;
+        int sumHeartRate = 0;
+        double avgHeartRate;
+        List<Integer> heartRateList = upload.getHeartRateList();
+        for (int i = 0; i < heartRateList.size(); i++) {
+            sumHeartRate += heartRateList.get(i);
+            if (minHeartRate > heartRateList.get(i)) {
+                minHeartRate = heartRateList.get(i);
+            }
+            if (maxHeartRate < heartRateList.get(i)) {
+                maxHeartRate = heartRateList.get(i);
+            }
+        }
+        avgHeartRate = sumHeartRate / heartRateList.size();
+        result.add("最小心率：" + minHeartRate + "BPM");
+        result.add("最大心率：" + maxHeartRate + "BPM");
+        result.add("平均心率：" + avgHeartRate + "BPM");
 
         //将待训练设备信息设置在页面上
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
@@ -371,7 +366,7 @@ public class ByeActivity extends BaseActivity{
     /**
      * 获取设备名称、操作电机复位、页面跳转、待训练设备
      */
-    private void  mainEvent(){
+    private void mainEvent(){
 
         //待训练设备列表
         //取得用户对象
@@ -397,41 +392,34 @@ public class ByeActivity extends BaseActivity{
             String str12 = str11.replace("P08", "反向蝴蝶机");
             String str13 = str12.replace("P09", "坐式背部伸展机");
             //将字符串转为集合
-            List<String> result = Arrays.asList(str11.split(","));
+            List<String> allDevice = Arrays.asList(str13.split(","));
+
+
             //将待训练设备信息设置在页面上
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
-            listView.setAdapter(adapter);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.gravity = Gravity.CENTER;
+            layoutParams.setMargins(20, 10, 20, 10);
+
+            for (int i = 0; i < allDevice.size(); i++) {
+                TextView textView = new TextView(this);
+                textView.setText(allDevice.get(i));
+                textView.setTextColor(Color.parseColor("#2c2c2c"));
+                textView.setTextSize(40);
+                textView.setLayoutParams(layoutParams);
+                container.addView(textView);
+                container.invalidate();
+            }
+
+
+            //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
+            //listView.setAdapter(adapter);
         }
 
         //TODO：给电机发送复位指令
         init();
-        //十五秒之后跳转到待机页面
-        /*final Timer t = new Timer();
-        t.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                //断开蓝牙连接
-                if (MyApplication.getInstance().getUser() != null){
-                    Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
-                    startService(intentLog);
-                    LogUtil.e("再见页面结束时，蓝牙第一用户退出");
-                }
-                //置空用户
-                MyApplication.getInstance().setUser(null);
-                startActivity(new Intent(ByeActivity.this,LoginActivity.class));
-                t.cancel();
-                finish(); //关闭本activity
-            }
-        } , 15000);*/
-    }
-
-    //按钮监听事件，返回待机页面
-    @Event(R.id.btn_return)
-    private void setBtn_return(View v) {
-        //TODO：给电机发送复位指令
-        init();
-        //十五秒之后跳转到待机页面
+        //3分钟之后若没有点击返回，自动跳转到待机页面
         final Timer t = new Timer();
         t.schedule(new TimerTask() {
             @Override
@@ -449,7 +437,23 @@ public class ByeActivity extends BaseActivity{
                 t.cancel();
                 finish(); //关闭本activity
             }
-        } , 10);
+        } , 3*60*1000);
+    }
+
+    //按钮监听事件，返回待机页面
+    @Event(R.id.btn_return)
+    private void setBtn_return(View v) {
+        //断开蓝牙连接
+        if (MyApplication.getInstance().getUser() != null){
+            Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
+            intentLog.putExtra("command", CommonCommand.LOGOUT.value());
+            startService(intentLog);
+            LogUtil.e("再见页面结束时，蓝牙用户退出");
+        }
+        //置空用户
+        MyApplication.getInstance().setUser(null);
+        startActivity(new Intent(ByeActivity.this,LoginActivity.class));
+        finish(); //关闭本activity
     }
     /**
      * 隐藏状态栏，导航栏
