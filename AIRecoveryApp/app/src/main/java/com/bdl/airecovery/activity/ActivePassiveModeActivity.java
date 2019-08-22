@@ -976,6 +976,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private void openRestDialog() {
         restDialog = new MediumDialog(ActivePassiveModeActivity.this);
         restDialog.setTime(String.valueOf(MyApplication.getInstance().getUser().getRelaxTime()) + "秒");
+        restDialog.setCanceledOnTouchOutside(false);
         //模态框隐藏导航栏
         restDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         restDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {

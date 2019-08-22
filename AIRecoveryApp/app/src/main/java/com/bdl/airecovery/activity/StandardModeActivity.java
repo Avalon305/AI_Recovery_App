@@ -198,7 +198,7 @@ public class StandardModeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //test(); //测试训练场景
+        test(); //测试训练场景
         needAfterMotion = true;
         initImmersiveMode(); //隐藏状态栏，导航栏
         initCalibrationParam();
@@ -221,7 +221,7 @@ public class StandardModeActivity extends BaseActivity {
     int currGroupNum;
     boolean canOpenRestDialog = false;
 
-    /*private Handler testHandler = new Handler() {
+    private Handler testHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -240,7 +240,8 @@ public class StandardModeActivity extends BaseActivity {
                     currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
                 tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
                 allowRecordNum = false;
-                btn_ms_pause.setText("结束"); //暂停按钮修改为结束按钮
+                //btn_ms_pause.setText("结束"); //暂停按钮修改为结束按钮
+                openRatingDialog();
                 return ;
             }
 
@@ -255,18 +256,19 @@ public class StandardModeActivity extends BaseActivity {
                 currGroup++;
             }
         }
-    };*/
+    };
 
     /**
      * 测试训练场景
      */
-    /*private void test() {
+    private void test() {
         User newUser = new User();
         newUser.setUserId("离线用户");
         newUser.setExisitSetting(false);
+        newUser.setDeviceTypearrList("[P00,P01,P02,P03,P04,P05,P06,P07]");
         newUser.setMoveWay(0);
-        newUser.setGroupCount(3);
-        newUser.setGroupNum(5);
+        newUser.setGroupCount(2);
+        newUser.setGroupNum(3);
         newUser.setRelaxTime(10);
         newUser.setSpeedRank(1);
         newUser.setAge(30);
@@ -287,8 +289,8 @@ public class StandardModeActivity extends BaseActivity {
                 }
             }
         };
-        testTimer.schedule(testTask, 5*1000, 2*1000);
-    }*/
+        testTimer.schedule(testTask, 2*1000, 1*1000);
+    }
 
     /**
      * 心率分析
@@ -974,13 +976,49 @@ public class StandardModeActivity extends BaseActivity {
         ratingDialog = new RatingDialog(StandardModeActivity.this);
         ratingDialog.setTitle("完成训练");
         ratingDialog.setMessage("本次训练感受？");
+        ratingDialog.setMessage2(" ");
         ratingDialog.setPositiveBtnText("确定");
-        ratingDialog.setCanceledOnTouchOutside(true);
+        ratingDialog.setCanceledOnTouchOutside(false);
         //评级 监听
         ratingDialog.setRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                upload.setUserThoughts(String.valueOf((int) rating));
+                int ratingInt = (int)rating;
+                TextView ratingNote = ratingDialog.getTextMsg2();
+                switch (ratingInt) {
+                    case 1:
+                    case 2:
+                        ratingNote.setText("非常轻松");
+                        ratingNote.setTextColor(Color.parseColor("#424088"));
+                        upload.setUserThoughts("非常轻松");
+                        break;
+                    case 3:
+                    case 4:
+                        ratingNote.setText("很轻松");
+                        ratingNote.setTextColor(Color.parseColor("#007cb9"));
+                        upload.setUserThoughts("很轻松");
+                        break;
+                    case 5:
+                    case 6:
+                        ratingNote.setText("轻松");
+                        ratingNote.setTextColor(Color.parseColor("#00a03e"));
+                        upload.setUserThoughts("轻松");
+                        break;
+                    case 7:
+                    case 8:
+                        ratingNote.setText("有点儿困难");
+                        ratingNote.setTextColor(Color.parseColor("#ff6c01"));
+                        upload.setUserThoughts("有点儿困难");
+                        break;
+                    case 9:
+                    case 10:
+                        ratingNote.setText("困难");
+                        ratingNote.setTextColor(Color.parseColor("#fa1f55"));
+                        upload.setUserThoughts("困难");
+                        break;
+                    default:
+                        break;
+                }
             }
         });
         //“确定”按钮 监听
@@ -994,7 +1032,7 @@ public class StandardModeActivity extends BaseActivity {
                 int sumNum = (currGroup-1) * targetGroupNum + currGroupNum;
                 upload.setFinishNum(sumNum); //计算训练个数
                 long trainTime = (System.currentTimeMillis() - startTime) / 1000;
-                //TODO 上传统计训练时间 trainTime
+                upload.setFinishTime((int)trainTime);
                 upload.setConsequentForce(Integer.parseInt(positivenumber.getText().toString())); //最终顺向力
                 upload.setReverseForce(Integer.parseInt(inversusnumber.getText().toString())); //最终反向力
                 upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
@@ -1356,6 +1394,7 @@ public class StandardModeActivity extends BaseActivity {
     private void openRestDialog() {
         restDialog = new MediumDialog(StandardModeActivity.this);
         restDialog.setTime(String.valueOf(MyApplication.getInstance().getUser().getRelaxTime()) + "秒");
+        restDialog.setCanceledOnTouchOutside(false);
         //模态框隐藏导航栏
         restDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         restDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
