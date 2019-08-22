@@ -64,6 +64,7 @@ import org.xutils.view.annotation.ViewInject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,6 +73,7 @@ import static com.bdl.airecovery.contoller.Writer.setInitialBounce;
 import static com.bdl.airecovery.contoller.Writer.setKeepArmTorque;
 import static com.bdl.airecovery.contoller.Writer.setParameter;
 import static java.lang.Math.abs;
+import static java.lang.Math.random;
 
 @ContentView(R.layout.activity_mode_standard)
 public class StandardModeActivity extends BaseActivity {
@@ -198,7 +200,7 @@ public class StandardModeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        test(); //测试训练场景
+        //test(); //测试训练场景
         needAfterMotion = true;
         initImmersiveMode(); //隐藏状态栏，导航栏
         initCalibrationParam();
@@ -221,7 +223,7 @@ public class StandardModeActivity extends BaseActivity {
     int currGroupNum;
     boolean canOpenRestDialog = false;
 
-    private Handler testHandler = new Handler() {
+    /*private Handler testHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -256,12 +258,12 @@ public class StandardModeActivity extends BaseActivity {
                 currGroup++;
             }
         }
-    };
+    };*/
 
     /**
      * 测试训练场景
      */
-    private void test() {
+    /*private void test() {
         User newUser = new User();
         newUser.setUserId("离线用户");
         newUser.setExisitSetting(false);
@@ -277,6 +279,11 @@ public class StandardModeActivity extends BaseActivity {
         newUser.setTrainMode("康复模式");
         MyApplication.getInstance().setUser(newUser);
 
+        Random ran = new Random();
+        for (int i = 0; i < 50; i++) {
+            heartRateList.add(ran.nextInt(200-30+1)+30);
+        }
+
         Timer testTimer = new Timer();
         TimerTask testTask = new TimerTask() {
             @Override
@@ -290,7 +297,7 @@ public class StandardModeActivity extends BaseActivity {
             }
         };
         testTimer.schedule(testTask, 2*1000, 1*1000);
-    }
+    }*/
 
     /**
      * 心率分析
