@@ -9,6 +9,7 @@ public class TrainResultDTO {
     double  power_ = 0D;              //最终功率
     int speedRank=0;                   //运动速度
     int finishNum_ = 0;             //训练个数
+    int finishTime_=0;              //完成训练时间
     double finalDistance_ = 0D;       //运动距离
     double energy_ = 0D;             //耗能（卡路里）
     String heart_rate_list ="";      ////心率集合：运动过程实时心率集合，数据之间*分割'
@@ -140,4 +141,11 @@ public class TrainResultDTO {
         this.dpId_ = dpId_;
     }
 
+    public int getFinishTime_() {
+        return finishTime_;
+    }
+
+    public void setFinishTime_(int finishTime_) {
+        this.finishTime_ = finishTime_;
+    }
 }

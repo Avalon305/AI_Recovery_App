@@ -109,6 +109,7 @@ message UploadRequest{
     double power = 7; //功率
 	int32 speedRank = 8;//运动速度
 	int32 finishNum = 9;//完成运动个数：
+	int32 finishTime = 10; //运动完成所用时间
 	double distance = 11; //距离 千米，两位小数
 	double energy = 12;//训练总耗能 单位卡路里
 	string heart_rate_list = 13;//心率集合：运动过程实时心率集合，数据之间*分割'
