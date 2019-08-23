@@ -5,6 +5,7 @@ import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.biz.LoginBiz;
 import com.bdl.airecovery.biz.LoginUtils;
 import com.bdl.airecovery.entity.TempStorage;
+import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.proto.BdlProto;
 import com.google.gson.Gson;
 
@@ -32,24 +33,12 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 		//Log.e("BtService","channelRead");
 		if (message.hasLoginResponse()) {
 
-			logger.info("DataSocket客户端收到登陆结果响应:"+message.toString());
-//			if (message.getLoginResponse().getExisitSetting()==false) {
-//				if (CardReaderService.isIsCardLog()){
-//					CardReaderService.setNoSuchPerson(true);
-//				}
-//			}else{
-//				//TODO 在这里处理获取到的登陆信息
-//				BdlProto.LoginResponse resp =message.getLoginResponse();
-//				if (CardReaderService.isIsCardLog()){
-//					CardReaderService.setLoginResponse(resp);
-//					CardReaderService.setIsLogRespGet(true);
-//				}else {
-//					//BtService.setLoginResponse(resp);
-//				}
-//				logger.info("DataSocket客户端收到登陆结果响应:"+gsonUtil.toJson(resp).toString());
-//				//Log.e("重传service--loginResp",gsonUtil.toJson(resp).toString());
-//			}
-
+			BdlProto.LoginResponse resp = message.getLoginResponse();
+			logger.info("DataSocket客户端收到登陆结果响应:"+gsonUtil.toJson(resp).toString());
+           //为全局User赋值
+			User loginUser = new User(message);
+			MyApplication.getInstance().setUser(loginUser);
+				//TODO 在这里处理获取到的登陆信息
 			LogUtil.e("收到教练机反馈-开始");
 			//根据反馈情况进行设置
 			LoginUtils.parseLoginRespMsg(message);

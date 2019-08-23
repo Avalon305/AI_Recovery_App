@@ -264,7 +264,7 @@ public class MainActivity extends BaseActivity {
         //判空，如果非空是正常登陆
         if(MyApplication.getInstance().getUser() != null) {
             //非空的情况下，把第一用户的名字进行设置到指定位置
-            tv_user_name.setText(MyApplication.getInstance().getUser().getUserId());
+            tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
             //界面左上角模式标题
             tv_title.setText("      " + MyApplication.getInstance().getUser().getTrainMode());
         }else{

@@ -20,11 +20,19 @@ public class RatingDialog extends Dialog {
 
     private String title; //标题
     private String message; //主要信息
+    private String message2; //次要信息
     private View.OnClickListener onNegativeClickListener;
     private View.OnClickListener onPositiveClickListener;
     private String negativeBtnText = "取消"; //Negative按钮文本
     private String positiveBtnText = "确定"; //Positive按钮文本
     private RatingBar.OnRatingBarChangeListener ratingBarChangeListener;
+
+    TextView textTitle = (TextView) findViewById(R.id.common_dialog_title);
+    TextView textMsg = (TextView) findViewById(R.id.common_dialog_msg);
+    TextView textMsg2 = (TextView) findViewById(R.id.common_dialog_msg2);
+    TextView sure = (TextView) findViewById(R.id.common_dialog_sure);
+    TextView cancel = (TextView) findViewById(R.id.common_dialog_cancel);
+    RatingBar ratingBar = (RatingBar) findViewById(R.id.rb_rating);
 
 
     public RatingDialog(Context context) { super(context, R.style.CustomDialog);}
@@ -33,11 +41,12 @@ public class RatingDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.dialog_rating);
-        TextView textTitle = (TextView) findViewById(R.id.common_dialog_title);
-        TextView textMsg = (TextView) findViewById(R.id.common_dialog_msg);
-        TextView sure = (TextView) findViewById(R.id.common_dialog_sure);
-        TextView cancel = (TextView) findViewById(R.id.common_dialog_cancel);
-        RatingBar ratingBar = (RatingBar) findViewById(R.id.rb_rating);
+        textTitle = (TextView) findViewById(R.id.common_dialog_title);
+        textMsg = (TextView) findViewById(R.id.common_dialog_msg);
+        textMsg2 = (TextView) findViewById(R.id.common_dialog_msg2);
+        sure = (TextView) findViewById(R.id.common_dialog_sure);
+        cancel = (TextView) findViewById(R.id.common_dialog_cancel);
+        ratingBar = (RatingBar) findViewById(R.id.rb_rating);
 
         if (!TextUtils.isEmpty(title)) { //判断是否设置了title
             textTitle.setVisibility(View.VISIBLE);
@@ -49,8 +58,13 @@ public class RatingDialog extends Dialog {
         if (!TextUtils.isEmpty(message)) { //判断是否设置了message
             textMsg.setVisibility(View.VISIBLE);
             textMsg.setText(message);
+        }
+
+        if (!TextUtils.isEmpty(message2)) {
+            textMsg2.setVisibility(View.VISIBLE);
+            textMsg2.setText(message2);
         } else {
-            textMsg.setVisibility(View.GONE);
+            textMsg2.setVisibility(View.GONE);
         }
 
         if (onNegativeClickListener != null) { //判断是否设置了返回按钮
@@ -69,6 +83,11 @@ public class RatingDialog extends Dialog {
             sure.setVisibility(View.GONE);
         }
 
+        if (ratingBarChangeListener != null) {
+            ratingBar.setVisibility(View.VISIBLE);
+            ratingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
+        }
+
     }
     public void setTitle(String title) {
         this.title = title;
@@ -76,6 +95,10 @@ public class RatingDialog extends Dialog {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setMessage2(String message2) {
+        this.message2 = message2;
     }
 
     public void setOnNegativeClickListener(View.OnClickListener onNegativeClickListener) {
@@ -100,5 +123,9 @@ public class RatingDialog extends Dialog {
 
     public void setRatingBarChangeListener(RatingBar.OnRatingBarChangeListener ratingBarChangeListener) {
         this.ratingBarChangeListener = ratingBarChangeListener;
+    }
+
+    public TextView getTextMsg2() {
+        return textMsg2;
     }
 }

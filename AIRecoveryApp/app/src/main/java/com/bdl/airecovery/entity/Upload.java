@@ -15,6 +15,7 @@ public class Upload {
     private double power; //最终功率
     private int speedRank; //运动速度
     private int finishNum; //训练个数
+    private int finishTime; //训练完成的时间
 //    private double distance; //运动距离 千米，两位小数
     private double energy;//训练总耗能 单位卡路里
     private List<Integer> heartRateList;//心率集合：运动过程实时心率集合
@@ -108,6 +109,14 @@ public class Upload {
         this.userThoughts = userThoughts;
     }
 
+    public int getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(int finishTime) {
+        this.finishTime = finishTime;
+    }
+
     @Override
     public String toString() {
         return "Upload{" +
@@ -119,6 +128,7 @@ public class Upload {
                 ", power=" + power +
                 ", speedRank=" + speedRank +
                 ", finishNum=" + finishNum +
+                ", finishTime=" + finishTime +
                 ", energy=" + energy +
                 ", heartRateList=" + heartRateList +
                 ", userThoughts='" + userThoughts + '\'' +

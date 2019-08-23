@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@drawable/background3"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background3"
+    android:orientation="vertical">
 
     <!--标题栏-->
     <RelativeLayout
+        android:id="@+id/rl_top_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="-6dp"
@@ -18,113 +20,93 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:paddingLeft="5dp"
             android:layout_marginLeft="25dp"
             android:layout_centerVertical="true"
-            android:paddingLeft="5dp"
             android:textSize="40dp"
-            android:text="再见"
-            />
+            android:text="再见" />
     </RelativeLayout>
 
+    <!--待训练设备-->
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title">
 
         <ImageView
             android:id="@+id/iv_bye_not"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginLeft="70dp"
-            android:layout_alignBottom="@+id/tv_bye_not"
+            android:layout_marginLeft="40dp"
             android:src="@drawable/list" />
         <!--未完成训练-->
         <TextView
             android:id="@+id/tv_bye_not"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="0dp"
-            android:paddingLeft="170dp"
-            android:paddingTop="10dp"
-            android:text="待训练设备如下:"
+            android:layout_toRightOf="@id/iv_bye_not"
+            android:layout_marginLeft="30dp"
+            android:text="训练计划"
             android:textColor="@color/Black"
             android:textSize="50sp" />
-        <TextView
-            android:id="@+id/tv_bye_not1"
-            android:layout_width="460dp"
-            android:layout_marginLeft="70dp"
-            android:layout_height="5dp"
-            android:layout_below="@+id/tv_bye_not"
-            android:background="#bfbfbf"/>
         <!--未完成的设备列表-->
-        <ListView
+        <!--<ListView
             android:id="@+id/lv_bye_not"
-            android:layout_width="455dp"
-            android:layout_height="520dp"
-            android:layout_below="@+id/tv_bye_not1"
+            android:layout_width="458dp"
+            android:layout_height="312dp"
+            android:layout_below="@+id/iv_bye_not"
             android:layout_marginLeft="70dp"
-            android:layout_marginTop="-2dp"
-            android:divider="@null" />
-
-
-        <!--快速登录按钮-->
-        <Button
-            android:id="@+id/btn_return"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lv_bye_not"
-            android:layout_marginLeft="200dp"
-            android:background="@drawable/button_selector"
-            android:text="返回待机页面"
-            android:textColor="#2b2b2b"
-            android:textSize="30sp" />
-
-
-        <ImageView
-            android:id="@+id/iv_bye_res"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_toLeftOf="@id/tv_bye_res"
-            android:layout_alignBottom="@+id/tv_bye_res"
-            android:layout_marginRight="30dp"
-            android:layout_marginBottom="6dp"
-            android:src="@drawable/statistic" />
-        <!--训练结果-->
-        <TextView
-            android:id="@+id/tv_bye_res"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignBottom="@+id/tv_bye_not"
-            android:layout_marginRight="210dp"
-            android:textColor="@color/Black"
-            android:text="训练结果如下:"
-            android:textSize="50sp" />
-        <TextView
-            android:id="@+id/tv_bye_not2"
-            android:layout_width="410dp"
-            android:layout_height="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_alignLeft="@+id/iv_bye_res"
-            android:layout_below="@+id/tv_bye_res"
-            android:background="#bfbfbf"/>
-        <com.bdl.airecovery.widget.PieChartView
-            android:id="@+id/pie_chart"
-            android:layout_width="700dp"
-            android:layout_height="320dp"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/tv_bye_not2"
-            android:paddingBottom="40dp"
-            android:paddingLeft="20dp"
-            app:circleRadius="100dp"
-            app:textSize="20sp" />
-
-
-        <RelativeLayout
+            android:divider="@null" />-->
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/pie_chart"
-            android:layout_marginTop="0dp">
+            android:layout_below="@id/iv_bye_not"
+            android:padding="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+            <LinearLayout
+                android:id="@+id/horizontalScrollViewItemContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <!--训练结果展示-->
+        <RelativeLayout
+            android:id="@+id/rl_train_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/horizontalScrollView">
+            <ImageView
+                android:id="@+id/iv_bye_res"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/statistic" />
+            <TextView
+                android:id="@+id/tv_bye_res"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="90dp"
+                android:textColor="@color/Black"
+                android:text="训练结果展示"
+                android:textSize="50sp" />
+            <ListView
+                android:id="@+id/lv_analysis"
+                android:layout_width="500dp"
+                android:layout_height="350dp"
+                android:layout_below="@+id/iv_bye_res"
+                android:divider="@null" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:layout_toRightOf="@id/rl_train_result"
+            android:layout_alignBottom="@+id/rl_train_result">
             <!--折线图底板-->
             <ImageView
                 android:layout_width="wrap_content"
@@ -144,6 +126,18 @@
 
     </RelativeLayout>
 
+    <!--返回按钮-->
+    <Button
+        android:id="@+id/btn_return"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="220dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_selector"
+        android:text="返回"
+        android:textColor="#2b2b2b"
+        android:textSize="30sp" />
 
-
-</LinearLayout>
+</RelativeLayout>

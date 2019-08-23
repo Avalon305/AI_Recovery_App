@@ -17,7 +17,9 @@ import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 
 import java.net.ConnectException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +33,7 @@ public class LoginBiz {
 
     private volatile static LoginBiz instance = new LoginBiz();
 
-    private LoginBiz(){
+    public LoginBiz(){
 
     }
 
@@ -60,7 +62,7 @@ public class LoginBiz {
      *         教练第二用户只能远程登陆成功，本地登录成功，远程/本地 查无此人不予处理
      *         如果返回0，说明本次不需要继续执行了，另一种登录方式已经登录成功了
      */
-    public int loginBiz(String name,int who){
+    public int loginBiz(String name,int who,String nowDate){
         try {
             //发卡器与此方法共用，防止并发，先上锁。
             lock.lock();
@@ -74,7 +76,7 @@ public class LoginBiz {
             //TODO 要求在待机页面创建的时候置空一下当前的登录对象，在oncreate方法里面
 
             //向教练机发送请求,然后等待，500ms，教练机没响应说明凉凉了。需要注意传入的参数，是request中需要的参数，确认是手环名字还是啥奇葩东西。
-            sendLoginRequest(name);
+            sendLoginRequest(name,nowDate);
             LogUtil.e("上锁。。。。。");
             COUNT_DOWN_LATCH.await(500,TimeUnit.MILLISECONDS);//收到响应：17:53:32.370 - 阻塞结束：17:53:31.840
             LogUtil.e("解锁。。。。。");
@@ -172,7 +174,7 @@ public class LoginBiz {
                         }
                     }
                     User newUser = new User();
-                    newUser.setUserId("离线用户");
+                    newUser.setUsername("离线用户");
                     newUser.setExisitSetting(false);
                     newUser.setMoveWay(0);
                     newUser.setGroupCount(5);
@@ -273,12 +275,14 @@ public class LoginBiz {
      * @param name
      */
     private AtomicInteger Seq = new AtomicInteger(1);
-    private void sendLoginRequest(String name) {
-
+    private void sendLoginRequest(String bind_value,String nowDate) {
         //生成请求
         BdlProto.LoginRequest request =
-                BdlProto.LoginRequest.newBuilder().setDeviceType(CommonUtils.getDeviceType())
-                        .setUid(name).build();
+                BdlProto.LoginRequest.newBuilder()
+                        .setDeviceType(CommonUtils.getDeviceType())
+                        .setBindId(bind_value)
+                        .setClientTime(nowDate)
+                        .setUid("").build();
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         final BdlProto.Message message = DataProtoUtil.packLoginRequest(Seq.get(),request);
         LogUtil.i("Message : " + message);

@@ -5,7 +5,7 @@ import com.bdl.airecovery.proto.BdlProto;
 
 public class User {
     //用户标识
-    private String userId ;
+    private String userId;
 
     //用户姓名
     private String username;
@@ -18,7 +18,27 @@ public class User {
 
     //训练模式
     private String trainMode;
+    //---------个人设置信息↓
+    private int seatHeight = 7; //座椅高度
 
+    private int backDistance = 8; //靠背距离
+
+    private int footboardDistance = 9;//踏板距离
+
+    private double leverAngle = 10;//杠杆角度
+
+    private int forwardLimit = 11; //前方限制
+
+    private int backLimit = 12; //后方限制
+
+    private double consequentForce = 13; //顺向力
+
+    private double reverseForce = 14; //反向力
+
+    private double power = 15; //功率
+
+    //--------处方信息 ↓
+    int dpStatus = 16;//'1做了 0没做'
     //移乘方式
     private int moveWay;
 
@@ -54,15 +74,20 @@ public class User {
     private String bindId;
 
     //处方id
-    private  int dpId;
+    private int dpId;
 
     //客户端时间戳
-    private String clientTime ;
+    private String clientTime;
 
+    //服务端时间
+    private String serverTime;
+
+    private int infoResponse; // 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划
 
     public User() {
 
     }
+
     public User(BdlProto.Message message) {
         //用户标识
         this.userId = message.getLoginResponse().getUid();
@@ -84,6 +109,20 @@ public class User {
             default:
                 break;
         }
+
+        //---------个人设置信息↓
+        this.seatHeight = message.getLoginResponse().getSeatHeight();
+        this.backDistance = message.getLoginResponse().getBackDistance();
+        this.footboardDistance = message.getLoginResponse().getFootboardDistance();
+        this.leverAngle = message.getLoginResponse().getLeverAngle();
+        this.forwardLimit = message.getLoginResponse().getForwardLimit();
+        this.backLimit = message.getLoginResponse().getBackLimit();
+        this.consequentForce = message.getLoginResponse().getConsequentForce();
+        this.reverseForce = message.getLoginResponse().getReverseForce();
+        this.power = message.getLoginResponse().getPower();
+
+        //--------处方信息 ↓
+        this.dpStatus = message.getLoginResponse().getDpStatus();
         //移乘方式
         this.moveWay = message.getLoginResponse().getDpMoveway();
         //医生指示建议
@@ -105,11 +144,13 @@ public class User {
         //最大心率
         this.heartRatemMax = 220 - this.age;
         //处方id
-        this.dpId=message.getLoginResponse().getDpId();
+        this.dpId = message.getLoginResponse().getDpId();
         //用户姓名
-        this.username=message.getLoginResponse().getUserName();
+        this.username = message.getLoginResponse().getUserName();
         //客户端时间
-        this.clientTime=message.getLoginResponse().getClientTime();
+        this.clientTime = message.getLoginResponse().getClientTime();
+        //服务端时间
+        this.serverTime = message.getLoginResponse().getServerTime();
 
     }
 
@@ -257,27 +298,99 @@ public class User {
         this.clientTime = clientTime;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId='" + userId + '\'' +
-                ", username='" + username + '\'' +
-                ", deviceTypearrList='" + deviceTypearrList + '\'' +
-                ", exisitSetting=" + exisitSetting +
-                ", trainMode='" + trainMode + '\'' +
-                ", moveWay=" + moveWay +
-                ", memo='" + memo + '\'' +
-                ", groupCount=" + groupCount +
-                ", groupNum=" + groupNum +
-                ", relaxTime=" + relaxTime +
-                ", speedRank=" + speedRank +
-                ", sysVersion='" + sysVersion + '\'' +
-                ", weight=" + weight +
-                ", age=" + age +
-                ", heartRatemMax=" + heartRatemMax +
-                ", bindId='" + bindId + '\'' +
-                ", dpId=" + dpId +
-                ", clientTime='" + clientTime + '\'' +
-                '}';
+    public int getInfoResponse() {
+        return infoResponse;
+    }
+
+    public void setInfoResponse(int infoResponse) {
+        this.infoResponse = infoResponse;
+    }
+
+    public String getServerTime() {
+        return serverTime;
+    }
+
+    public void setServerTime(String serverTime) {
+        this.serverTime = serverTime;
+    }
+
+    public int getSeatHeight() {
+        return seatHeight;
+    }
+
+    public void setSeatHeight(int seatHeight) {
+        this.seatHeight = seatHeight;
+    }
+
+    public int getBackDistance() {
+        return backDistance;
+    }
+
+    public void setBackDistance(int backDistance) {
+        this.backDistance = backDistance;
+    }
+
+    public int getFootboardDistance() {
+        return footboardDistance;
+    }
+
+    public void setFootboardDistance(int footboardDistance) {
+        this.footboardDistance = footboardDistance;
+    }
+
+    public double getLeverAngle() {
+        return leverAngle;
+    }
+
+    public void setLeverAngle(double leverAngle) {
+        this.leverAngle = leverAngle;
+    }
+
+    public int getForwardLimit() {
+        return forwardLimit;
+    }
+
+    public void setForwardLimit(int forwardLimit) {
+        this.forwardLimit = forwardLimit;
+    }
+
+    public int getBackLimit() {
+        return backLimit;
+    }
+
+    public void setBackLimit(int backLimit) {
+        this.backLimit = backLimit;
+    }
+
+    public double getConsequentForce() {
+        return consequentForce;
+    }
+
+    public void setConsequentForce(double consequentForce) {
+        this.consequentForce = consequentForce;
+    }
+
+    public double getReverseForce() {
+        return reverseForce;
+    }
+
+    public void setReverseForce(double reverseForce) {
+        this.reverseForce = reverseForce;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public void setPower(double power) {
+        this.power = power;
+    }
+
+    public int getDpStatus() {
+        return dpStatus;
+    }
+
+    public void setDpStatus(int dpStatus) {
+        this.dpStatus = dpStatus;
     }
 }

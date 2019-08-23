@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -29,7 +27,6 @@ import org.xutils.view.annotation.ViewInject;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.entity.Personal;
 import com.bdl.airecovery.entity.TempStorage;
-import com.bdl.airecovery.entity.login.Helperuser;
 import com.bdl.airecovery.proto.BdlProto;
 import com.google.gson.Gson;
 import com.bdl.airecovery.dialog.CommonDialog;
@@ -125,9 +122,6 @@ public class PersonalSettingActivity extends BaseActivity {
     //SeekBar
     @ViewInject(R.id.seekBar)
     private SeekBar seekBar;                        //用于医护设置中调节各选项的拖动条
-
-
-    Helperuser helperuser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -565,7 +559,12 @@ public class PersonalSettingActivity extends BaseActivity {
             //4.保存数据到本地PersonalInfo表
             try {
                 if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null && MyApplication.getInstance().getCurrentDevice() != null) {
-                    personalInfoDAO.getInstance().SavrOrUpdata(MyApplication.getInstance().getUser().getUserId(),BdlProto.DeviceType.getDescriptor().getName(),MyApplication.getInstance().getUser(), MyApplication.getInstance().getCurrentDevice());
+                    personalInfoDAO.getInstance().SavrOrUpdata(
+                            MyApplication.getInstance().getUser().getUserId(),
+                            BdlProto.DeviceType.getDescriptor().getName(),
+                            MyApplication.getInstance().getUser(),
+                            MyApplication.getInstance().getCurrentDevice()
+                    );
                 }
             } catch (DbException e) {
                 e.printStackTrace();

@@ -41,7 +41,7 @@ public class BluetoothService extends Service {
     private enum Status{
         NORMAL(1), //正常
         SCANNING(2), //扫描
-        CONNECTING(3), //连接中，
+        CONNECTING(3), //连接中
         TRY_CONNECTING(4);// 尝试连接
 
         private int value = 0;
@@ -95,9 +95,9 @@ public class BluetoothService extends Service {
             LogUtil.d("bluetooth is started");
         }
     }
-    //第一用户登录指令的变量
+    //用户登录指令的变量
     private volatile int whoLogin = 0;
-    //第一用户登录指令的变量
+    //用户登录指令的变量
     private volatile int whoLogout = 0;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -178,7 +178,7 @@ public class BluetoothService extends Service {
             public void run() {
                 //执行业务
                 LogUtil.d("蓝牙执行LoginBiz！！！！！！！！");
-                int loginResult = LoginBiz.getInstance().loginBiz(name,BluetoothService.this.whoLogin);
+                int loginResult = LoginBiz.getInstance().loginBiz(name,BluetoothService.this.whoLogin,null);
                 LogUtil.d("登陆方法回调的结果：" + loginResult);
                 if (loginResult == 0){
                     //登录被打回，蓝牙模块应该重新属于可扫描的状态。

@@ -2,7 +2,6 @@ package com.bdl.airecovery;
 
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.PersonalInfo;
-import com.bdl.airecovery.entity.login.Helperuser;
 import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.proto.BdlProto;
 import com.google.gson.Gson;
@@ -18,7 +17,6 @@ public class personalInfoDAO {
     //数据库管理对象
     private DbManager dbManager = MyApplication.getInstance().getDbManager();
     private static personalInfoDAO personalInfoDAO = new personalInfoDAO();
-    private static Helperuser nullhelperuser = null;
 
     /**
      * 私有化构造函数，防止其他人瞎几把new

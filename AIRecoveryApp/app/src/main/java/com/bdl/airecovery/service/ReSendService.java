@@ -171,6 +171,8 @@ public class ReSendService extends Service {
         Log.d("重传service", "数据库id：" + tempStorage.getId());
         BdlProto.PersonalSetRequest request = BdlProto.PersonalSetRequest.newBuilder()
                 .setUid(sendMsg.getUid()) //用户ID
+                .setBindId(sendMsg.getBind_id())
+                .setDeviceTypeValue(sendMsg.getDeviceTypeValue_())
                 .setSeatHeight(sendMsg.getSeatHeight()) //座位高度
                 .setBackDistance(sendMsg.getBackDistance()) //靠背距离
                 .setFootboardDistance(sendMsg.getFootboardDistance())//踏板距离
