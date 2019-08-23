@@ -113,7 +113,7 @@ public class CardReaderService extends Service {
             public void run() {
                 //执行业务
                 LogUtil.d("发卡器运行LoginBiz！！！！！！！");
-                int loginResult = LoginBiz.getInstance().loginBiz(name,CardReaderService.this.whoLogin);
+                int loginResult = LoginBiz.getInstance().loginBiz(name,CardReaderService.this.whoLogin,null);
                 LogUtil.d("登陆方法回调的结果：" + loginResult);
 
                 //如果其他人已经做过了，就不需要接收了

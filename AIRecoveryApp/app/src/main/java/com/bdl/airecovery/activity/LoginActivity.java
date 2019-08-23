@@ -1,8 +1,5 @@
 package com.bdl.airecovery.activity;
 
-import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,26 +15,30 @@ import android.widget.TextView;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
 
+import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
-import org.xutils.x;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.biz.LoginBiz;
-import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LoginDialog;
+import com.bdl.airecovery.entity.Device;
+import com.bdl.airecovery.entity.Personal;
+import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.service.BluetoothService;
-import com.bdl.airecovery.service.CardReaderService;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,6 +62,7 @@ public class LoginActivity extends BaseActivity {
     private String nfcMessage;//NFC标签
     private LoginDialog loginDialog;                  //ShowLogin弹模态框
     private CommonDialog commonDialog;                  //ShowTips弹模态框
+    private DbManager db = MyApplication.getInstance().getDbManager();
     //第一用户登录指令的变量
     private volatile int whoLogin = 0;
     //设置全局当前时间变量
@@ -90,7 +91,7 @@ public class LoginActivity extends BaseActivity {
     private void setBtn_quick_login(View v) {
         User user = new User();
         //初始化待训练设备
-        String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09,E10,E11,E12,E13,E14,E15,E16,E28,E10]";
+        String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
         user.setDeviceTypearrList(str1);
         user.setUsername("体验者");
         user.setExisitSetting(false);
@@ -103,13 +104,72 @@ public class LoginActivity extends BaseActivity {
         user.setWeight(60);
         user.setHeartRatemMax(190);
         user.setTrainMode("康复模式");
+        if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式划船机")){
+                  user.setForwardLimit(130);
+                  user.setBackLimit(50);
+                  user.setSeatHeight(0);
+                  user.setConsequentForce(25);
+                  user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式推胸机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setSeatHeight(0);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部推蹬机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腹肌训练机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+            user.setLeverAngle(0);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("三头肌训练机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部外弯机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部内弯机")){
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("蝴蝶机")){
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("反向蝴蝶机")){
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式背部伸展机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+            user.setLeverAngle(0);
+        }
         MyApplication.getInstance().setUser(user);
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);//新建一个跳转到主界面Activity的显式意图
         startActivity(intent); //启动
         LoginActivity.this.finish(); //结束当前Activity
     }
-
-
     /**
      * NFC标签广播接受的注册
      */
@@ -198,19 +258,23 @@ public class LoginActivity extends BaseActivity {
                 e.printStackTrace();
             }
             if(commonMessage.getMsgType()==CommonMessage.LOGIN_SUCCESS_ONLINE &&
-                    MyApplication.getInstance().getUser()!=null && second<=6){
+                    MyApplication.getInstance().getUser()!=null && second<=7){
                 //关闭模态框
                 loginDialog.dismiss();
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
-            if(second>6){
+            else if(MyApplication.getInstance().getUser().getDpStatus() == 3){
+
+            }
+            else if(second>7){
                 //提示登录失败
                 if (commonDialog != null && commonDialog.isShowing()) {
                     return;
                 }
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("登录失败");
+                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
@@ -279,13 +343,30 @@ public class LoginActivity extends BaseActivity {
                 int loginResult = LoginBiz.getInstance().loginBiz(name,LoginActivity.this.whoLogin,nowDate);
                 LogUtil.d("登陆方法回调的结果：" + loginResult);
     }
+
+    /**
+     * 设置快速登录按钮是否可见
+     */
+    private void isBtnVisible() {
+        Setting setting = new Setting();
+        try {
+            setting = db.findFirst(Setting.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        if (setting.getCanQuickLogin()) {
+            btn_quick_login.setVisibility(View.VISIBLE);
+        } else {
+            btn_quick_login.setVisibility(View.INVISIBLE);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         queryDevInfo(); //查询设备信息
         registerBluetoothReceiver();//蓝牙监听广播接收器的注册
         registerNfcReceiver();//nfc标签广播接收器的注册
-
+        isBtnVisible();     //是否显示快速登录按钮
     }
 
     /**
@@ -308,6 +389,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(nfcReceiver);
+        unregisterReceiver(nfcReceiver);//注册广播解除
+        unregisterReceiver(bluetoothReceiver);//同上
     }
 }
