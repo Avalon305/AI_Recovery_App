@@ -259,7 +259,7 @@ public class LoginActivity extends BaseActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if(commonMessage.getMsgType()==CommonMessage.LOGIN_SUCCESS_ONLINE &&
+            if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser()!=null && second<=7){
                 //关闭模态框
                 loginDialog.dismiss();

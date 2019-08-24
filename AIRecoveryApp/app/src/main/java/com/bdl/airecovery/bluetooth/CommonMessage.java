@@ -6,14 +6,16 @@ package com.bdl.airecovery.bluetooth;
 public class CommonMessage {
     //心率类型
     public static final int HEART_BEAT = 1;
+
     //用户登录的反馈：在线登录，离线登录，远程无此人登录，本地无此人登录
     public static final int LOGIN_SUCCESS_ONLINE = 2;
     public static final int LOGIN_SUCCESS_OFFLINE = 3;
     public static final int LOGIN_REGISTER_ONLINE = 4;
     public static final int LOGIN_REGISTER_OFFLINE = 5;
-    //用户掉线与退出的广播,掉线是蓝牙专用，目前掉线仅监听，并无发送
-    public static final int CONNECT_SUCCESS = 8; //连接成功
-    public static final int DISCONNECTED = 9; //连接断开
+
+    public static final int CONNECT_SUCCESS = 8; //蓝牙连接成功
+    public static final int DISCONNECTED = 9; //蓝牙连接断开
+
     public static final int LOGOUT = 10;
 
 
