@@ -130,7 +130,9 @@ public class BluetoothService extends Service {
         switch (commonCommand){
             case LOGIN: //开启蓝牙扫描，自动连接附近设备。若成功会发送提示广播，并连续广播心率。
                 String nfcMessage = intent.getStringExtra("message");
-                scanDevice();
+                //scanDevice();
+                this.status = Status.TRY_CONNECTING;
+                connectMAC(nfcMessage);
                 break;
             case LOGOUT: //断开蓝牙连接
                 disConnect();
