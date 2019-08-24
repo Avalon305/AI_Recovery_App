@@ -125,7 +125,7 @@ public class MyApplication extends MultiDexApplication {
         //启动静态电机Service
         startStaticMotorService();
         //启动usb的service
-        startUsbService();
+//        startUsbService();
         //初始化需要的字体样式
         //typefaceChar = Typeface.createFromAsset(getAssets(),"fonts/NotoSansHans_Light.otf");
         typefaceNum = Typeface.createFromAsset(getAssets(), "fonts/Arvo-Bold.ttf");

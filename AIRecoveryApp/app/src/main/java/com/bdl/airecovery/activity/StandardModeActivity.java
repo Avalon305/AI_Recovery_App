@@ -88,6 +88,8 @@ public class StandardModeActivity extends BaseActivity {
     private int rearLimitedPosition; //后方限制
     private int deviceType; //设备类型
     private boolean allowRecordNum = true; //允许计数
+    private String errorID;
+    private CommonDialog errorDialog;
     //double rate = MyApplication.getCurrentRate();
     private eStopBroadcastReceiver eStopReceiver; //急停广播
     int motorDirection = MyApplication.getInstance().motorDirection;
@@ -128,6 +130,30 @@ public class StandardModeActivity extends BaseActivity {
             }
         }
     };
+
+    private boolean isErrorDialogShow = false;
+    private Handler errorDialogHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    if (!isErrorDialogShow) {
+                        Log.e("-----flag", String.valueOf(isErrorDialogShow));
+                        isErrorDialogShow = true;
+                        showErrorDialog();
+                        Log.e("-----flag", String.valueOf(isErrorDialogShow));
+                    }
+                    break;
+                case 2:
+                    errorDialog.dismiss();
+                    isErrorDialogShow = false;
+                    break;
+
+            }
+        }
+    };
+
     private boolean needAfterMotion = true;
 
     //标定参数
@@ -977,6 +1003,20 @@ public class StandardModeActivity extends BaseActivity {
         commonDialog.show();
     }
 
+
+    private void showErrorDialog() {
+        errorDialog = new CommonDialog(StandardModeActivity.this);
+        errorDialog.setTitle("警告");
+        errorDialog.setMessage("变频器内部发生错误，错误码：" + errorID);
+        errorDialog.setPositiveBtnText("RESET");
+        errorDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MotorProcess.restoration();
+                Log.e("-----flag", String.valueOf(isErrorDialogShow));
+            }
+        });
+        errorDialog.show();
+    }
     RatingDialog ratingDialog;
     //打开评级模态框
     private void openRatingDialog() {
@@ -1309,6 +1349,20 @@ public class StandardModeActivity extends BaseActivity {
                 startActivity(new Intent(StandardModeActivity.this, ScramActivity.class));
                 StandardModeActivity.this.finish();
             }
+            errorID = intent.getStringExtra("error");
+            if (errorID != null && !errorID.equals("0")) {
+                Message message = errorDialogHandler.obtainMessage();
+                message.what = 1;
+                message.arg1 = 1;
+                errorDialogHandler.sendMessage(message);
+            }
+            if (errorID != null && errorID.equals("0") && isErrorDialogShow) {
+                Message message = errorDialogHandler.obtainMessage();
+                message.what = 2;
+                message.arg1 = 1;
+                errorDialogHandler.sendMessage(message);
+            }
+
         }
     }
 

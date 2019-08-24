@@ -63,7 +63,7 @@ public class StrengthTestActivity extends BaseActivity {
     private CircularRingPercentageView circularRingPercentageView;
     private DbManager db = MyApplication.getInstance().getDbManager();
 
-    private Handler mHandler = new Handler() { //次数handler
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -75,6 +75,7 @@ public class StrengthTestActivity extends BaseActivity {
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +102,7 @@ public class StrengthTestActivity extends BaseActivity {
     private void uploadResult() {
         //获取当前时间
         Date date = new Date();
-        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
         String currentTime = dateFormat.format(date);
         StrengthTest strengthTest = new StrengthTest();
         strengthTest.setUid(MyApplication.getInstance().getUser().getUserId());
@@ -120,6 +121,7 @@ public class StrengthTestActivity extends BaseActivity {
         }
 
     }
+
     //点击事件
     @Event(R.id.btn_st_start)
     private void setStartTestOnClick(View v) {
@@ -132,16 +134,17 @@ public class StrengthTestActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
-                    //读取当前位置
-                    strength++;
-                    Log.e("count", String.valueOf(strength));
-                    circularRingPercentageView.setProgress(strength);
-                    if (strength >= 100) {
+                    strength = Integer.parseInt(getRespData(MotorConstant.READ_TORQUE));
+                    if (strength > maxStrength) { //获取最大力矩
+                        maxStrength = strength;
+                    }
+                    circularRingPercentageView.setProgress(strength / 5);
+                    count++;
+                    if (count >= 1000) {
                         Message message = mHandler.obtainMessage();
                         message.what = 1;
                         message.arg1 = 1;
                         mHandler.sendMessage(message);
-                        strength = 0;
                         timer.cancel();
                     }
                 } catch (Exception e) {
@@ -155,10 +158,11 @@ public class StrengthTestActivity extends BaseActivity {
     private int ratingByResult(int result) {
         return 0;
     }
+
     private void showCommonDialog() {
         final CommonDialog commonDialog = new CommonDialog(StrengthTestActivity.this);
         commonDialog.setTitle("测试结果");
-        commonDialog.setMessage("您在肌力测试中使用的最大力量为"+ strength +",肌力测试评级为");
+        commonDialog.setMessage("您在肌力测试中使用的最大力量为" + maxStrength + ",肌力测试评级为");
         commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 commonDialog.dismiss();
@@ -167,6 +171,7 @@ public class StrengthTestActivity extends BaseActivity {
         });
         commonDialog.show();
     }
+
     //打开定位模态框
     private void LaunchDialogLocating() throws Exception {
         dialog_locating = new LargeDialog(StrengthTestActivity.this);
@@ -197,15 +202,28 @@ public class StrengthTestActivity extends BaseActivity {
         dialog_locating.setCanceledOnTouchOutside(false);
         dialog_locating.show();
 
+        //定位
+        setParameter(0, MotorConstant.SET_BACK_SPEED);
+        //开启来程速度
+        setParameter(-500, MotorConstant.SET_GOING_SPEED);
+        setParameter(-500, MotorConstant.SET_COMPARE_SPEED);
         final Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 try {
                     //读取当前位置
-                    count++;
-                    Log.e("count", String.valueOf(count));
-                    if (count >= 100) {
+                    String currentPosition = Reader.getRespData(MotorConstant.READ_ACTUAL_LOCATION);
+                    if (currentPosition == null) { //读取失败
+                        return;
+                    }
+                    if (Integer.parseInt(currentPosition) <= 110 * 10000) { //比较当前位置和初始位置
+                        setParameter((Integer.valueOf(currentPosition) / 10000 - 10) * 4856, MotorConstant.SET_FRONTLIMIT);
+                        //设置去程速度为0
+                        setParameter(0, MotorConstant.SET_GOING_SPEED);
+                        setParameter(0, MotorConstant.SET_COMPARE_SPEED);
+                        setParameter(100 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                        //关闭返回速度
                         timer.cancel(); //关闭当前定时轮询任务
                         dialog_locating.dismiss();//隐藏定位模态框
                     }
@@ -215,37 +233,6 @@ public class StrengthTestActivity extends BaseActivity {
             }
         };
         timer.schedule(timerTask, 0, 50);
-
-//        //定位
-//        setParameter(0, MotorConstant.SET_BACK_SPEED);
-//        //开启来程速度
-//        setParameter(-MotorConstant.initSpeed, MotorConstant.SET_GOING_SPEED);
-//        setParameter(-MotorConstant.initSpeed, MotorConstant.SET_COMPARE_SPEED);
-//        final Timer timer = new Timer();
-//        TimerTask timerTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//                try {
-//                    //读取当前位置
-//                    String currentPosition = Reader.getRespData(MotorConstant.READ_ACTUAL_LOCATION);
-//                    if (currentPosition == null) { //读取失败
-//                        return;
-//                    }
-//                    if (Integer.parseInt(currentPosition) <= 110 * 10000) { //比较当前位置和初始位置
-//                        setParameter((Integer.valueOf(currentPosition) / 10000 - 10) * 4856, MotorConstant.SET_FRONTLIMIT);
-//                        //设置去程速度为0
-//                        setParameter(0, MotorConstant.SET_GOING_SPEED);
-//                        setParameter(0, MotorConstant.SET_COMPARE_SPEED);
-//                        //关闭返回速度
-//                            timer.cancel(); //关闭当前定时轮询任务
-//                            dialog_locating.dismiss();//隐藏定位模态框
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        };
-//        timer.schedule(timerTask, 0, 50);
 
     }
 
@@ -257,7 +244,7 @@ public class StrengthTestActivity extends BaseActivity {
      */
     public void strengthTest() throws Exception {
         //力矩设置
-        setParameter(100 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -274,6 +261,4 @@ public class StrengthTestActivity extends BaseActivity {
         };
         timer.schedule(timerTask, 0, 20);
     }
-
-
 }

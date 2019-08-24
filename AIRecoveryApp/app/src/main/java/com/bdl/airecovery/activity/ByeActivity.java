@@ -172,7 +172,7 @@ public class ByeActivity extends BaseActivity{
     private  void getAxisXLables() {
         Upload upload = MyApplication.getUpload();
         List<Integer> list = upload.getHeartRateList();
-        for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
             mAxisXValues.add(new AxisValue(i).setLabel(i + ""));
         }
     }

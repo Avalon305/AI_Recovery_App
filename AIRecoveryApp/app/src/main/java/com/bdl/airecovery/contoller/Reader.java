@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.mao.MotorSocketClient;
+import com.bdl.airecovery.util.CodecUtils;
 import com.bdl.airecovery.util.MessageUtils;
 import com.bdl.airecovery.util.MessageUtils.*;
 
@@ -80,6 +81,17 @@ public class Reader {
         }
         String bitField = MessageUtils.getStatusData(respMsg);
         return String.valueOf(bitField.charAt(statusBit.getValue()));
+    }
+
+    /**
+     * 读取Error ID
+     * Error ID为0没有错误
+     * @return
+     * @throws Exception
+     */
+    public static String getErrorID() throws Exception {
+        byte[] respMsg = MotorSocketClient.getInstance().sendMessage(MotorConstant.READ_ERROR_CODE);
+        return MessageUtils.getErrorID(respMsg);
     }
 
 }

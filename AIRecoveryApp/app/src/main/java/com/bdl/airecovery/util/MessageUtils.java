@@ -67,6 +67,18 @@ public class MessageUtils {
     }
 
     /**
+     * 获取Error ID
+     * @param bytes
+     * @return
+     */
+    public static String getErrorID(byte[] bytes) {
+        String s1 = Integer.toHexString(0xFF & bytes[20]); //byte转化为十六进制字符串
+        BigInteger bi = new BigInteger(String.valueOf(s1), 16);
+        return String.valueOf(bi);
+    }
+
+
+    /**
      * 获取150号参数bitfield类型的数据
      *
      * @param bytes

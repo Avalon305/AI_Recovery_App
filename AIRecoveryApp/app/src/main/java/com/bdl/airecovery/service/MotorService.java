@@ -11,8 +11,17 @@ import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.entity.CalibrationParameter;
+import com.bdl.airecovery.entity.DTO.ErrorMsg;
+import com.bdl.airecovery.entity.DTO.StrengthTest;
+import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.mao.MotorSocketClient;
+import com.google.gson.Gson;
 
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,6 +35,7 @@ public class MotorService extends Service {
     private static final String TAG = "MotorClientService";
     private static Intent initIntent = new Intent("locate"); //运动前初始化的广播
     private static Intent locationIntent = new Intent("location"); //联测定位的广播
+    private DbManager db = MyApplication.getInstance().getDbManager();
     private CalibrationParameter calibrationParameter  = MyApplication.getInstance()
             .getCalibrationParam();
 
@@ -234,11 +244,17 @@ public class MotorService extends Service {
             @Override
             public void run() {
                 try {
+                    String errorID = Reader.getErrorID();
                     String status = Reader.getStatus(Reader.StatusBit.EStop);
-                    Log.e("-----", status);
+                    Log.e("-----", errorID);
                     if (status != null) {
                         intent.putExtra("state", status);
-                        sendBroadcast(intent); //发送广播
+                        sendBroadcast(intent); //发送急停广播
+                    }
+                    if (errorID != null) {
+                        //发送错误信息广播
+                        intent.putExtra("error", errorID);
+                        sendBroadcast(intent);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -247,4 +263,29 @@ public class MotorService extends Service {
         };
         timer.schedule(timerTask, 0, 500);
     }
+
+//    private void uploadResult() {
+//        //获取当前时间
+//        Date date = new Date();
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+//        String currentTime = dateFormat.format(date);
+//        ErrorMsg errorMsg = new ErrorMsg();
+//        errorMsg.setUid(MyApplication.getInstance().getUser().getUserId());
+//        errorMsg.setDeviceType(2);
+//        errorMsg.setTrainMode();
+//        errorMsg.setTime(currentTime);
+//
+//        //存暂存表
+//        TempStorage tempStorage = new TempStorage();
+//        Gson gson = new Gson();
+//        tempStorage.setData(gson.toJson(strengthTest)); //重传数据（转换为JSON串）
+//        tempStorage.setType(3); //重传类型
+//        try {
+//            db.saveBindingId(tempStorage);
+//        } catch (DbException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
 }
