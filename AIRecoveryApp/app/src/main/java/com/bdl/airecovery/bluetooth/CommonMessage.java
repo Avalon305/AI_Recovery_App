@@ -12,7 +12,8 @@ public class CommonMessage {
     public static final int LOGIN_REGISTER_ONLINE = 4;
     public static final int LOGIN_REGISTER_OFFLINE = 5;
     //用户掉线与退出的广播,掉线是蓝牙专用，目前掉线仅监听，并无发送
-    public static final int DISCONNECTED = 9;
+    public static final int CONNECT_SUCCESS = 8; //连接成功
+    public static final int DISCONNECTED = 9; //连接断开
     public static final int LOGOUT = 10;
 
 

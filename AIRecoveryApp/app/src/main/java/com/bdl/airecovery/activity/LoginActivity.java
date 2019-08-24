@@ -24,6 +24,7 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.biz.LoginBiz;
+import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LoginDialog;
@@ -209,7 +210,8 @@ public class LoginActivity extends BaseActivity {
     private void startBluetooth(){
         //启动蓝牙扫描
         Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("command", nfcMessage);
+        intent.putExtra("command", CommonCommand.LOGIN);
+        intent.putExtra("message", nfcMessage);
         startService(intent);
         LogUtil.d("发出了启动蓝牙扫描的命令");
     }
