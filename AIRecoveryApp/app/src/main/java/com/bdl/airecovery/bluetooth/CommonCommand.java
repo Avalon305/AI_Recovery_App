@@ -5,14 +5,8 @@ package com.bdl.airecovery.bluetooth;
  此对象用于activity发的命令
  */
 public enum CommonCommand {
-//    FIRST__LOGIN("FIRST__LOGIN"), //第一用户登录
-//    LOGOUT("LOGOUT"), //第一用户退出
-//    SECOND__LOGIN("SECOND__LOGIN"), //第二用户登录
-//    SECOND__LOGOUT("SECOND__LOGOUT"),//第二用户退出
-//    ALL__LOGOUT("ALL__LOGOUT"),//待机页面大退
-//    CARD_STOP_ACCEPT("CARD_STOP_ACCEPT");//蓝牙专用，扫描到合适设备之后，发指令给发卡器service，让其不再接受数据。
-    LOGIN("LOGIN"),  //登录
-    LOGOUT("LOGOUT"); //登出
+    LOGIN("LOGIN"),  //开启蓝牙扫描，自动连接附近设备。若成功会发送提示广播，并连续广播心率。
+    LOGOUT("LOGOUT"); //断开蓝牙连接
 
     private String value = "";
 

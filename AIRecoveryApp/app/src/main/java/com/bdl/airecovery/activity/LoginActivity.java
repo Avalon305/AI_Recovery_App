@@ -24,6 +24,7 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.biz.LoginBiz;
+import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LoginDialog;
@@ -209,7 +210,8 @@ public class LoginActivity extends BaseActivity {
     private void startBluetooth(){
         //启动蓝牙扫描
         Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("command", nfcMessage);
+        intent.putExtra("command", CommonCommand.LOGIN);
+        intent.putExtra("message", nfcMessage);
         startService(intent);
         LogUtil.d("发出了启动蓝牙扫描的命令");
     }
@@ -257,7 +259,7 @@ public class LoginActivity extends BaseActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if(commonMessage.getMsgType()==CommonMessage.LOGIN_SUCCESS_ONLINE &&
+            if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser()!=null && second<=7){
                 //关闭模态框
                 loginDialog.dismiss();
@@ -265,9 +267,24 @@ public class LoginActivity extends BaseActivity {
                 loginSuccess();
             }
             else if(MyApplication.getInstance().getUser().getDpStatus() == 3){
-
+                //提示训练已经完成
+                if (commonDialog != null && commonDialog.isShowing()) {
+                    return;
+                }
+                commonDialog = new CommonDialog(LoginActivity.this);
+                commonDialog.setMessage("您以完成本设备训练，请到下一设备训练！");
+                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() { commonDialog.dismiss();
+                    }
+                },2000); // 延时2秒
             }
             else if(second>7){
+                //制空user类
+                User user = new User();
+                MyApplication.getInstance().setUser(user);
                 //提示登录失败
                 if (commonDialog != null && commonDialog.isShowing()) {
                     return;
