@@ -70,14 +70,20 @@ public class BluetoothService extends Service {
         }
     }
 
-
+    /**
+     * 当第一次调用startService时会执行
+     */
     @Override
     public void onCreate() {
         super.onCreate();
         LogUtil.d("BluetoothService初始化...");
         initBluetooth();
     }
-    //检查蓝牙模块，启动蓝牙，达到可以接受请求的状态。
+
+    /**
+     * 初始化蓝牙模块
+     * 检查并启动蓝牙模块，达到可以接受请求的状态。
+     */
     private void initBluetooth() {
         if (BleManager.getInstance().isSupportBle()){
             LogUtil.d("设备支持低功耗蓝牙");
@@ -95,30 +101,38 @@ public class BluetoothService extends Service {
             LogUtil.d("bluetooth is started");
         }
     }
-    //用户登录指令的变量
-    private volatile int whoLogin = 0;
-    //用户登录指令的变量
-    private volatile int whoLogout = 0;
+
+    /**
+     * 请求接收的处理
+     * 每次调用startService时都会执行
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtil.d("收到了command");
+
         //不支持BLE蓝牙的设备，拒绝执行任何命令！
         if (!isBluetoothUseful){
             return super.onStartCommand(intent, flags, startId);
         }
-        String command = intent.getStringExtra("command");
-        //初始化的时候，肯定是不带指令的，所以直接return；
-        if (command == null) return super.onStartCommand(intent, flags, startId);
 
-        LogUtil.d("command != null status =" + this.status.value());
+        String command = intent.getStringExtra("command");
+
+        //初始化的时候，肯定是不带指令的，所以直接return
+        if (command == null) {
+            return super.onStartCommand(intent, flags, startId);
+        }
+
         CommonCommand commonCommand = CommonCommand.getEnumByString(command);
         switch (commonCommand){
-            case LOGIN:
+            case LOGIN: //开启蓝牙扫描，自动连接附近设备。若成功会发送提示广播，并连续广播心率。
                 String nfcMessage = intent.getStringExtra("message");
                 scanDevice();
                 break;
-            case LOGOUT:
-                //下线所有设备
+            case LOGOUT: //断开蓝牙连接
                 disConnect();
                 break;
             default:
