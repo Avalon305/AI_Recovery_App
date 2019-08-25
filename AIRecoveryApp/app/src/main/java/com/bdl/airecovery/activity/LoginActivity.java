@@ -7,8 +7,12 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -68,7 +72,8 @@ public class LoginActivity extends BaseActivity {
     private volatile int whoLogin = 0;
     //设置全局当前时间变量
     private String nowDate;
-
+    //手环iD
+    private String bind_id;
     /**
      * 控件绑定
      */
@@ -81,6 +86,8 @@ public class LoginActivity extends BaseActivity {
     @ViewInject(R.id.iv_muscle_image)
     private ImageView iv_muscle_image;  //锻炼肌肉图
 
+    @ViewInject(R.id.usb_edittext)
+    private EditText usb_edittext;   //usb输入框内容
     //Button
     @ViewInject(R.id.btn_quick_login)
     private Button btn_quick_login;
@@ -361,6 +368,27 @@ public class LoginActivity extends BaseActivity {
                 LogUtil.d("登陆方法回调的结果：" + loginResult);
     }
 
+    private  void readerConvertIntoBind(String readContent){
+        Log.d("readerINfo",readContent);
+
+        char[] chars=readContent.toUpperCase().toCharArray();
+        StringBuilder BindId = new StringBuilder();
+        BindId.append("D1:");
+        BindId.append(chars[12]);
+        BindId.append(chars[13]+":");
+        BindId.append(chars[10]);
+        BindId.append(chars[11]+":");
+        BindId.append(chars[8]);
+        BindId.append(chars[9]+":");
+        BindId.append(chars[6]);
+        BindId.append(chars[7]+":");
+        BindId.append(chars[4]);
+        BindId.append(chars[5]+":");
+        bind_id=BindId.toString();
+        Log.d("bind_id",bind_id);
+        //输出框设为空
+        usb_edittext.setText(null);
+    }
     /**
      * 设置快速登录按钮是否可见
      */
@@ -380,6 +408,25 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        usb_edittext = (EditText) findViewById(R.id.usb_edittext);
+        usb_edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                      if(usb_edittext.length()==16 ){
+                          readerConvertIntoBind(usb_edittext.getText().toString());
+                      }
+            }
+        });
         queryDevInfo(); //查询设备信息
         registerBluetoothReceiver();//蓝牙监听广播接收器的注册
         registerNfcReceiver();//nfc标签广播接收器的注册

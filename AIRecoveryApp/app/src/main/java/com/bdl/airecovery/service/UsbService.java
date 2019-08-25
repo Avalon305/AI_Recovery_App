@@ -15,6 +15,7 @@ import android.hardware.usb.UsbManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 /**
@@ -34,95 +35,122 @@ public class UsbService extends Service {
     private Thread mReadingthread = null; //持续读数据的线程
     private boolean isReading = false; //锁
 
+    private final int VendorID = 8746;
+    private final int ProductID = 10;
 
 
-
-
-    //获取设备权限广播
-    private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (ACTION_DEVICE_PERMISSION.equals(action)) {
-                synchronized (this) {
-                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if (device != null) {
-                            initDevice(device);
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    //获取usb插拔广播
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {   // 插入
-                searchUsb();
-            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {  // 拔出
-                closeUsbService();
-            }
-        }
-    };
 
     //搜索usb设备
     private void searchUsb() {
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        if(mUsbManager==null){
+            Log.d("usbservice","mUsbManager为空");
+        }
         HashMap<String, UsbDevice> devices = mUsbManager.getDeviceList();
-        Iterator<UsbDevice> iterator = devices.values().iterator();
-        while (iterator.hasNext()) {
-            UsbDevice device = iterator.next();
+        if(!devices.isEmpty()) {
 
-            if (mUsbManager.hasPermission(device)) {
-                initDevice(device);
-            } else {
-                mUsbManager.requestPermission(device, mPermissionIntent);
+            Iterator<UsbDevice> iterator = devices.values().iterator();
+            while (iterator.hasNext()) {
+                UsbDevice device = iterator.next();
+
+                Log.d("usbService", "DeviceInfo: v" + device.getVendorId() + " , p"
+                        + device.getProductId());
+
+                if(device.getVendorId() ==VendorID
+                        && device.getProductId()==ProductID){
+
+                    initDevice(device);
+                    Log.d("usbService", "枚举设备成功");
+                }
+//                if (mUsbManager.hasPermission(device)) {
+//
+//                } else {
+//                    mUsbManager.requestPermission(device, mPermissionIntent);
+//                }
             }
         }
     }
-
 
     //初始化设备
     private void initDevice(UsbDevice device) {
-        UsbInterface usbInterface = device.getInterface(0);
-        UsbEndpoint ep = usbInterface.getEndpoint(0);
-        if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_INT) {
+        if(device!=null) {
+            Log.d("usbService","usbInterface count"+device.getInterfaceCount());
 
-            if (ep.getDirection() == UsbConstants.USB_DIR_IN) {
-                mUsbEndpointIn = ep;
-            } else {
-                mUsbEndpointOut = ep;
-            }
-            if ((null == mUsbEndpointIn)) {
-                mUsbEndpointIn = null;
-                mUsbInterface = null;
-            } else {
-                mUsbInterface = usbInterface;
-                mUsbDeviceConnection = mUsbManager.openDevice(device);
+            for(int i=0;i<device.getInterfaceCount();i++){
 
-                startReading();
+                UsbInterface usbInterface = device.getInterface(i);
+                Log.d("usbservice","每个接口的属性"+usbInterface.getInterfaceClass()
+                        +","+usbInterface.getInterfaceSubclass()
+                        +","+usbInterface.getInterfaceProtocol()
+                        +","
+                        +"," );
+                if(usbInterface.getInterfaceClass()==3
+                        && usbInterface.getInterfaceSubclass()==0
+                        &&  usbInterface.getInterfaceProtocol()==0
+                        ){
+                    mUsbInterface=usbInterface;
+
+                    Log.d("usbService", "找到我的设备接口");
+                    assignEndpoint(mUsbInterface);
+                    openDevice(device);
+
+                }
             }
         }
     }
 
+    /**
+     * 分配端点，IN | OUT，即输入输出；此处我直接用1为OUT端点，0为IN，当然你也可以通过判断
+     */
+    private void assignEndpoint(UsbInterface myInterface) {
+        if (myInterface.getEndpoint(1) != null) {
+            mUsbEndpointOut = myInterface.getEndpoint(1);
+        }
+        if (myInterface.getEndpoint(0) != null) {
+            mUsbEndpointIn = myInterface.getEndpoint(0);
+        }
+
+        Log.d("usbService", "分配断点成功");
+    }
+
+    //打开设备
+    public void openDevice(UsbDevice device){
+           if(mUsbInterface!=null){
+               UsbDeviceConnection conn = null;
+               // 在open前判断是否有连接权限；对于连接权限可以静态分配，也可以动态分配权限，可以查阅相关资料
+               if (mUsbManager.hasPermission(device)) {
+                   conn = mUsbManager.openDevice(device);
+               }else {
+                   mUsbManager.requestPermission(device, mPermissionIntent);
+                   Log.d("usbservice","没有权限");
+               }
+
+               if (conn == null) {
+
+                   Log.d("usbservice","代码129");
+               }
+               if(conn.claimInterface(mUsbInterface,true)){
+                   mUsbDeviceConnection =conn;
+                   Log.d("usbservice","打开设备成功");
+                   startReading();
+               }
+           }
+
+    }
 
     //开线程读取数据
     private void startReading() {
-        mUsbDeviceConnection.claimInterface(mUsbInterface, true);
-
         isReading = true;
-
         final StringBuffer qr = new StringBuffer();
-
+Log.d("usbservice","即将进入线程");
         mReadingthread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (isReading) {
                     synchronized (this) {
+                        Log.d("usbService","已经进入线程");
                         byte[] bytes = new byte[mUsbEndpointIn.getMaxPacketSize()];
+                        Log.d("usbService","字节数组"+bytes.length);
                         int ret = mUsbDeviceConnection.bulkTransfer(
                                 mUsbEndpointIn,
                                 bytes,
@@ -144,14 +172,14 @@ public class UsbService extends Service {
 
 
                             //最终处理数据
-                            Log.d("usbService", stringbuilder.toString());
+                            Log.d("usbService最终数据", stringbuilder.toString());
 
-                            bind_id=stringbuilder.toString();
-                            //发送广播
-                            Intent intent = new Intent();
-                            intent.putExtra("bind_id", bind_id);
-                            intent.setAction("com.bdl.airecovery.service.UsbService");
-                            sendBroadcast(intent);
+//                            bind_id=stringbuilder.toString();
+//                            //发送广播
+//                            Intent intent = new Intent();
+//                            intent.putExtra("bind_id", bind_id);
+//                            intent.setAction("com.bdl.airecovery.service.UsbService");
+//                            sendBroadcast(intent);
                         }
                     }
 
@@ -177,18 +205,7 @@ public class UsbService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("usbService","on onCreate");
-
-        //注册插拔广播
-        IntentFilter usbFilter = new IntentFilter();
-        usbFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        usbFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(mUsbReceiver, usbFilter);
-
-        //注册usb权限广播
-        mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_DEVICE_PERMISSION), 0);
-        IntentFilter permissionFilter = new IntentFilter(ACTION_DEVICE_PERMISSION);
-        registerReceiver(mUsbPermissionReceiver, permissionFilter);
+        Log.i("usbService","on onCreate");
 
         searchUsb();
     }
