@@ -247,15 +247,23 @@ public class MotorService extends Service {
                     String errorID = Reader.getErrorID();
                     String status = Reader.getStatus(Reader.StatusBit.EStop);
                     Log.e("-----", errorID);
-                    if (status != null) {
-                        intent.putExtra("state", status);
-                        sendBroadcast(intent); //发送急停广播
-                    }
-                    if (errorID != null) {
+                    //1.error:0 stop:0 正常
+                    //2.error:0 stop:1 按下急停
+                    //4.error:1 stop:1 出错误按下急停
+
+                    if (errorID != null && status != null) {
                         //发送错误信息广播
                         intent.putExtra("error", errorID);
                         sendBroadcast(intent);
+                        if (errorID.equals("0")) { //无错误
+                            if (status != null) {
+                                intent.putExtra("state", status);
+                                sendBroadcast(intent); //发送急停广播
+                                Log.e("---e-stop", ":::");
+                            }
+                        }
                     }
+                    //
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -264,28 +272,6 @@ public class MotorService extends Service {
         timer.schedule(timerTask, 0, 500);
     }
 
-//    private void uploadResult() {
-//        //获取当前时间
-//        Date date = new Date();
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-//        String currentTime = dateFormat.format(date);
-//        ErrorMsg errorMsg = new ErrorMsg();
-//        errorMsg.setUid(MyApplication.getInstance().getUser().getUserId());
-//        errorMsg.setDeviceType(2);
-//        errorMsg.setTrainMode();
-//        errorMsg.setTime(currentTime);
-//
-//        //存暂存表
-//        TempStorage tempStorage = new TempStorage();
-//        Gson gson = new Gson();
-//        tempStorage.setData(gson.toJson(strengthTest)); //重传数据（转换为JSON串）
-//        tempStorage.setType(3); //重传类型
-//        try {
-//            db.saveBindingId(tempStorage);
-//        } catch (DbException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
+
 
 }

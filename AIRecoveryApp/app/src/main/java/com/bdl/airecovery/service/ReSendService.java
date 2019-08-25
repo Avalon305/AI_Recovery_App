@@ -89,7 +89,7 @@ public class ReSendService extends Service {
 
                             case 4:
                                 Log.d("重传service", "准备发送错误码结果");
-                                sendStrengthTestResult(tempStorage);
+                                SendErrorInfo(tempStorage);
                                 Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
                                 break;
 
@@ -204,7 +204,7 @@ public class ReSendService extends Service {
     private void sendStrengthTestResult(TempStorage tempStorage) throws ConnectException {
         Gson gson = new Gson();
         String sendStr = tempStorage.getData();
-        Type listType = new TypeToken<TrainResultDTO>() {
+        Type listType = new TypeToken<StrengthTest>() {
         }.getType();
         StrengthTest sendMsg = gson.fromJson(sendStr, listType);
 
@@ -225,7 +225,7 @@ public class ReSendService extends Service {
     private  void SendErrorInfo(TempStorage tempStorage) throws ConnectException{
         Gson gson = new Gson();
         String sendStr = tempStorage.getData();
-        Type listType = new TypeToken<TrainResultDTO>() {
+        Type listType = new TypeToken<ErrorMsg>() {
         }.getType();
         ErrorMsg sendMsg = gson.fromJson(sendStr, listType);
 

@@ -35,7 +35,9 @@ import com.bdl.airecovery.dialog.LargeDialogHelp;
 import com.bdl.airecovery.dialog.MediumDialog;
 import com.bdl.airecovery.dialog.RatingDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
+import com.bdl.airecovery.entity.DTO.ErrorMsg;
 import com.bdl.airecovery.entity.Setting;
+import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
@@ -49,7 +51,9 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -76,6 +80,8 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private eStopBroadcastReceiver eStopReceiver; //急停广播
     int motorDirection = MyApplication.getInstance().motorDirection;
 
+    private String errorID; //错误ID
+    private CommonDialog errorDialog; //错误提示框
     int currGroup;
     int currGroupNum;
     boolean canOpenRestDialog = false;
@@ -118,7 +124,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     };
     //TODO:电机相关
     private boolean needAfterMotion = true;
-
+    DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
     /**
      * 类成员
      */
@@ -181,7 +187,33 @@ public class ActivePassiveModeActivity extends BaseActivity {
 
     @ViewInject(R.id.btn_map_pause)
     private Button btn_pause; //暂停按钮
+    private boolean isErrorDialogShow = false;
+    private Handler errorDialogHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    if (!isErrorDialogShow) {
+                        Log.e("-----flag", String.valueOf(isErrorDialogShow));
+                        isErrorDialogShow = true;
+                        showErrorDialog();
+                        Log.e("-----flag", String.valueOf(isErrorDialogShow));
+                    }
+                    break;
+                case 2:
+                    errorDialog.dismiss();
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    isErrorDialogShow = false;
+                    break;
 
+            }
+        }
+    };
 
 //    //顺向力反向力handler
 //    private Handler torqueHandler = new Handler() {
@@ -225,6 +257,46 @@ public class ActivePassiveModeActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void uploadErrorInfo() {
+        //获取当前时间
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+        String currentTime = dateFormat.format(date);
+        ErrorMsg errorMsg = new ErrorMsg();
+        errorMsg.setUid(MyApplication.getInstance().getUser().getUserId());
+        errorMsg.setDeviceType(2);
+        errorMsg.setTrainMode(2);
+        errorMsg.setError(errorID);
+        errorMsg.setErrorStartTime(currentTime);
+        //存暂存表
+        TempStorage tempStorage = new TempStorage();
+        Gson gson = new Gson();
+        tempStorage.setData(gson.toJson(errorMsg)); //重传数据（转换为JSON串）
+        tempStorage.setType(4); //重传类型
+        try {
+            db.saveBindingId(tempStorage);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     * 打开错误信息提示框
+     */
+    private void showErrorDialog() {
+        errorDialog = new CommonDialog(ActivePassiveModeActivity.this);
+        errorDialog.setTitle("警告");
+        errorDialog.setMessage("变频器内部发生错误，错误码：" + errorID);
+        errorDialog.setPositiveBtnText("RESET");
+        errorDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MotorProcess.restoration();
+
+            }
+        });
+        errorDialog.show();
     }
 
     /**
@@ -548,8 +620,25 @@ public class ActivePassiveModeActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String state = intent.getStringExtra("state");
             if (state != null && state.equals("1")) {
-                startActivity(new Intent(ActivePassiveModeActivity.this, ScramActivity.class));
-                ActivePassiveModeActivity.this.finish();
+                if (!isErrorDialogShow) {
+                    startActivity(new Intent(ActivePassiveModeActivity.this, ScramActivity.class));
+                    ActivePassiveModeActivity.this.finish();
+                }
+
+            }
+            errorID = intent.getStringExtra("error");
+            if (errorID != null && !errorID.equals("0")) {
+                Message message = errorDialogHandler.obtainMessage();
+                message.what = 1;
+                message.arg1 = 1;
+                errorDialogHandler.sendMessage(message);
+                uploadErrorInfo();
+            }
+            if (errorID != null && errorID.equals("0") && isErrorDialogShow) {
+                Message message = errorDialogHandler.obtainMessage();
+                message.what = 2;
+                message.arg1 = 1;
+                errorDialogHandler.sendMessage(message);
             }
         }
     }
