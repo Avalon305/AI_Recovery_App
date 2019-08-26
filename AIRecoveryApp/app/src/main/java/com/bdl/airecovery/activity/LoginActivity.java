@@ -256,7 +256,7 @@ public class LoginActivity extends BaseActivity {
     private void startBluetooth(){
         //启动蓝牙扫描
         Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("command", CommonCommand.LOGIN);
+        intent.putExtra("command", CommonCommand.LOGIN.value());
         intent.putExtra("message", bind_id);
         startService(intent);
         LogUtil.d("发出了启动蓝牙扫描的命令");
@@ -301,7 +301,7 @@ public class LoginActivity extends BaseActivity {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             LogUtil.d("收到广播："+messageJson);
-            System.out.println(CommonMessage.CONNECT_SUCCESS);
+            LogUtil.d("接收到登录信息"+CommonMessage.CONNECT_SUCCESS);
             //计算蓝牙登录时间差
             SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区

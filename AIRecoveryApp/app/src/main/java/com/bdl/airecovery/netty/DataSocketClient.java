@@ -1,5 +1,7 @@
 package com.bdl.airecovery.netty;
 
+import android.util.Log;
+
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.netty.listener.DataSocketListener;
@@ -45,7 +47,7 @@ public class DataSocketClient {
 			e.printStackTrace();
 		}
 		//host = "192.168.1.105";//TODO 替换为教练机的IP和端口
-		port = 6920;
+		port = 6860;
 		initLoop();
 	}
 
@@ -87,6 +89,7 @@ public class DataSocketClient {
 	private void connect() throws ConnectException {
 		try {
 			this.cf = b.connect(host, port).sync();
+			Log.d("netty conneect", "远程服务器已经连接, 可以进行数据交换..");
 			//logger.debug("远程服务器已经连接, 可以进行数据交换..");
 			status = true;
 		} catch (Exception e) {
