@@ -62,7 +62,7 @@ public class LoginActivity extends BaseActivity {
     /**
      * 类成员
      */
-    private NfcReceiver nfcReceiver;//接收NFC标签信息的广播
+    //private NfcReceiver nfcReceiver;//接收NFC标签信息的广播
     private BluetoothReceiver bluetoothReceiver;//蓝牙广播接收器，监听用户的登录广播
     private String nfcMessage;//NFC标签
     private LoginDialog loginDialog;                  //ShowLogin弹模态框
@@ -72,8 +72,10 @@ public class LoginActivity extends BaseActivity {
     private volatile int whoLogin = 0;
     //设置全局当前时间变量
     private String nowDate;
-    //手环iD
+    //手环mac地址
     private String bind_id;
+    //手环id
+    private String usbData;
     /**
      * 控件绑定
      */
@@ -181,12 +183,83 @@ public class LoginActivity extends BaseActivity {
     /**
      * NFC标签广播接受的注册
      */
-    private void registerNfcReceiver() {
-        //注册登录广播监听器
-        nfcReceiver = new NfcReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.bdl.airecovery.service.UsbService");
-        registerReceiver(nfcReceiver,intentFilter);
+//    private void registerNfcReceiver() {
+//        //注册登录广播监听器
+//        nfcReceiver = new NfcReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("com.bdl.airecovery.service.UsbService");
+//        registerReceiver(nfcReceiver,intentFilter);
+//    }
+//    /**
+//     * 接收NFC标签广播
+//     */
+//    private class NfcReceiver extends BroadcastReceiver{
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            nfcMessage=intent.getStringExtra("bind_id");
+//            showLogin();//弹出登录模态框
+//            loginExecute(nfcMessage);//请求登录
+//            startBluetooth();//开启蓝牙扫描
+//        }
+//    }
+    /**
+     * NFC数据获取
+     */
+    public void  nfcService(){
+        usb_edittext = (EditText) findViewById(R.id.usb_edittext);
+        usb_edittext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(usb_edittext.length()==16 ){
+                    readerConvertIntoBind(usb_edittext.getText().toString());
+                    usbData=usb_edittext.getText().toString();
+                    showLogin();//弹出登录模态框
+                    loginExecute(usbData);//请求登录
+                    startBluetooth();//开启蓝牙扫描
+                }
+            }
+        });
+    }
+    /**
+     * 将NFC标签转换成Mac地址
+     * @param readContent
+     */
+    private  void readerConvertIntoBind(String readContent){
+        Log.d("readerINfo",readContent);
+        char[] chars=readContent.toUpperCase().toCharArray();
+        StringBuilder BindId = new StringBuilder();
+        BindId.append("D1:");
+        BindId.append(chars[12]);
+        BindId.append(chars[13]+":");
+        BindId.append(chars[10]);
+        BindId.append(chars[11]+":");
+        BindId.append(chars[8]);
+        BindId.append(chars[9]+":");
+        BindId.append(chars[6]);
+        BindId.append(chars[7]+":");
+        BindId.append(chars[4]);
+        BindId.append(chars[5]);
+        bind_id=BindId.toString();
+        Log.d("bind_id",bind_id);
+        //输出框设为空
+        usb_edittext.setText(null);
+    }
+    /**
+     * 启动蓝牙扫描
+     */
+    private void startBluetooth(){
+        //启动蓝牙扫描
+        Intent intent = new Intent(this, BluetoothService.class);
+        intent.putExtra("command", CommonCommand.LOGIN);
+        intent.putExtra("message", bind_id);
+        startService(intent);
+        LogUtil.d("发出了启动蓝牙扫描的命令");
     }
     /**
      * 蓝牙返回信息的注册
@@ -198,31 +271,6 @@ public class LoginActivity extends BaseActivity {
         intentFilter.addAction("com.bdl.bluetoothmessage");
         registerReceiver(bluetoothReceiver,intentFilter);
     }
-
-    /**
-     * 接收NFC标签广播
-     */
-    private class NfcReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            nfcMessage=intent.getStringExtra("bind_id");
-            showLogin();//弹出登录模态框
-            loginExecute(nfcMessage);//请求登录
-            startBluetooth();//开启蓝牙扫描
-        }
-    }
-    /**
-     * 启动蓝牙扫描
-     */
-    private void startBluetooth(){
-        //启动蓝牙扫描
-        Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("command", CommonCommand.LOGIN);
-        intent.putExtra("message", nfcMessage);
-        startService(intent);
-        LogUtil.d("发出了启动蓝牙扫描的命令");
-    }
-
     /**
      * 用于界面提示，在用户连接蓝牙的时间段里，弹出正在登录模态框
      */
@@ -258,27 +306,41 @@ public class LoginActivity extends BaseActivity {
             TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
             myFmt.setTimeZone(timeZoneChina);//设置系统时区
             try {
-                Date startDate =myFmt.parse(nowDate);
-                Date endDate = myFmt.parse(MyApplication.getInstance().getUser().getClientTime());
+                Date startDate =myFmt.parse(MyApplication.getInstance().getUser().getClientTime());
+                Date endDate = myFmt.parse(MyApplication.getInstance().getUser().getServerTime());
                 interval=(endDate.getTime()-startDate.getTime())/1000;//秒
                 second=interval%60;//秒
                 System.out.println(second);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
             if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null && second<=7){
+                    MyApplication.getInstance().getUser()!=null &&
+                    second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 2){
                 //关闭模态框
                 loginDialog.dismiss();
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
-            else if(MyApplication.getInstance().getUser().getDpStatus() == 3){
+            //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
+            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser()!=null &&
+                    second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 6 ){
+                //关闭模态框
+                loginDialog.dismiss();
+                //登录成功时，执行跳转的逻辑
+                loginSuccess();
+            }
+            //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
+            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser()!=null && second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 3){
                 //提示训练已经完成
-                if (commonDialog != null && commonDialog.isShowing()) {
+                if (loginDialog != null && loginDialog.isShowing()) {
                     return;
                 }
                 commonDialog = new CommonDialog(LoginActivity.this);
+                commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您以完成本设备训练，请到下一设备训练！");
                 commonDialog.setCancelable(false);//设置点击空白处模态框不消失
                 Timer timer = new Timer();
@@ -288,16 +350,60 @@ public class LoginActivity extends BaseActivity {
                     }
                 },2000); // 延时2秒
             }
-            else if(second>7){
-                //制空user类
-                User user = new User();
-                MyApplication.getInstance().setUser(user);
-                //提示登录失败
-                if (commonDialog != null && commonDialog.isShowing()) {
+            //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方无该设备
+            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser()!=null && second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 5){
+                //关闭登录框
+                if (loginDialog != null && loginDialog.isShowing()) {
                     return;
                 }
                 commonDialog = new CommonDialog(LoginActivity.this);
-                commonDialog.setMessage("登录失败");
+                commonDialog.setTitle("温馨提示");
+                commonDialog.setMessage("您没有本设备的处方，建议您去教练机设置处方");
+                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        commonDialog.dismiss();
+                    }
+                },2000); // 延时2秒
+            }
+            //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户无处方
+            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser()!=null && second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 1) {
+                //关闭登录框
+                if (loginDialog != null && loginDialog.isShowing()) {
+                    return;
+                }
+                commonDialog = new CommonDialog(LoginActivity.this);
+                commonDialog.setTitle("温馨提示");
+                commonDialog.setMessage("您没有处方，建议您去教练机设置处方");
+                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        commonDialog.dismiss();
+                        loginSuccess();
+                    }
+                }, 2000); // 延时2秒
+            }
+            //蓝牙连接成功，时间超过7秒，判断为离线登录
+            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser()!=null && second==0){
+                //此时为离线登录
+                loginSuccess();
+            }else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){
+                //置空user类
+                User user = new User();
+                MyApplication.getInstance().setUser(user);
+                //提示登录失败
+                if (loginDialog != null && loginDialog.isShowing()) {
+                    return;
+                }
+                commonDialog = new CommonDialog(LoginActivity.this);
+                commonDialog.setMessage("蓝牙连接失败");
                 commonDialog.setCancelable(false);//设置点击空白处模态框不消失
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -305,10 +411,6 @@ public class LoginActivity extends BaseActivity {
                     public void run() { commonDialog.dismiss();
                     }
                 },2000); // 延时2秒
-            }else {
-                //此处为离线登录，虽然代码很无聊，但是还是要写的
-                //离线登录时，执行跳转的逻辑
-                loginSuccess();
             }
         }
     }
@@ -367,28 +469,6 @@ public class LoginActivity extends BaseActivity {
                 int loginResult = LoginBiz.getInstance().loginBiz(name,LoginActivity.this.whoLogin,nowDate);
                 LogUtil.d("登陆方法回调的结果：" + loginResult);
     }
-
-    private  void readerConvertIntoBind(String readContent){
-        Log.d("readerINfo",readContent);
-
-        char[] chars=readContent.toUpperCase().toCharArray();
-        StringBuilder BindId = new StringBuilder();
-        BindId.append("D1:");
-        BindId.append(chars[12]);
-        BindId.append(chars[13]+":");
-        BindId.append(chars[10]);
-        BindId.append(chars[11]+":");
-        BindId.append(chars[8]);
-        BindId.append(chars[9]+":");
-        BindId.append(chars[6]);
-        BindId.append(chars[7]+":");
-        BindId.append(chars[4]);
-        BindId.append(chars[5]+":");
-        bind_id=BindId.toString();
-        Log.d("bind_id",bind_id);
-        //输出框设为空
-        usb_edittext.setText(null);
-    }
     /**
      * 设置快速登录按钮是否可见
      */
@@ -408,29 +488,11 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        usb_edittext = (EditText) findViewById(R.id.usb_edittext);
-        usb_edittext.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                      if(usb_edittext.length()==16 ){
-                          readerConvertIntoBind(usb_edittext.getText().toString());
-                      }
-            }
-        });
         queryDevInfo(); //查询设备信息
         registerBluetoothReceiver();//蓝牙监听广播接收器的注册
-        registerNfcReceiver();//nfc标签广播接收器的注册
+        //registerNfcReceiver();//nfc标签广播接收器的注册
         isBtnVisible();     //是否显示快速登录按钮
+        nfcService();//nfc数据获取
     }
 
     /**
@@ -453,7 +515,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(nfcReceiver);//注册广播解除
+        //unregisterReceiver(nfcReceiver);//注册广播解除
         unregisterReceiver(bluetoothReceiver);//同上
     }
 }
