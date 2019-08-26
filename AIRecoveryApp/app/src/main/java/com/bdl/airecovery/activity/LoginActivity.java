@@ -301,6 +301,7 @@ public class LoginActivity extends BaseActivity {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             LogUtil.d("收到广播："+messageJson);
+            System.out.println(CommonMessage.CONNECT_SUCCESS);
             //计算蓝牙登录时间差
             SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
@@ -392,6 +393,8 @@ public class LoginActivity extends BaseActivity {
             //蓝牙连接成功，时间超过7秒，判断为离线登录
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser()!=null && second==0){
+                //关闭模态框
+                loginDialog.dismiss();
                 //此时为离线登录
                 loginSuccess();
             }else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){

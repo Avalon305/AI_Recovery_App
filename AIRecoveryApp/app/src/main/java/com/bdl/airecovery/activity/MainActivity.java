@@ -1,6 +1,7 @@
 package com.bdl.airecovery.activity;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +18,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +32,7 @@ import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
+import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.dialog.LargeDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.Setting;
@@ -98,10 +102,12 @@ public class MainActivity extends BaseActivity {
 
     //控件绑定
     //TextView
-    @ViewInject(R.id.tv_title)
-    private TextView  tv_title;                 //界面左上角模式标题（文本格式：设置模式 - Xxx训练）
+    @ViewInject(R.id.tv_train_mode)
+    private TextView  tv_train_mode;                 //界面左上角模式标题（文本格式：设置模式 - Xxx训练）
     @ViewInject(R.id.tv_user_name)
     private TextView tv_user_name;              //用户名（文本格式：x先生）
+    @ViewInject(R.id.iv_main_age)
+    private TextView age;              //年龄
     @ViewInject(R.id.tv_ms_positivenumber)
     private TextView tv_ms_positivenumber;      //顺向力数值
     @ViewInject(R.id.tv_ms_inversusnumber)
@@ -123,10 +129,12 @@ public class MainActivity extends BaseActivity {
     private ImageView iv_ms_inversusplus;       //反向力的“+”按钮
     @ViewInject(R.id.iv_ms_inversusminus)
     private ImageView iv_ms_inversusminus;      //反向力的“-”按钮
-    @ViewInject(R.id.iv_main_state)
-    private ImageView iv_main_state;            //登陆状态
+//    @ViewInject(R.id.iv_main_state)
+//    private ImageView iv_main_state;            //登陆状态
     @ViewInject(R.id.btn_enter_strength_test)
     private Button btnEnterStrengthTest;        //进入肌力测试页面
+    @ViewInject(R.id.image_hi)
+    private ImageView imageHi;
 
 
     @Override
@@ -201,7 +209,16 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //注册急停广播
+
+        ObjectAnimator objectAnimator;
+        objectAnimator = ObjectAnimator.ofFloat(imageHi, "rotation", 360f);
+        objectAnimator.setRepeatCount(Integer.MAX_VALUE);
+        objectAnimator.setDuration(2000);
+        objectAnimator.setInterpolator(new AnticipateOvershootInterpolator());
+        objectAnimator.start();
+
+
+
         IntentFilter filter = new IntentFilter();
         filter.addAction("E-STOP");
         eStopReceiver = new eStopBroadcastReceiver();
@@ -266,11 +283,13 @@ public class MainActivity extends BaseActivity {
             //非空的情况下，把第一用户的名字进行设置到指定位置
             tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
             //界面左上角模式标题
-            tv_title.setText("      " + MyApplication.getInstance().getUser().getTrainMode());
+            tv_train_mode.setText(MyApplication.getInstance().getUser().getTrainMode());
+            Log.e(":::::::", String.valueOf(MyApplication.getInstance().getUser().getAge()));
+            age.setText(MyApplication.getInstance().getUser().getAge() + "");
         }else{
             //否则就是测试页面直接跳转到主页面，应该显示扳手图标，开发者名字，测试状态按钮
             tv_user_name.setText("开发者");
-            iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.banshou1));
+//            iv_main_state.setImageDrawable(getResources().getDrawable(R.drawable.banshou1));
         }
     }
 
