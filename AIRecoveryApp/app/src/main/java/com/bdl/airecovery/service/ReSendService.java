@@ -65,6 +65,7 @@ public class ReSendService extends Service {
                 for (TempStorage tempStorage : tempStorageList) {
                     //代码简洁是毒药！此处注意switch与枚举配合使用的bug.必须使用简洁的写法。
                     //如果测试不通过，该用静态常量对方式定义类型
+                    Log.d("重传service", tempStorage.toString());
                     Log.d("重传service", "数据类型，" + tempStorage.getType());
                     try {
                         switch (tempStorage.getType()) {
@@ -222,7 +223,7 @@ public class ReSendService extends Service {
         DataSocketClient.getInstance().sendMsg(message);
 
         try {
-            dbManager.delete(tempStorage);
+            dbManager.deleteById(TempStorage.class, tempStorage.getId());
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -255,7 +256,7 @@ public class ReSendService extends Service {
 
 
         try {
-            dbManager.delete(tempStorage);
+            dbManager.deleteById(TempStorage.class, tempStorage.getId());
         } catch (DbException e) {
             e.printStackTrace();
         }
