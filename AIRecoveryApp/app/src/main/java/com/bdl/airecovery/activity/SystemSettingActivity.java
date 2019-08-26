@@ -117,10 +117,19 @@ public class SystemSettingActivity extends BaseActivity {
                     if (DataSocketClient.getInstance() == null) {
                         status = "未联通";
                     } else {
-                        status = DataSocketClient.getInstance().status ? "联通" : "未联通";
+                        if (DataSocketClient.getInstance().status) {
+                            status = "联通";
+                        } else {
+                            status = "未联通";
+                        }
                     }
                     setTextView(tvConnectStatus, status);
-                    tvConnectStatus.setTextColor(Color.parseColor("#00EE00"));
+                    if (status.equals("联通")) {
+                        tvConnectStatus.setTextColor(Color.parseColor("#00EE00"));
+                    } else {
+                        tvConnectStatus.setTextColor(Color.parseColor("#CD0000"));
+                    }
+
                 }
             });
         }
