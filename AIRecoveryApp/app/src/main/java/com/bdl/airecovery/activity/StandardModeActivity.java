@@ -903,6 +903,7 @@ public class StandardModeActivity extends BaseActivity {
                         }
                         if (flag[0]) {
                             startActivity(new Intent(StandardModeActivity.this, PersonalSettingActivity.class));
+                            finish();
                         } else if (cnt[0] != 0) {
                             Toast.makeText(StandardModeActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
                         }
