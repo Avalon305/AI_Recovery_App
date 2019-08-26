@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/background2"
+    android:background="@drawable/timg4"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="-6dp"
         android:layout_marginRight="-6dp"
-        android:layout_marginTop="-6dp"
-        android:background="@drawable/titlebg">
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
         <!--模式-->
         <TextView
             android:id="@+id/tv_map_title"
@@ -53,23 +53,27 @@
             android:layout_alignEnd="@+id/tv_map_title"
             android:layout_centerVertical="true"
             android:layout_marginRight="30dp"
-            android:src="@drawable/guanliyuan1"/>
+            android:src="@drawable/ic_user"/>
 
     </RelativeLayout>
+
+    <!--底板-->
+    <ImageView
+        android:id="@+id/image_ma_backboard"
+        android:layout_below="@+id/rl_top_title"
+        android:layout_width="600dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="-30dp"
+        android:layout_marginLeft="25dp"
+        android:src="@drawable/shadow_backboard2"/>
 
     <!--左侧控件区-->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="35dp"
         android:layout_marginLeft="30dp"
         android:layout_below="@+id/rl_top_title">
-        <!--底板-->
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-10dp"
-            android:src="@drawable/backboard"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -193,6 +197,42 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_ma_backboard"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="-10dp"
+     >
+        <Button
+            android:id="@+id/btn_setting"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@drawable/button_selector"
+            android:text="医护设置"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
+            android:textSize="30sp" />
+        <!--暂停-->
+        <Button
+            android:id="@+id/btn_map_pause"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
+            android:gravity="center"
+            android:layout_marginLeft="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textStyle="bold"
+            android:background="@drawable/button_selector"
+            android:text="暂停"
+            android:textColor="@color/blue1"
+            android:textSize="30sp" />
+    </LinearLayout>
+
 
     <!--右侧控件区-->
     <RelativeLayout
@@ -206,7 +246,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/backboard"/>
+            android:src="@drawable/shadow_backboard2"/>
         <LinearLayout
             android:id="@+id/ll_scope"
             android:layout_width="wrap_content"
@@ -288,40 +328,7 @@
     </RelativeLayout>
 
 
-    <LinearLayout
-        android:id="@+id/ll_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rl_right"
-        android:layout_alignStart="@id/rl_right"
-        android:layout_marginTop="-40dp"
-        android:layout_marginLeft="20dp">
-        <Button
-            android:id="@+id/btn_setting"
-            android:layout_width="200dp"
-            android:layout_height="90dp"
-            android:gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:background="@drawable/button_selector"
-            android:text="医护设置"
-            android:textColor="#2b2b2b"
-            android:textSize="30sp" />
-        <!--暂停-->
-        <Button
-            android:id="@+id/btn_map_pause"
-            android:layout_width="200dp"
-            android:layout_height="90dp"
-            android:gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:background="@drawable/button_selector"
-            android:text="暂停"
-            android:textColor="#2b2b2b"
-            android:textSize="30sp" />
-    </LinearLayout>
+
 
 
     <!--下方顺反方向力量数值-->
@@ -329,6 +336,7 @@
         android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:layout_marginLeft="700dp"
         android:layout_alignParentBottom="true">
         <!--增加顺向力-->
         <ImageView
