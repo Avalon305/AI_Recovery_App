@@ -1037,6 +1037,7 @@ public class StandardModeActivity extends BaseActivity {
      * 打开错误信息提示框
      */
     private void showErrorDialog() {
+        uploadErrorInfo();
         errorDialog = new CommonDialog(StandardModeActivity.this);
         errorDialog.setTitle("警告");
         errorDialog.setMessage("变频器内部发生错误，错误码：" + errorID);
@@ -1390,7 +1391,7 @@ public class StandardModeActivity extends BaseActivity {
                 message.what = 1;
                 message.arg1 = 1;
                 errorDialogHandler.sendMessage(message);
-                uploadErrorInfo();
+
             }
             if (errorID != null && errorID.equals("0") && isErrorDialogShow) {
                 Message message = errorDialogHandler.obtainMessage();
