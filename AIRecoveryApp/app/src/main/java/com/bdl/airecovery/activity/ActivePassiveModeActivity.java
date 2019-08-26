@@ -756,6 +756,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                         }
                         if (flag[0]) {
                             startActivity(new Intent(ActivePassiveModeActivity.this, PersonalSettingActivity.class));
+                            finish();
                         } else if (cnt[0] != 0) {
                             Toast.makeText(ActivePassiveModeActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
                         }
