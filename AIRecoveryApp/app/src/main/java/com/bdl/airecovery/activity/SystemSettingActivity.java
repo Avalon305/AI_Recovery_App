@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -115,11 +116,14 @@ public class SystemSettingActivity extends BaseActivity {
                     //动态获取当前与C#端连接状态
                     String status;
                     if (DataSocketClient.getInstance() == null) {
+                        Log.e("联通状态", "null");
                         status = "未联通";
                     } else {
                         if (DataSocketClient.getInstance().status) {
+                            Log.e("联通状态", "联通");
                             status = "联通";
                         } else {
+                            Log.e("联通状态", "未联通");
                             status = "未联通";
                         }
                     }

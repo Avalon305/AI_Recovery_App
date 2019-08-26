@@ -51,6 +51,7 @@ import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.proto.BdlProto;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
+import com.bdl.airecovery.util.CommonUtils;
 import com.bdl.airecovery.util.MessageUtils;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -1017,7 +1018,7 @@ public class StandardModeActivity extends BaseActivity {
         String currentTime = dateFormat.format(date);
         ErrorMsg errorMsg = new ErrorMsg();
         errorMsg.setUid("222");
-        errorMsg.setDeviceType(2);
+        errorMsg.setDeviceType(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()));
         errorMsg.setTrainMode(2);
         errorMsg.setError(errorID);
         errorMsg.setErrorStartTime(currentTime);

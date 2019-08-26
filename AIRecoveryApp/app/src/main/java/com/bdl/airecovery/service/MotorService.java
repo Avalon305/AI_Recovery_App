@@ -246,7 +246,6 @@ public class MotorService extends Service {
                 try {
                     String errorID = Reader.getErrorID();
                     String status = Reader.getStatus(Reader.StatusBit.EStop);
-                    Log.e("-----", errorID);
                     //1.error:0 stop:0 正常
                     //2.error:0 stop:1 按下急停
                     //4.error:1 stop:1 出错误按下急停
@@ -259,7 +258,6 @@ public class MotorService extends Service {
                             if (status != null) {
                                 intent.putExtra("state", status);
                                 sendBroadcast(intent); //发送急停广播
-                                Log.e("---e-stop", ":::");
                             }
                         }
                     }
