@@ -114,6 +114,7 @@ public class SystemSettingActivity extends BaseActivity {
                 @Override
                 public void run() {
                     //动态获取当前与C#端连接状态
+                    Log.e("::::", String.valueOf(DataSocketClient.getInstance().status));
                     String status;
                     if (DataSocketClient.getInstance() == null) {
                         Log.e("联通状态", "null");
@@ -197,7 +198,7 @@ public class SystemSettingActivity extends BaseActivity {
         setTextView(tvIp, ipAddress);
 
         //动态更新当前与C#端连接状态
-        updateStatusTimer.schedule(updateStatusTask, 0, 2);
+        updateStatusTimer.schedule(updateStatusTask, 0, 500);
     }
 
     /**
