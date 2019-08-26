@@ -70,6 +70,7 @@ public class StrengthTestActivity extends BaseActivity {
             int arg1 = msg.arg1;
             switch (msg.what) {
                 case 1:
+                    uploadResult();
                     showCommonDialog();
                     break;
             }
@@ -105,8 +106,8 @@ public class StrengthTestActivity extends BaseActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
         String currentTime = dateFormat.format(date);
         StrengthTest strengthTest = new StrengthTest();
-        strengthTest.setUid(MyApplication.getInstance().getUser().getUserId());
-        strengthTest.setResult("2");
+        strengthTest.setUid("7");
+        strengthTest.setResult(String.valueOf(maxStrength));
         strengthTest.setTime(currentTime);
 
         //存暂存表
