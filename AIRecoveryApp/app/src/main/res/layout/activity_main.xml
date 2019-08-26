@@ -82,7 +82,6 @@
                 android:id="@+id/tv_show_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:text="年龄："
                 android:textSize="50dp" />
             <TextView
@@ -281,6 +280,7 @@
             android:enabled="true"
             android:layout_width="200dp"
             android:layout_height="75dp"
+            android:textColor="@color/blue1"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -288,7 +288,7 @@
             android:textStyle="bold"
             android:text="开始训练"
             android:background="@drawable/button_selector"
-            android:textColor="@color/blue1"
+
             android:textSize="30dp"/>
         <!--退出训练按钮-->
         <Button
