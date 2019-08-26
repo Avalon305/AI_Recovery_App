@@ -473,9 +473,6 @@ public class StandardModeActivity extends BaseActivity {
         seekBarThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                if (true) {
-                    return;
-                }
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         //获取推拉位移
@@ -539,9 +536,6 @@ public class StandardModeActivity extends BaseActivity {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (true) {
-                    return;
-                }
                 Message message = countHandler.obtainMessage();
                 message.what = 1;
                 try {
@@ -588,9 +582,6 @@ public class StandardModeActivity extends BaseActivity {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (true) {
-                    return;
-                }
                 try {
                     //发送消息到handler
                     Message message = countHandler.obtainMessage();
