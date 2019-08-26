@@ -1013,7 +1013,7 @@ public class StandardModeActivity extends BaseActivity {
     private void uploadErrorInfo() {
         //获取当前时间
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String currentTime = dateFormat.format(date);
         ErrorMsg errorMsg = new ErrorMsg();
         errorMsg.setUid("222");

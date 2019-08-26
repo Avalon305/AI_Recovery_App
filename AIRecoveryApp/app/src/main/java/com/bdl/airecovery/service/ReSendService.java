@@ -243,7 +243,7 @@ public class ReSendService extends Service {
         BdlProto.Message message =DataProtoUtil.packErrorInfoRequest(ErrorInfoSeq++,request);
         Log.d("重传service","发送的请求："+message.toString());
         //发送Message
-        Log.d("重传service","肌力测试");
+        Log.d("重传service","错误码");
         DataSocketClient.getInstance().sendMsg(message);
     }
 

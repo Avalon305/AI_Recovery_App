@@ -103,7 +103,7 @@ public class StrengthTestActivity extends BaseActivity {
     private void uploadResult() {
         //获取当前时间
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String currentTime = dateFormat.format(date);
         StrengthTest strengthTest = new StrengthTest();
         strengthTest.setUid("7");
