@@ -220,6 +220,13 @@ public class ReSendService extends Service {
 
         BdlProto.Message message = DataProtoUtil.packMuscleStrengthRequest(strengthTestSeq++, request);
         DataSocketClient.getInstance().sendMsg(message);
+
+        try {
+            dbManager.delete(tempStorage);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private  void SendErrorInfo(TempStorage tempStorage) throws ConnectException{
@@ -245,6 +252,13 @@ public class ReSendService extends Service {
         //发送Message
         Log.d("重传service","错误码");
         DataSocketClient.getInstance().sendMsg(message);
+
+
+        try {
+            dbManager.delete(tempStorage);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
     }
 
     public ReSendService() {
