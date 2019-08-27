@@ -41,6 +41,7 @@ import com.bdl.airecovery.entity.DTO.ErrorMsg;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.entity.Upload;
+import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
@@ -58,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -299,6 +301,7 @@ public class PassiveModeActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
     /**
      * 初始化前方限制、后方限制、设备类型
      */
@@ -1056,6 +1059,41 @@ public class PassiveModeActivity extends BaseActivity {
                     default:
                         break;
                 }
+            }
+        });
+        //“确定”按钮 监听
+        ratingDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //设置Upload类
+                int currGroup = Integer.parseInt(tv_curr_groupcount.getText().toString());
+                int currGroupNum = Integer.parseInt(tv_curr_groupnum.getText().toString());
+                int targetGroupNum = MyApplication.getInstance().getUser().getGroupNum();
+                int sumNum = (currGroup-1) * targetGroupNum + currGroupNum;
+                upload.setFinishNum(sumNum); //计算训练个数
+                long trainTime = (System.currentTimeMillis() - startTime) / 1000;
+                upload.setFinishTime((int)trainTime);
+                upload.setSpeedRank(Integer.parseInt(getSpeed.getText().toString()));
+                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
+                upload.setHeartRateList(heartRateList);
+                MyApplication.getInstance().setUpload(upload);
+
+                //关闭可能存在的模态框
+                if (commonDialog != null && commonDialog.isShowing()) {
+                    commonDialog.dismiss();
+                }
+                if (helpDialog != null && helpDialog.isShowing()) {
+                    helpDialog.dismiss();
+                }
+
+                ratingDialog.dismiss();
+
+                //跳转再见页面
+                Intent intent = new Intent(PassiveModeActivity.this, ByeActivity.class);
+                //启动
+                startActivity(intent);
+                //结束当前Activity
+                PassiveModeActivity.this.finish();
             }
         });
         //模态框隐藏导航栏
