@@ -118,7 +118,7 @@ public class StandardModeActivity extends BaseActivity {
                 tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
                 allowRecordNum = false;
                 //btn_ms_pause.setText("结束"); //暂停按钮修改为结束按钮
-                if (MyApplication.getInstance().getUser().getUsername().equals("体验者") {
+                if (MyApplication.getInstance().getUser().getUsername().equals("体验者")) {
 					//打开体验者退出模态框
 					openExperiencer();
 				} else {

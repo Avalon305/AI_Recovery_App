@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,6 +89,9 @@ public class SystemSettingActivity extends BaseActivity {
     @ViewInject(R.id.btn_adset) //进入高级设置页面
     private QMUIRoundButton btnAdset;
 
+    @ViewInject(R.id.ic_setting)
+    private ImageView iconSetting;
+
     Setting setting = null; //接收数据库数据的Setting对象
     //String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
@@ -103,6 +108,12 @@ public class SystemSettingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        ObjectAnimator objectAnimator;
+        objectAnimator = ObjectAnimator.ofFloat(iconSetting, "rotation", 360f);
+        objectAnimator.setRepeatCount(Integer.MAX_VALUE);
+        objectAnimator.setDuration(2000);
+        objectAnimator.setInterpolator(new LinearInterpolator());
+        objectAnimator.start();
         initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
 

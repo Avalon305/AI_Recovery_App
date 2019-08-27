@@ -6,14 +6,17 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,6 +72,8 @@ public class AdvancedSettingActivity extends BaseActivity {
     private QMUIRoundButton setDeviceName;
     @ViewInject(R.id.btn_goto_calibration)
     private QMUIRoundButton gotoCalibration; //标定界面入口
+    @ViewInject(R.id.ic_advanced_setting)
+    private ImageView iconAdSetting;
 
     Setting setting = null; //接收数据库数据的Setting对象
     String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
@@ -83,6 +88,12 @@ public class AdvancedSettingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        ObjectAnimator objectAnimator;
+        objectAnimator = ObjectAnimator.ofFloat(iconAdSetting, "rotation", 360f);
+        objectAnimator.setRepeatCount(Integer.MAX_VALUE);
+        objectAnimator.setDuration(2000);
+        objectAnimator.setInterpolator(new LinearInterpolator());
+        objectAnimator.start();
         initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
 
