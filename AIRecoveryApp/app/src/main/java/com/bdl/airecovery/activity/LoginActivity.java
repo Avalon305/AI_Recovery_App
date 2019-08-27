@@ -325,9 +325,9 @@ public class LoginActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
-            LogUtil.d("接收到登录信息："+CommonMessage.CONNECT_SUCCESS);
-            LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
-            LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
+            //LogUtil.d("接收到登录信息："+CommonMessage.CONNECT_SUCCESS);
+            //LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
+            //LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
             if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser()!=null &&
@@ -353,7 +353,7 @@ public class LoginActivity extends BaseActivity {
                 //提示训练已经完成
                 //关闭模态框
                 loginDialog.dismiss();
-                unregisterReceiver(bluetoothReceiver);
+                //unregisterReceiver(bluetoothReceiver);
                 //关闭蓝牙连接
                 closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
@@ -375,6 +375,9 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 5){
                 //关闭登录框
                 loginDialog.dismiss();
+                //unregisterReceiver(bluetoothReceiver);
+                //关闭蓝牙连接
+                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有本设备的处方，建议您去教练机设置处方");
@@ -394,6 +397,9 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 1) {
                 //关闭模态框
                 loginDialog.dismiss();
+                //unregisterReceiver(bluetoothReceiver);
+                //关闭蓝牙连接
+                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有处方，建议您去教练机设置处方");
@@ -413,12 +419,93 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getServerTime() == null){
                 //关闭模态框
                 loginDialog.dismiss();
+                User user = new User();
+                //初始化待训练设备
+                String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
+                user.setUserId("体验者");
+                user.setDeviceTypearrList(str1);
+                user.setUsername("体验者");
+                user.setExisitSetting(false);
+                user.setMoveWay(0);
+                user.setGroupCount(1);
+                user.setGroupNum(2);
+                user.setRelaxTime(5);
+                user.setSpeedRank(1);
+                user.setAge(30);
+                user.setWeight(60);
+                user.setHeartRatemMax(190);
+                user.setTrainMode("康复模式");
+                if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式划船机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setSeatHeight(0);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式推胸机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setSeatHeight(0);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部推蹬机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腹肌训练机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                    user.setLeverAngle(0);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("三头肌训练机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部外弯机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部内弯机")){
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("蝴蝶机")){
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("反向蝴蝶机")){
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                }
+                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式背部伸展机")){
+                    user.setForwardLimit(130);
+                    user.setBackLimit(50);
+                    user.setConsequentForce(25);
+                    user.setReverseForce(25);
+                    user.setLeverAngle(0);
+                }
+                MyApplication.getInstance().setUser(user);
                 //此时为离线登录
                 loginSuccess();
             }else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){
                 //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
+                //unregisterReceiver(bluetoothReceiver);
+                //关闭蓝牙连接
+                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("蓝牙连接失败");
                 commonDialog.setPositiveBtnText("我知道了");
@@ -434,6 +521,9 @@ public class LoginActivity extends BaseActivity {
                 //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
+                //unregisterReceiver(bluetoothReceiver);
+                //关闭蓝牙连接
+                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("登录失败");
                 commonDialog.setPositiveBtnText("我知道了");
