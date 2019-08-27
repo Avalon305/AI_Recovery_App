@@ -151,7 +151,11 @@ public class ReSendService extends Service {
         //发送Message
         Log.d("重传service", "正在发送训练结果");
         DataSocketClient.getInstance().sendMsg(message);
-
+        try {
+            dbManager.deleteById(TempStorage.class, tempStorage.getId());
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -196,10 +200,16 @@ public class ReSendService extends Service {
         //发送Message
         Log.d("重传service", "正在发送医护设置");
         DataSocketClient.getInstance().sendMsg(message);
+        try {
+            dbManager.deleteById(TempStorage.class, tempStorage.getId());
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * 发送肌力测试结果
+     *
      * @param tempStorage
      */
     private void sendStrengthTestResult(TempStorage tempStorage) throws ConnectException {
@@ -230,7 +240,7 @@ public class ReSendService extends Service {
 
     }
 
-    private  void SendErrorInfo(TempStorage tempStorage) throws ConnectException{
+    private void SendErrorInfo(TempStorage tempStorage) throws ConnectException {
         Gson gson = new Gson();
         String sendStr = tempStorage.getData();
         Type listType = new TypeToken<ErrorMsg>() {
@@ -245,13 +255,13 @@ public class ReSendService extends Service {
                 .setErrorStartTime(sendMsg.getErrorStartTime())
                 .build();
 
-        if(ErrorInfoSeq == Integer.MAX_VALUE) {
+        if (ErrorInfoSeq == Integer.MAX_VALUE) {
             ErrorInfoSeq = 1;
         }
-        BdlProto.Message message =DataProtoUtil.packErrorInfoRequest(ErrorInfoSeq++,request);
-        Log.d("重传service","发送的请求："+message.toString());
+        BdlProto.Message message = DataProtoUtil.packErrorInfoRequest(ErrorInfoSeq++, request);
+        Log.d("重传service", "发送的请求：" + message.toString());
         //发送Message
-        Log.d("重传service","错误码");
+        Log.d("重传service", "错误码");
         DataSocketClient.getInstance().sendMsg(message);
 
 

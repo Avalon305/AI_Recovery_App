@@ -72,9 +72,9 @@ public class CircularRingPercentageView extends View {
         circleWidth = 450;
         roundBackgroundColor = 0xffdddddd;
         //textColor =0xff999999;
-        textColor = 0xff3D4F62;
+        textColor = 0xff000000;
         roundWidth = 80;
-        textSize = 20;
+        textSize = 25;
         colors[0] = 0xff3cdf5f;
         colors[1] = 0xffcdd513;
         colors[2] =  0xffff4639;
