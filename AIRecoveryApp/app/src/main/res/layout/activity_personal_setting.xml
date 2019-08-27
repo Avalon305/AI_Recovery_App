@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@drawable/timg4"
     tools:context=".activity.PersonalSettingActivity">
     <!--上侧标题栏-->
     <RelativeLayout
@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="-6dp"
         android:layout_marginRight="-6dp"
-        android:layout_marginTop="-6dp"
-        android:background="@drawable/titlebg">
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
         <!--页面标题-->
         <TextView
             android:id="@+id/tv_title"
@@ -55,7 +55,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginRight="30dp"
-            android:src="@drawable/guanliyuan1" />
+            android:src="@drawable/ic_user" />
     </RelativeLayout>
 
     <!--左侧功能按钮-->
@@ -67,7 +67,7 @@
         android:gravity="center_horizontal"
         android:layout_below="@id/rl_top_title"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:layout_marginLeft="60dp">
         <TextView
             android:id="@+id/tv_note"
@@ -78,94 +78,101 @@
         <!--“参数0”按钮-->
         <Button
             android:id="@+id/btn_param_0"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
+            android:layout_marginTop="15dp"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:visibility="gone"
             android:text="参数0"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <!--“参数1”按钮-->
         <Button
+            android:layout_marginTop="15dp"
             android:id="@+id/btn_param_1"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:visibility="gone"
             android:text="参数1"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <!--“参数2”按钮-->
         <Button
+            android:layout_marginTop="15dp"
             android:id="@+id/btn_param_2"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:visibility="gone"
             android:text="参数2"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <!--“参数3”按钮-->
         <Button
+            android:layout_marginTop="15dp"
             android:id="@+id/btn_param_3"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:visibility="gone"
             android:text="参数3"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <!--“参数4”按钮-->
         <Button
+            android:layout_marginTop="15dp"
             android:id="@+id/btn_param_4"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:visibility="gone"
             android:text="参数4"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <!--“设置模式”按钮-->
         <Button
+            android:layout_marginTop="15dp"
             android:id="@+id/btn_setting_mode"
-            android:layout_width="250dp"
-            android:layout_height="80dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:text="设置模式"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <RelativeLayout
             android:id="@+id/rl_show_mode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
             <!--提示文本 当前模式是：-->
             <TextView
                 android:id="@+id/tv_mode_note"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="当前模式是："
@@ -192,7 +199,6 @@
         android:layout_marginLeft="120dp"
         />
 
-    <!--调整动画显示部分-->
     <RelativeLayout
         android:id="@+id/relative_layout_cartoon"
         android:layout_width="wrap_content"
@@ -203,9 +209,12 @@
         android:layout_marginRight="60dp">
         <!--底板-->
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/backboard4"/>
+            android:id="@+id/image_ma_backboard"
+            android:layout_width="500dp"
+            android:layout_height="500dp"
+            android:layout_marginTop="-60dp"
+            android:layout_marginLeft="0dp"
+            android:src="@drawable/shadow_backboard2"/>
         <!--当前参数名-->
         <TextView
             android:id="@+id/tv_tips_right"
@@ -242,7 +251,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginRight="20dp"
             android:rotation="180"
-            android:src="@drawable/mode_minus_selector" />
+            android:src="@drawable/mode_plus_selector" />
         <!--加号-->
         <ImageView
             android:id="@+id/iv_param_add"
@@ -252,7 +261,7 @@
             android:layout_alignBottom="@id/rl_number"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/mode_plus_selector" />
+            android:src="@drawable/mode_minus_selector" />
         <!--拖动条-->
         <SeekBar
             android:id="@+id/seekBar"
@@ -284,33 +293,33 @@
         <Button
             android:id="@+id/btn_save"
             android:layout_width="200dp"
-            android:layout_height="90dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:layout_alignBottom="@+id/btn_map_end"
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/btn_map_end"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:text="保存"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
         <!--返回按钮-->
         <Button
             android:id="@+id/btn_back"
             android:layout_width="200dp"
-            android:layout_height="90dp"
+            android:layout_height="75dp"
             android:gravity="center"
             android:layout_toRightOf="@+id/btn_map_end"
             android:layout_alignBottom="@+id/btn_map_end"
             android:layout_marginLeft="20dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:background="@drawable/button_selector"
             android:text="返回"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
     </LinearLayout>
 

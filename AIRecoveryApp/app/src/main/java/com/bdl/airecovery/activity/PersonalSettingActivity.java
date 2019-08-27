@@ -1,6 +1,7 @@
 package com.bdl.airecovery.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -380,12 +381,13 @@ public class PersonalSettingActivity extends BaseActivity {
         }
 
         //恢复上一次点击的按钮样式，保持高亮效果只存在于当前点击的按钮中
-        btn_params.get(curIndex).setBackgroundResource(R.drawable.btnbackground);
-
+        btn_params.get(curIndex).setBackgroundResource(R.drawable.btn_blue_bg);
+        btn_params.get(curIndex).setTextColor((getResources().getColor(R.color.blue1)));
         for (int i = 0; i < 5; ++i) {
             if (v.getId() == btn_params_id[i]) {
                 //更改选中按钮的样式
-                btn_params.get(i).setBackgroundResource(R.drawable.btnbackground_pressed);
+                btn_params.get(i).setBackgroundResource(R.drawable.btn_blue_bg_pressed);
+                btn_params.get(i).setTextColor((getResources().getColor(R.color.orange2)));
                 //判空
                 if (MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i) != null && MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getName() != null && !MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getName().equals("")) {
                     //更新右侧文本的提示内容
@@ -743,7 +745,8 @@ public class PersonalSettingActivity extends BaseActivity {
     private void defaultSetting() {
         //默认高亮第一个按钮
         curIndex = 0;
-        btn_params.get(curIndex).setBackgroundResource(R.drawable.btnbackground_pressed);
+        btn_params.get(curIndex).setBackgroundResource(R.drawable.btn_blue_bg_pressed);
+        btn_params.get(curIndex).setTextColor((getResources().getColor(R.color.orange2)));
         //动画部分默认显示第一个参数（所以该方法必须在queryDevParam()之后调用）
         //更新右侧拖动条动画
         if (MyApplication.getInstance().getCurrentDevice().getPersonalList() != null && curIndex >= 0 && MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex) != null) {
@@ -776,7 +779,7 @@ public class PersonalSettingActivity extends BaseActivity {
         //获取用户名
         if (MyApplication.getInstance().getUser().getUserId() != null && !MyApplication.getInstance().getUser().getUserId().equals("")) {
             tv_user_name.setText(MyApplication.getInstance().getUser().getUserId());
-            iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.yonghu1));
+            iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.ic_user));
         }
 
         //获取当前训练模式
