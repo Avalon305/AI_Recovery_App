@@ -795,7 +795,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     /**
      * 暂停按钮    暂停后不计个数
      */
-    @Event(R.id.btn_ms_pause)
+    @Event(R.id.btn_map_pause)
     private void pauseClick(View view) {
         allowRecordNum = false;
         commonDialog = new CommonDialog(ActivePassiveModeActivity.this);
