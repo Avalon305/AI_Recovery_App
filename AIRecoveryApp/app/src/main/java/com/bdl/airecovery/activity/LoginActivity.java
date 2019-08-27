@@ -69,7 +69,7 @@ public class LoginActivity extends BaseActivity {
     private CommonDialog commonDialog;                  //ShowTips弹模态框
     private DbManager db = MyApplication.getInstance().getDbManager();
     //第一用户登录指令的变量
-    private volatile int whoLogin = 0;
+    private volatile int whoLogin = 1;
     //设置全局当前时间变量
     private String nowDate;
     //手环mac地址
@@ -102,24 +102,25 @@ public class LoginActivity extends BaseActivity {
         User user = new User();
         //初始化待训练设备
         String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
+        user.setUserId("体验者");
         user.setDeviceTypearrList(str1);
         user.setUsername("体验者");
         user.setExisitSetting(false);
         user.setMoveWay(0);
-        user.setGroupCount(5);
-        user.setGroupNum(10);
-        user.setRelaxTime(30);
+        user.setGroupCount(1);
+        user.setGroupNum(2);
+        user.setRelaxTime(5);
         user.setSpeedRank(1);
         user.setAge(30);
         user.setWeight(60);
         user.setHeartRatemMax(190);
         user.setTrainMode("康复模式");
         if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式划船机")){
-                  user.setForwardLimit(130);
-                  user.setBackLimit(50);
-                  user.setSeatHeight(0);
-                  user.setConsequentForce(25);
-                  user.setReverseForce(25);
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setSeatHeight(0);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
         }
         else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式推胸机")){
             user.setForwardLimit(130);
@@ -217,11 +218,10 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(usb_edittext.length()==16 ){
-                    readerConvertIntoBind(usb_edittext.getText().toString());
-                    usbData=usb_edittext.getText().toString();
                     showLogin();//弹出登录模态框
-                    loginExecute(usbData);//请求登录
-                    startBluetooth();//开启蓝牙扫描
+                    startBluetooth(readerConvertIntoMAC(usb_edittext.getText().toString()));//开启蓝牙扫描
+                    loginExecute(readerConvertIntoBindId(usb_edittext.getText().toString()));//请求登录
+                    usb_edittext.setText(null);
                 }
             }
         });
@@ -230,7 +230,7 @@ public class LoginActivity extends BaseActivity {
      * 将NFC标签转换成Mac地址
      * @param readContent
      */
-    private  void readerConvertIntoBind(String readContent){
+    private  String readerConvertIntoMAC(String readContent){
         Log.d("readerINfo",readContent);
         char[] chars=readContent.toUpperCase().toCharArray();
         StringBuilder BindId = new StringBuilder();
@@ -246,14 +246,33 @@ public class LoginActivity extends BaseActivity {
         BindId.append(chars[4]);
         BindId.append(chars[5]);
         bind_id=BindId.toString();
-        Log.d("bind_id",bind_id);
-        //输出框设为空
-        usb_edittext.setText(null);
+        Log.d("Mac",bind_id);
+        return bind_id;
+
+    }
+
+    private  String readerConvertIntoBindId(String readContent){
+        Log.d("readerINfo",readContent);
+        char[] chars=readContent.toUpperCase().toCharArray();
+        StringBuilder BindId = new StringBuilder();
+        BindId.append(chars[12]);
+        BindId.append(chars[13]);
+        BindId.append(chars[10]);
+        BindId.append(chars[11]);
+        BindId.append(chars[8]);
+        BindId.append(chars[9]);
+        BindId.append(chars[6]);
+        BindId.append(chars[7]);
+        BindId.append(chars[4]);
+        BindId.append(chars[5]);
+        usbData=BindId.toString();
+        Log.d("bind_id",usbData);
+        return usbData;
     }
     /**
      * 启动蓝牙扫描
      */
-    private void startBluetooth(){
+    private void startBluetooth(String bind_id){
         //启动蓝牙扫描
         Intent intent = new Intent(this, BluetoothService.class);
         intent.putExtra("command", CommonCommand.LOGIN.value());
@@ -282,7 +301,7 @@ public class LoginActivity extends BaseActivity {
         loginDialog = new LoginDialog(LoginActivity.this);
         loginDialog.setTitle("温馨提示");
         loginDialog.setMessage("正在登录");
-        loginDialog.setCancelable(false);//设置点击空白处模态框不消失
+        //loginDialog.setCancelable(false);//设置点击空白处模态框不消失
         loginDialog.show();
     }
     /**
@@ -300,25 +319,13 @@ public class LoginActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
-            LogUtil.d("收到广播："+messageJson);
-            LogUtil.d("接收到登录信息"+CommonMessage.CONNECT_SUCCESS);
-            //计算蓝牙登录时间差
-            SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
-            myFmt.setTimeZone(timeZoneChina);//设置系统时区
-            try {
-                Date startDate =myFmt.parse(MyApplication.getInstance().getUser().getClientTime());
-                Date endDate = myFmt.parse(MyApplication.getInstance().getUser().getServerTime());
-                interval=(endDate.getTime()-startDate.getTime())/1000;//秒
-                second=interval%60;//秒
-                System.out.println(second);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            LogUtil.d("接收到登录信息："+CommonMessage.CONNECT_SUCCESS);
+            LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
+            LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
             if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser()!=null &&
-                    second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 2){
+                    MyApplication.getInstance().getUser().getDpStatus() == 2){
                 //关闭模态框
                 loginDialog.dismiss();
                 //登录成功时，执行跳转的逻辑
@@ -327,7 +334,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser()!=null &&
-                    second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 6 ){
+                     MyApplication.getInstance().getUser().getInfoResponse() == 6 ){
                 //关闭模态框
                 loginDialog.dismiss();
                 //登录成功时，执行跳转的逻辑
@@ -335,11 +342,11 @@ public class LoginActivity extends BaseActivity {
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null && second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 3){
+                    MyApplication.getInstance().getUser()!=null &&
+                    MyApplication.getInstance().getUser().getInfoResponse() == 3){
                 //提示训练已经完成
-                if (loginDialog != null && loginDialog.isShowing()) {
-                    return;
-                }
+                //关闭模态框
+                loginDialog.dismiss();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您以完成本设备训练，请到下一设备训练！");
@@ -353,11 +360,10 @@ public class LoginActivity extends BaseActivity {
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方无该设备
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null && second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 5){
+                    MyApplication.getInstance().getUser()!=null  &&
+                    MyApplication.getInstance().getUser().getInfoResponse() == 5){
                 //关闭登录框
-                if (loginDialog != null && loginDialog.isShowing()) {
-                    return;
-                }
+                loginDialog.dismiss();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有本设备的处方，建议您去教练机设置处方");
@@ -372,11 +378,10 @@ public class LoginActivity extends BaseActivity {
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户无处方
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null && second<=7 && MyApplication.getInstance().getUser().getDpStatus() == 1) {
-                //关闭登录框
-                if (loginDialog != null && loginDialog.isShowing()) {
-                    return;
-                }
+                    MyApplication.getInstance().getUser()!=null  &&
+                    MyApplication.getInstance().getUser().getInfoResponse() == 1) {
+                //关闭模态框
+                loginDialog.dismiss();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有处方，建议您去教练机设置处方");
@@ -390,9 +395,10 @@ public class LoginActivity extends BaseActivity {
                     }
                 }, 2000); // 延时2秒
             }
-            //蓝牙连接成功，时间超过7秒，判断为离线登录
+            //蓝牙连接成功，教练机连接失败
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null && second==0){
+                    MyApplication.getInstance().getUser()!=null &&
+                    MyApplication.getInstance().getUser().getServerTime() == null){
                 //关闭模态框
                 loginDialog.dismiss();
                 //此时为离线登录
@@ -402,11 +408,23 @@ public class LoginActivity extends BaseActivity {
                 User user = new User();
                 MyApplication.getInstance().setUser(user);
                 //提示登录失败
-                if (loginDialog != null && loginDialog.isShowing()) {
-                    return;
-                }
+                //关闭模态框
+                loginDialog.dismiss();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("蓝牙连接失败");
+                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() { commonDialog.dismiss();
+                    }
+                },2000); // 延时2秒
+            }else{
+                //提示登录失败
+                //关闭模态框
+                loginDialog.dismiss();
+                commonDialog = new CommonDialog(LoginActivity.this);
+                commonDialog.setMessage("登录失败");
                 commonDialog.setCancelable(false);//设置点击空白处模态框不消失
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -462,15 +480,15 @@ public class LoginActivity extends BaseActivity {
      * @param name
      */
     private void loginExecute(final  String name){
-                //获取当前时间
-                SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
-                myFmt.setTimeZone(timeZoneChina);//设置系统时区
-                nowDate=myFmt.format(new Date());
-                //执行业务
-                LogUtil.d("蓝牙执行LoginBiz！！！！！！！！");
-                int loginResult = LoginBiz.getInstance().loginBiz(name,LoginActivity.this.whoLogin,nowDate);
-                LogUtil.d("登陆方法回调的结果：" + loginResult);
+        //获取当前时间
+        SimpleDateFormat myFmt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        TimeZone timeZoneChina = TimeZone.getTimeZone("Asia/Shanghai");//获取中国的时区
+        myFmt.setTimeZone(timeZoneChina);//设置系统时区
+        nowDate=myFmt.format(new Date());
+        //执行业务
+        LogUtil.d("蓝牙执行LoginBiz！！！！！！！！");
+        int loginResult = LoginBiz.getInstance().loginBiz(name,LoginActivity.this.whoLogin,nowDate);
+        LogUtil.d("登陆方法回调的结果：" + loginResult);
     }
     /**
      * 设置快速登录按钮是否可见

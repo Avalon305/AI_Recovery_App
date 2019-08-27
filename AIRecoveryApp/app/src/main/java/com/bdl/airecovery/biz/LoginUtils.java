@@ -182,8 +182,8 @@ public class LoginUtils {
             user.setUsername("离线用户");
             user.setExisitSetting(false);
             user.setMoveWay(0);
-            user.setGroupCount(5);
-            user.setGroupNum(10);
+            user.setGroupCount(1);
+            user.setGroupNum(2);
             user.setRelaxTime(30);
             user.setSpeedRank(1);
             user.setAge(30);

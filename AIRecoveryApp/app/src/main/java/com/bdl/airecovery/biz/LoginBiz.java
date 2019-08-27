@@ -185,7 +185,7 @@ public class LoginBiz {
                     newUser.setWeight(60);
                     newUser.setHeartRatemMax(190);
                     newUser.setTrainMode("康复模式");
-                    MyApplication.getInstance().setUser(newUser);
+//                    MyApplication.getInstance().setUser(newUser);
                     return CommonMessage.LOGIN_REGISTER_OFFLINE;
                 }
             }
@@ -277,12 +277,19 @@ public class LoginBiz {
     private AtomicInteger Seq = new AtomicInteger(1);
     private void sendLoginRequest(String bind_value,String nowDate) {
         //生成请求
+        if(bind_value==null){
+            return;
+        }else {
+            LogUtil.i("nfc标签 : " + bind_value);
+        }
+        LogUtil.i("设备类型 : " + CommonUtils.getDeviceType());
         BdlProto.LoginRequest request =
                 BdlProto.LoginRequest.newBuilder()
-                        .setDeviceType(CommonUtils.getDeviceType())
                         .setBindId(bind_value)
                         .setClientTime(nowDate)
-                        .setUid("").build();
+                        .setUid("7")
+                        .setDeviceTypeValue((Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()))+1)
+                                .build();
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         final BdlProto.Message message = DataProtoUtil.packLoginRequest(Seq.get(),request);
         LogUtil.i("Message : " + message);

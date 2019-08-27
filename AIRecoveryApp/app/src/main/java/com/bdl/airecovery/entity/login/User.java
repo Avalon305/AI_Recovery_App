@@ -19,26 +19,26 @@ public class User {
     //训练模式
     private String trainMode;
     //---------个人设置信息↓
-    private int seatHeight = 7; //座椅高度
+    private int seatHeight ; //座椅高度
 
-    private int backDistance = 8; //靠背距离
+    private int backDistance ; //靠背距离
 
-    private int footboardDistance = 9;//踏板距离
+    private int footboardDistance;//踏板距离
 
-    private double leverAngle = 10;//杠杆角度
+    private double leverAngle ;//杠杆角度
 
-    private int forwardLimit = 11; //前方限制
+    private int forwardLimit ; //前方限制
 
-    private int backLimit = 12; //后方限制
+    private int backLimit ; //后方限制
 
-    private double consequentForce = 13; //顺向力
+    private double consequentForce ; //顺向力
 
-    private double reverseForce = 14; //反向力
+    private double reverseForce ; //反向力
 
-    private double power = 15; //功率
+    private double power ; //功率
 
     //--------处方信息 ↓
-    int dpStatus = 16;//'1做了 0没做'
+    int dpStatus ;//'1做了 0没做'
     //移乘方式
     private int moveWay;
 
@@ -151,6 +151,9 @@ public class User {
         this.clientTime = message.getLoginResponse().getClientTime();
         //服务端时间
         this.serverTime = message.getLoginResponse().getServerTime();
+
+        //登录状态i
+        this.infoResponse = message.getLoginResponse().getInfoResponse();
 
     }
 

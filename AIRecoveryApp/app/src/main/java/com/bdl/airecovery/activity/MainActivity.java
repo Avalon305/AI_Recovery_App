@@ -136,11 +136,15 @@ public class MainActivity extends BaseActivity {
     @ViewInject(R.id.image_hi)
     private ImageView imageHi;
 
+    @ViewInject(R.id.btn_setting)
+    private Button btn_setting;  //进入医护设置按钮
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isBtnVisible();     //是否显示肌力测试按钮
+        healthCare();//是否显示医护设置按钮
         initImmersiveMode();//隐藏状态栏，导航栏
         initMotor();
         queryDevInfo();     //查询设备信息
@@ -758,6 +762,15 @@ public class MainActivity extends BaseActivity {
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    //设置快速登录用户医护设置按钮不可见
+    private void healthCare(){
+        if(MyApplication.getInstance().getUser().getUsername().equals("体验者")){
+               btn_setting.setVisibility(View.GONE);
+        }else{
+               btn_setting.setVisibility(View.VISIBLE);
         }
     }
 
