@@ -27,6 +27,7 @@ import org.xutils.view.annotation.ViewInject;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.entity.Personal;
 import com.bdl.airecovery.entity.TempStorage;
+import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.proto.BdlProto;
 import com.google.gson.Gson;
 import com.bdl.airecovery.dialog.CommonDialog;
@@ -126,6 +127,7 @@ public class PersonalSettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        test();
         //获取数据库管理单例
         if (MyApplication.getInstance() != null && MyApplication.getInstance().getDbManager() != null) {
             db = MyApplication.getInstance().getDbManager(); //获取DbManager
@@ -136,6 +138,30 @@ public class PersonalSettingActivity extends BaseActivity {
         defaultSetting(); //控件内容的默认设置
         queryUserInfo(); //获取用户相关信息
 //        isOpenFatLossModeEvent(); //减脂模式CheckBox事件监听
+    }
+
+    /**
+     * 测试训练场景
+     */
+    private void test() {
+        User newUser = new User();
+        newUser.setUserId("离线用户");
+        newUser.setExisitSetting(false);
+        newUser.setDeviceTypearrList("[P00,P01,P02,P03,P04,P05,P06,P07]");
+        newUser.setMoveWay(0);
+        newUser.setGroupCount(2);
+        newUser.setGroupNum(3);
+        newUser.setRelaxTime(10);
+        newUser.setSpeedRank(1);
+        newUser.setAge(30);
+        newUser.setWeight(60);
+        newUser.setHeartRatemMax(190);
+        newUser.setTrainMode("康复模式");
+        newUser.setForwardLimit(123);
+        newUser.setBackLimit(23);
+        newUser.setSeatHeight(5);
+        newUser.setLeverAngle(8);
+        MyApplication.getInstance().setUser(newUser);
     }
 
     @Override
@@ -376,15 +402,14 @@ public class PersonalSettingActivity extends BaseActivity {
         if (curIndex >= 0 && MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex) != null) {
             if (MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getMax() != null && !MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getMax().equals("")) {
                 //更新拖动条最大值
-                //如果参数是double类型（杠杆角度/初始功率）
+                //如果参数是double类型（杠杆角度）
                 if (MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getName().equals("杠杆角度") || MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getName().equals("初始功率")) {
                     //转换为Integer
                     Double paramDouble = Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getMax());
                     Integer paramInteger = paramDouble.intValue();
                     seekBar.setProgress(paramInteger);
-                } else {
-                    seekBar.setMax(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getMax()));
                 }
+                seekBar.setMax(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getMax()));
             }
             if (MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getValue() != null && !MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getValue().equals("")) {
                 //更新拖动条进度（参数需要int类型）
