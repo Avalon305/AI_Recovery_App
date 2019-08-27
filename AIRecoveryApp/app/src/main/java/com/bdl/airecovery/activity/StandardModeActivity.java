@@ -240,7 +240,6 @@ public class StandardModeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //test(); //测试训练场景
         needAfterMotion = true;
         initImmersiveMode(); //隐藏状态栏，导航栏
         initCalibrationParam();
@@ -262,82 +261,6 @@ public class StandardModeActivity extends BaseActivity {
     int currGroup;
     int currGroupNum;
     boolean canOpenRestDialog = false;
-
-    /*private Handler testHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.arg1 == 0) {
-                return;
-            }
-            if (msg.arg1 % MyApplication.getInstance().getUser().getGroupNum() == 0) {
-                currGroupNum = MyApplication.getInstance().getUser().getGroupNum();
-                currGroup = msg.arg1 / MyApplication.getInstance().getUser().getGroupNum();
-            } else {
-                currGroupNum = msg.arg1 % MyApplication.getInstance().getUser().getGroupNum();
-                currGroup = 1 + msg.arg1 / MyApplication.getInstance().getUser().getGroupNum();
-            }
-
-            if (currGroup == MyApplication.getInstance().getUser().getGroupCount() &&
-                    currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
-                tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
-                allowRecordNum = false;
-                //btn_ms_pause.setText("结束"); //暂停按钮修改为结束按钮
-                openRatingDialog();
-                return ;
-            }
-
-            tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
-            tv_curr_groupcount.setText(String.valueOf(currGroup)); //当前组
-
-            //如果当前组做完，进入组间休息
-            if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
-                canOpenRestDialog = true;
-                allowRecordNum = false; //期间不允许计数
-                currGroupNum = 0;
-                currGroup++;
-            }
-        }
-    };*/
-
-    /**
-     * 测试训练场景
-     */
-    /*private void test() {
-        User newUser = new User();
-        newUser.setUserId("离线用户");
-        newUser.setExisitSetting(false);
-        newUser.setDeviceTypearrList("[P00,P01,P02,P03,P04,P05,P06,P07]");
-        newUser.setMoveWay(0);
-        newUser.setGroupCount(2);
-        newUser.setGroupNum(3);
-        newUser.setRelaxTime(10);
-        newUser.setSpeedRank(1);
-        newUser.setAge(30);
-        newUser.setWeight(60);
-        newUser.setHeartRatemMax(190);
-        newUser.setTrainMode("康复模式");
-        MyApplication.getInstance().setUser(newUser);
-
-        Random ran = new Random();
-        for (int i = 0; i < 50; i++) {
-            heartRateList.add(ran.nextInt(200-30+1)+30);
-        }
-
-        Timer testTimer = new Timer();
-        TimerTask testTask = new TimerTask() {
-            @Override
-            public void run() {
-                Message message = testHandler.obtainMessage();
-                if (allowRecordNum) {
-                    num++;
-                    message.arg1 = num;
-                    testHandler.sendMessage(message);
-                }
-            }
-        };
-        testTimer.schedule(testTask, 2*1000, 1*1000);
-    }*/
 
     /**
      * 心率分析
@@ -379,7 +302,8 @@ public class StandardModeActivity extends BaseActivity {
      * 计算卡路里消耗
      */
     private double countEnergy(int count, int force){
-        return count * (0.01 * weight + 0.02 * force);
+        double res = count * (0.01 * weight + 0.02 * force);
+        return (double) Math.round(res * 100) / 100; //四舍五入，小数点保留两位
     }
 
     private void initCalibrationParam() {

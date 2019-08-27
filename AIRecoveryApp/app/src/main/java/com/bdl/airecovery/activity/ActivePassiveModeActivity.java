@@ -305,7 +305,8 @@ public class ActivePassiveModeActivity extends BaseActivity {
      * 计算卡路里消耗
      */
     private double countEnergy(int count, int force){
-        return count * (0.01 * weight + 0.02 * force);
+        double res = count * (0.01 * weight + 0.02 * force);
+        return (double) Math.round(res * 100) / 100; //四舍五入，小数点保留两位
     }
 
     /**
@@ -708,7 +709,9 @@ public class ActivePassiveModeActivity extends BaseActivity {
      * 查询当前设备参数
      */
     private void queryDeviceParam() {
-        speednumber.setText(speed / 100 + "");
+        //speednumber.setText(speed / 100 + "");
+        speednumber.setText(String.valueOf(MyApplication.getInstance().getUser().getSpeedRank()));
+        speed = 50 * Integer.valueOf(speednumber.getText().toString()) + 250;
     }
 
     /**

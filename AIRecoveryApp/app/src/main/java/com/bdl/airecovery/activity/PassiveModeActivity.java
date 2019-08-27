@@ -264,7 +264,6 @@ public class PassiveModeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         needAfterMotion = true;
         initImmersiveMode(); //隐藏状态栏，导航栏
         initMotor();
@@ -525,25 +524,17 @@ public class PassiveModeActivity extends BaseActivity {
      * 查询当前设备参数
      */
     private void queryDeviceParam() {
-        getSpeed.setText(speed / 100 + "");
-        //获取设备信息
-        //判空
-//        if (MyApplication.getInstance().getCurrentDevice() == null) {
-//            return;
-//        }
-//        if (MyApplication.getInstance().getCurrentDevice().getReverseForce() != null && MyApplication.getInstance().getCurrentDevice().getConsequentForce() != null) {
-//            positivenumber.setText(MyApplication.getInstance().getCurrentDevice().getConsequentForce());//顺向力数值
-//            inversusnumber.setText(MyApplication.getInstance().getCurrentDevice().getReverseForce());   //反向力数值
-//            positiveTorqueLimited = Integer.parseInt(String.valueOf(positivenumber.getText())) * 100;
-//            negativeTorqueLimited = Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100;
-//        }
+        //getSpeed.setText(speed / 100 + "");
+        getSpeed.setText(String.valueOf(MyApplication.getInstance().getUser().getSpeedRank()));
+        speed = 50 * Integer.valueOf(getSpeed.getText().toString()) + 250;
     }
 
     /**
      * 计算卡路里消耗
      */
     private double countEnergy(int count, int force){
-        return count * (0.01 * weight + 0.02 * force);
+        double res = count * (0.01 * weight + 0.02 * force);
+        return (double) Math.round(res * 100) / 100; //四舍五入，小数点保留两位
     }
 
     /**
