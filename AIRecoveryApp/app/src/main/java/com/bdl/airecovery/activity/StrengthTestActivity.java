@@ -164,6 +164,7 @@ public class StrengthTestActivity extends BaseActivity {
         final CommonDialog commonDialog = new CommonDialog(StrengthTestActivity.this);
         commonDialog.setTitle("测试结果");
         commonDialog.setMessage("您在肌力测试中使用的最大力量为" + maxStrength + ",肌力测试评级为");
+        commonDialog.setCanceledOnTouchOutside(true);
         commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 commonDialog.dismiss();

@@ -128,7 +128,7 @@ public class PersonalSettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        test();
+//        test();
         //获取数据库管理单例
         if (MyApplication.getInstance() != null && MyApplication.getInstance().getDbManager() != null) {
             db = MyApplication.getInstance().getDbManager(); //获取DbManager
@@ -602,6 +602,7 @@ public class PersonalSettingActivity extends BaseActivity {
             PersonalSettingDTO personalSettingDTO = new PersonalSettingDTO();
             if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
                 personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
+                personalSettingDTO.setBind_id(MyApplication.getInstance().getUser().getBindId());
                 personalSettingDTO.setSeatHeight(seatHeight);
                 personalSettingDTO.setBackDistance(backDistance);
                 personalSettingDTO.setLeverAngle(leverAngle);

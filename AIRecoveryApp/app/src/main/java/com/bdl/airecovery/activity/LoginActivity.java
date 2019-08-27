@@ -267,6 +267,9 @@ public class LoginActivity extends BaseActivity {
         BindId.append(chars[4]);
         BindId.append(chars[5]);
         usbData=BindId.toString();
+        User user = new User();
+        user.setBindId(usbData);
+        MyApplication.getInstance().setUser(user);
         Log.d("bind_id",usbData);
         return usbData;
     }
@@ -325,7 +328,7 @@ public class LoginActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
-            //LogUtil.d("接收到登录信息："+CommonMessage.CONNECT_SUCCESS);
+            LogUtil.d("接收到登录信息："+commonMessage);
             //LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
             //LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
@@ -353,9 +356,6 @@ public class LoginActivity extends BaseActivity {
                 //提示训练已经完成
                 //关闭模态框
                 loginDialog.dismiss();
-                //unregisterReceiver(bluetoothReceiver);
-                //关闭蓝牙连接
-                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您以完成本设备训练，请到下一设备训练！");
@@ -375,9 +375,6 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 5){
                 //关闭登录框
                 loginDialog.dismiss();
-                //unregisterReceiver(bluetoothReceiver);
-                //关闭蓝牙连接
-                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有本设备的处方，建议您去教练机设置处方");
@@ -397,9 +394,6 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 1) {
                 //关闭模态框
                 loginDialog.dismiss();
-                //unregisterReceiver(bluetoothReceiver);
-                //关闭蓝牙连接
-                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有处方，建议您去教练机设置处方");
@@ -415,7 +409,6 @@ public class LoginActivity extends BaseActivity {
             }
             //蓝牙连接成功，教练机连接失败
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null &&
                     MyApplication.getInstance().getUser().getServerTime() == null){
                 //关闭模态框
                 loginDialog.dismiss();
@@ -424,7 +417,7 @@ public class LoginActivity extends BaseActivity {
                 String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
                 user.setUserId("体验者");
                 user.setDeviceTypearrList(str1);
-                user.setUsername("体验者");
+                user.setUsername("离线登录");
                 user.setExisitSetting(false);
                 user.setMoveWay(0);
                 user.setGroupCount(1);
@@ -499,13 +492,11 @@ public class LoginActivity extends BaseActivity {
                 MyApplication.getInstance().setUser(user);
                 //此时为离线登录
                 loginSuccess();
-            }else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){
+            }
+            else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){
                 //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
-                //unregisterReceiver(bluetoothReceiver);
-                //关闭蓝牙连接
-                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("蓝牙连接失败");
                 commonDialog.setPositiveBtnText("我知道了");
@@ -517,13 +508,11 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
                 commonDialog.show();
-            }else{
+            }
+            else{
                 //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
-                //unregisterReceiver(bluetoothReceiver);
-                //关闭蓝牙连接
-                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("登录失败");
                 commonDialog.setPositiveBtnText("我知道了");

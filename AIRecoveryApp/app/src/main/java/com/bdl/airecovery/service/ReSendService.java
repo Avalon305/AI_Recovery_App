@@ -59,7 +59,7 @@ public class ReSendService extends Service {
         try {
             //查询出10条数据，方法可用性需要测试。
             List<TempStorage> tempStorageList =
-                    dbManager.selector(TempStorage.class).limit(10).findAll();
+                    dbManager.selector(TempStorage.class).findAll();
             if (tempStorageList != null) {
                 Log.d("重传service", "成功读取暂存表，大小为" + tempStorageList.size());
                 for (TempStorage tempStorage : tempStorageList) {
@@ -104,6 +104,8 @@ public class ReSendService extends Service {
                         break;
                     }
                 }
+            } else {
+                Log.d("重传service", "暂存表为空");
             }
         } catch (DbException e) {
             e.printStackTrace();
