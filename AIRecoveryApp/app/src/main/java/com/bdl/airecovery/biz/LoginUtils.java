@@ -196,7 +196,7 @@ public class LoginUtils {
         //第一用户为空，初始化第一用户
         if (MyApplication.getInstance().getUser() == null){
             //初始化全局User对象
-            MyApplication.getInstance().setUser(user);
+            //MyApplication.getInstance().setUser(user);
             LogUtil.e("初始化的全局User对象：" + MyApplication.getInstance().getUser().getUserId());
             //存入暂存表
             personalInfoDAO personalInfoDAO = com.bdl.airecovery.personalInfoDAO.getInstance();

@@ -305,13 +305,18 @@ public class LoginActivity extends BaseActivity {
         //loginDialog.setCancelable(false);//设置点击空白处模态框不消失
         loginDialog.show();
     }
+
+    //关闭蓝牙连接
+    private void closeBluetooth(){
+        Intent intentLog = new Intent(LoginActivity.this, BluetoothService.class);
+        intentLog.putExtra("command", CommonCommand.LOGOUT.value());
+        startService(intentLog);
+        LogUtil.e("蓝牙第一用户退出");
+    }
     /**
      * 接收蓝牙连接成功返回广播
      */
     private class BluetoothReceiver extends BroadcastReceiver{
-
-        private long interval;
-        private long second;
         private Gson gson = new Gson();
         private CommonMessage transfer(String json){
             return gson.fromJson(json,CommonMessage.class);
@@ -334,7 +339,7 @@ public class LoginActivity extends BaseActivity {
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser()!=null &&
+                     MyApplication.getInstance().getUser()!=null &&
                      MyApplication.getInstance().getUser().getInfoResponse() == 6 ){
                 //关闭模态框
                 loginDialog.dismiss();
@@ -348,16 +353,21 @@ public class LoginActivity extends BaseActivity {
                 //提示训练已经完成
                 //关闭模态框
                 loginDialog.dismiss();
+                unregisterReceiver(bluetoothReceiver);
+                //关闭蓝牙连接
+                closeBluetooth();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您以完成本设备训练，请到下一设备训练！");
-                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() { commonDialog.dismiss();
+                commonDialog.setPositiveBtnText("我知道了");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        commonDialog.dismiss();
+                        //置空用户
+                        MyApplication.getInstance().setUser(null);
                     }
-                },2000); // 延时2秒
+                });
+                commonDialog.show();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方无该设备
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
@@ -368,14 +378,15 @@ public class LoginActivity extends BaseActivity {
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有本设备的处方，建议您去教练机设置处方");
-                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
+                commonDialog.setPositiveBtnText("我知道了");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
                         commonDialog.dismiss();
+                        //置空用户
+                        MyApplication.getInstance().setUser(null);
                     }
-                },2000); // 延时2秒
+                });
+                commonDialog.show();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户无处方
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
@@ -386,15 +397,15 @@ public class LoginActivity extends BaseActivity {
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setTitle("温馨提示");
                 commonDialog.setMessage("您没有处方，建议您去教练机设置处方");
-                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
+                commonDialog.setPositiveBtnText("我知道了");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
                         commonDialog.dismiss();
-                        loginSuccess();
+                        //置空用户
+                        MyApplication.getInstance().setUser(null);
                     }
-                }, 2000); // 延时2秒
+                });
+                commonDialog.show();
             }
             //蓝牙连接成功，教练机连接失败
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
@@ -405,34 +416,35 @@ public class LoginActivity extends BaseActivity {
                 //此时为离线登录
                 loginSuccess();
             }else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){
-                //置空user类
-                User user = new User();
-                MyApplication.getInstance().setUser(user);
                 //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("蓝牙连接失败");
-                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() { commonDialog.dismiss();
+                commonDialog.setPositiveBtnText("我知道了");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        commonDialog.dismiss();
+                        //置空用户
+                        MyApplication.getInstance().setUser(null);
                     }
-                },2000); // 延时2秒
+                });
+                commonDialog.show();
             }else{
                 //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
                 commonDialog = new CommonDialog(LoginActivity.this);
                 commonDialog.setMessage("登录失败");
-                commonDialog.setCancelable(false);//设置点击空白处模态框不消失
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() { commonDialog.dismiss();
+                commonDialog.setPositiveBtnText("我知道了");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        commonDialog.dismiss();
+                        //置空用户
+                        MyApplication.getInstance().setUser(null);
                     }
-                },2000); // 延时2秒
+                });
+                commonDialog.show();
             }
         }
     }
