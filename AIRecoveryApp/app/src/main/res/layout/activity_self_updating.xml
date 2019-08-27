@@ -4,23 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/updatesoft">
+    android:background="@drawable/mix_bg">
 
     <!--更新页标题设置-->
     <!--更新页标题设置-->
-    <TextView
+
+
+    <RelativeLayout
         android:id="@+id/tv_loading_title"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp"
-        android:background="@color/bg_color"
-        android:text="  软件更新页"
-        android:textColor="@color/Black"
-        android:textSize="40dp"
-        tools:background="@color/title_color" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
+        <!--标题-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="25dp"
+            android:paddingLeft="5dp"
+            android:layout_centerVertical="true"
+            android:text="软件更新页"
+            android:textSize="40dp" />
+    </RelativeLayout>
 
     <!--软件自检更新页正文-->
 
@@ -31,7 +38,7 @@
         android:layout_below="@+id/tv_loading_title"
         android:layout_alignStart="@+id/tv_loading_title"
         android:layout_marginStart="456dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="80dp"
         android:text="资源位置"
         android:textColor="@color/qmui_config_color_white"
         android:textSize="35sp" />
@@ -181,7 +188,7 @@
         <ProgressBar
             android:id="@+id/progressBar_update"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="400sp"
+            android:layout_width="490sp"
             android:layout_height="30sp"
             android:layout_marginLeft="300dp"
             android:layout_marginEnd="27dp"

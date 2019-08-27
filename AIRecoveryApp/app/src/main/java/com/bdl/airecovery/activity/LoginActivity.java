@@ -1,5 +1,6 @@
 package com.bdl.airecovery.activity;
 
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -93,7 +95,6 @@ public class LoginActivity extends BaseActivity {
     //Button
     @ViewInject(R.id.btn_quick_login)
     private Button btn_quick_login;
-
 
 
     //按钮监听事件，快速登录点击跳转训练模块

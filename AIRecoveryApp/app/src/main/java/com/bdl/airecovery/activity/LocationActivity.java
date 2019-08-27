@@ -1,6 +1,7 @@
 package com.bdl.airecovery.activity;
 
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,6 +49,7 @@ public class LocationActivity extends BaseActivity {
      * 定义成员变量
      */
     List<TestItem> testItemList;         //连测参数列表
+    List<ImageView> testItemImg;
     List<TextView> testItemShow;         //需要显示的连测参数列表
     List<TextView> testItemRes;          //需要显示的连测结果列表
 //    List<Boolean> locateRes;             //连测结果
@@ -84,13 +87,23 @@ public class LocationActivity extends BaseActivity {
     private ImageView imageView1;        //第一个箭头图标
     @ViewInject(R.id.iv_location_2)
     private ImageView imageView2;        //第二个箭头图标
-    @ViewInject(R.id.iv_location_wheel) //齿轮动画
-    private ImageView location_wheel;
+    @ViewInject(R.id.iv_location_3)
+    private ImageView imageView3;        //第二个箭头图标
+//    @ViewInject(R.id.iv_location_wheel) //齿轮动画
+//    private ImageView location_wheel;
     //Button
     @ViewInject(R.id.btn_location_again)
     private Button againButton; //再次定位按钮
     @ViewInject(R.id.btn_test)
     private Button btn_test;  //跳转待机界面测试按钮
+    @ViewInject(R.id.gear)
+    private ImageView gear;
+
+    @ViewInject(R.id.gear_medium)
+    private ImageView gearMedium;
+
+    @ViewInject(R.id.gear_small)
+    private ImageView gearSmall;
     //广播对象
     locationReceiver LocationReceiver = new locationReceiver();
     IntentFilter filterHR = new IntentFilter();
@@ -120,6 +133,26 @@ public class LocationActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
+        ObjectAnimator objectAnimatorSmallGear;
+        objectAnimatorSmallGear = ObjectAnimator.ofFloat(gearSmall, "rotation", 360f);
+        objectAnimatorSmallGear.setRepeatCount(Integer.MAX_VALUE);
+        objectAnimatorSmallGear.setDuration(3000);
+        objectAnimatorSmallGear.setInterpolator(new LinearInterpolator());
+        objectAnimatorSmallGear.start();
+
+        ObjectAnimator objectAnimatorMediumGear;
+        objectAnimatorMediumGear = ObjectAnimator.ofFloat(gearMedium, "rotation", 360f, 0f);
+        objectAnimatorMediumGear.setRepeatCount(Integer.MAX_VALUE);
+        objectAnimatorMediumGear.setDuration(3000);
+        objectAnimatorMediumGear.setInterpolator(new LinearInterpolator());
+        objectAnimatorMediumGear.start();
+        ObjectAnimator objectAnimatorGear;
+
+        objectAnimatorGear = ObjectAnimator.ofFloat(gear, "rotation", 360f);
+        objectAnimatorGear.setRepeatCount(Integer.MAX_VALUE);
+        objectAnimatorGear.setDuration(3000);
+        objectAnimatorGear.setInterpolator(new LinearInterpolator());
+        objectAnimatorGear.start();
         super.onResume();
     }
 
@@ -326,6 +359,12 @@ public class LocationActivity extends BaseActivity {
         testItemRes.add(item1Res);
         testItemRes.add(item2Res);
         testItemRes.add(item3Res);
+
+        testItemImg = new ArrayList<>();
+        testItemImg.add(imageView1);
+        testItemImg.add(imageView2);
+        testItemImg.add(imageView3);
+
         //获取设备信息
         Device device = MyApplication.getInstance().getCurrentDevice();
         //判断设备信息是否为空
@@ -339,6 +378,7 @@ public class LocationActivity extends BaseActivity {
             for (int i = 0; i < testItemList.size(); ++i) {
                 if (testItemList.get(i).getName() != "") {
                     //加载连测参数的文本信息
+                    testItemImg.get(i).setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_right));
                     testItemShow.get(i).setText(testItemList.get(i).getName());
                     //发指令时，显示正在初始化定位
                     testItemRes.get(i).setText("初始化定位中");
@@ -385,71 +425,71 @@ public class LocationActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 系统设置的点击事件
-     *
-     * @param v
-     */
-    @Event(R.id.iv_location_wheel)
-    private void sysClick(View v) {
-        //sysset.setText(" 系统设置");
-        b = 1;
-
-        //直接跳转系统设置，不需要密码
-        startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
-
-        //创建对话框对象的时候对对话框进行监听
-        /*String info = "请输入密码";
-        final int[] cnt = {0};
-        final boolean[] flag = {false};
-        final SmallPwdDialog dialog = new SmallPwdDialog(LocationActivity.this, info, R.style.CustomDialog,
-                new SmallPwdDialog.DataBackListener() {
-                    @Override
-                    public void getData(String data) {
-                        String result = data;
-                        if (result.equals(MyApplication.ADMIN_PASSWORD)) {
-                            flag[0] = true;
-                        } else {
-                            flag[0] = false;
-                        }
-                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+result+"  ADMIN_PWD:"+MyApplication.ADMIN_PASSWORD);
-                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+flag[0]);
-                        if (flag[0]) {
-                            startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
-                        } else if (cnt[0] != 0) {
-                            Toast.makeText(LocationActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
-                        }
-                        cnt[0]++;
-                    }
-                });*/
-
-        /*
-        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-        params.y = 100;
-        dialog.getWindow().setGravity(Gravity.TOP);
-        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        //布局位于状态栏下方
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        //全屏
-//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        //隐藏导航栏
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    uiOptions |= 0x00001000;
-                } else {
-                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-                }
-                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-            }
-        });
-        dialog.show();
-        initImmersiveMode(); //隐藏虚拟按键和状态栏*/
-    }
+//    /**
+//     * 系统设置的点击事件
+//     *
+//     * @param v
+//     */
+//    @Event(R.id.iv_location_wheel)
+//    private void sysClick(View v) {
+//        //sysset.setText(" 系统设置");
+//        b = 1;
+//
+//        //直接跳转系统设置，不需要密码
+//        startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
+//
+//        //创建对话框对象的时候对对话框进行监听
+//        /*String info = "请输入密码";
+//        final int[] cnt = {0};
+//        final boolean[] flag = {false};
+//        final SmallPwdDialog dialog = new SmallPwdDialog(LocationActivity.this, info, R.style.CustomDialog,
+//                new SmallPwdDialog.DataBackListener() {
+//                    @Override
+//                    public void getData(String data) {
+//                        String result = data;
+//                        if (result.equals(MyApplication.ADMIN_PASSWORD)) {
+//                            flag[0] = true;
+//                        } else {
+//                            flag[0] = false;
+//                        }
+//                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+result+"  ADMIN_PWD:"+MyApplication.ADMIN_PASSWORD);
+//                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+flag[0]);
+//                        if (flag[0]) {
+//                            startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
+//                        } else if (cnt[0] != 0) {
+//                            Toast.makeText(LocationActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
+//                        }
+//                        cnt[0]++;
+//                    }
+//                });*/
+//
+//        /*
+//        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+//        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+//        params.y = 100;
+//        dialog.getWindow().setGravity(Gravity.TOP);
+//        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+//            @Override
+//            public void onSystemUiVisibilityChange(int visibility) {
+//                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+//                        //布局位于状态栏下方
+//                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+//                        //全屏
+////                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+//                        //隐藏导航栏
+//                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+//                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+//                if (Build.VERSION.SDK_INT >= 19) {
+//                    uiOptions |= 0x00001000;
+//                } else {
+//                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+//                }
+//                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+//            }
+//        });
+//        dialog.show();
+//        initImmersiveMode(); //隐藏虚拟按键和状态栏*/
+//    }
 
     @Event(R.id.btn_test)
     private void testClick(View v) {

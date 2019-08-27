@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:background="@drawable/timg4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -12,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="-6dp"
         android:layout_marginRight="-6dp"
-        android:layout_marginTop="-6dp"
-        android:background="@drawable/titlebg">
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
         <!--标题-->
         <TextView
             android:layout_width="match_parent"
@@ -42,31 +43,32 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="3"
+            android:layout_weight="2.5"
             android:layout_height="wrap_content"
             android:layout_marginTop="44dp"
             android:orientation="vertical">
 
             <RelativeLayout
+                android:layout_marginRight="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <!--图标-->
                 <ImageView
                     android:id="@+id/iv_location_1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp" />
-                <pl.droidsonroids.gif.GifImageView
+                <ImageView
                     android:id="@+id/iv_location_2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:layout_below="@+id/iv_location_1" />
                 <ImageView
                     android:id="@+id/iv_location_3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:layout_below="@+id/iv_location_2" />
                 <!--连测内容，暂时仅为一个设备的参数-->
@@ -78,7 +80,7 @@
                     android:layout_toRightOf="@+id/iv_location_1"
                     android:layout_marginLeft="10dp"
                     android:textSize="40sp"
-                    android:text="" />
+                    android:text="联测参数1" />
                 <TextView
                     android:id="@+id/tv_location_item2"
                     android:layout_width="wrap_content"
@@ -88,7 +90,7 @@
                     android:layout_toRightOf="@+id/iv_location_2"
                     android:layout_marginLeft="10dp"
                     android:textSize="40sp"
-                    android:text="" />
+                    android:text="=" />
 
                 <TextView
                     android:id="@+id/tv_location_item3"
@@ -133,22 +135,47 @@
             </RelativeLayout>
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="250dp"
+            android:layout_height="300dp"
             android:orientation="vertical">
-            <!--警示图标-->
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/iv_location_wheel"
-                android:layout_width="200dp"
-                android:layout_height="240dp"
-                android:layout_marginLeft="60dp"
-                android:paddingTop="30dp"
-                android:src="@drawable/wheel" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/gear_medium"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_gear_medium"/>
+                <ImageView
+                    android:id="@+id/gear_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_gear_small"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/gear"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_gear"/>
+
+
+            <!--&lt;!&ndash;警示图标&ndash;&gt;-->
+            <!--<pl.droidsonroids.gif.GifImageView-->
+                <!--android:id="@+id/iv_location_wheel"-->
+                <!--android:layout_width="200dp"-->
+                <!--android:layout_height="240dp"-->
+                <!--android:layout_marginLeft="60dp"-->
+                <!--android:paddingTop="30dp"-->
+                <!--android:src="@drawable/wheel" />-->
 
         </LinearLayout>
+
 
     </LinearLayout>
 

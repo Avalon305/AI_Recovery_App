@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/background3"
+    android:background="@drawable/timg4"
     android:orientation="vertical">
 
     <!--标题栏-->
@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="-6dp"
         android:layout_marginRight="-6dp"
-        android:layout_marginTop="-6dp"
-        android:background="@drawable/titlebg">
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
         <!--标题-->
         <TextView
             android:layout_width="match_parent"
@@ -109,17 +109,17 @@
             android:layout_alignBottom="@+id/rl_train_result">
             <!--折线图底板-->
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="700dp"
+                android:layout_height="500dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/backboard2" />
+                android:src="@drawable/shadow_backboard_right_angle" />
             <!--折线图-->
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/mh_chart"
                 android:layout_width="550dp"
                 android:layout_height="280dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="100dp"
                 android:layout_marginEnd="77dp"
                 android:padding="10dp" />
         </RelativeLayout>
@@ -129,15 +129,15 @@
     <!--返回按钮-->
     <Button
         android:id="@+id/btn_return"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="75dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="220dp"
+        android:layout_marginRight="200dp"
         android:layout_marginBottom="30dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/button_selector"
+        android:background="@drawable/button_selector2"
         android:text="返回"
-        android:textColor="#2b2b2b"
+        android:textColor="@color/blue1"
         android:textSize="30sp" />
 
 </RelativeLayout>
