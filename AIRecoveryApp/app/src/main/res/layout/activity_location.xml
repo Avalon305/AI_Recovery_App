@@ -90,7 +90,7 @@
                     android:layout_toRightOf="@+id/iv_location_2"
                     android:layout_marginLeft="10dp"
                     android:textSize="40sp"
-                    android:text="=" />
+                    android:text="" />
 
                 <TextView
                     android:id="@+id/tv_location_item3"

@@ -767,6 +767,9 @@ public class MainActivity extends BaseActivity {
 
     //设置快速登录用户医护设置按钮不可见
     private void healthCare(){
+        if (MyApplication.getInstance().getUser() == null) {
+            return;
+        }
         if(MyApplication.getInstance().getUser().getUsername().equals("体验者")){
                btn_setting.setVisibility(View.GONE);
         }else{
