@@ -237,29 +237,4 @@ public class StrengthTestActivity extends BaseActivity {
 
     }
 
-
-    /**
-     * 肌力测试过程
-     *
-     * @throws Exception
-     */
-    public void strengthTest() throws Exception {
-        //力矩设置
-
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    strength = Integer.parseInt(getRespData(MotorConstant.READ_TORQUE));
-                    if (strength > maxStrength) { //获取最大力矩
-                        maxStrength = strength;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        timer.schedule(timerTask, 0, 20);
-    }
 }
