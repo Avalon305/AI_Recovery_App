@@ -519,6 +519,8 @@ public class LoginActivity extends BaseActivity {
         user.setWeight(60);
         user.setHeartRatemMax(190);
         user.setTrainMode("康复模式");
+        user.setBindId("");
+        user.setDpId(0);
         if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式划船机")){
             user.setForwardLimit(130);
             user.setBackLimit(50);

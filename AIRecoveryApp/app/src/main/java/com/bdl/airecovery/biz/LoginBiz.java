@@ -288,7 +288,7 @@ public class LoginBiz {
                         .setBindId(bind_value)
                         .setClientTime(nowDate)
                         .setUid("7")
-                        .setDeviceTypeValue((Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()))+1)
+                        .setDeviceTypeValue((Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID())))
                                 .build();
         //请求递增，seq达到 Integer.MAX_VALUE时重新计数
         final BdlProto.Message message = DataProtoUtil.packLoginRequest(Seq.get(),request);

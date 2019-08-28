@@ -148,4 +148,26 @@ public class TrainResultDTO {
     public void setFinishTime_(int finishTime_) {
         this.finishTime_ = finishTime_;
     }
+
+    @Override
+    public String toString() {
+        return "TrainResultDTO{" +
+                "uid_='" + uid_ + '\'' +
+                ", deviceTypeValue_=" + deviceTypeValue_ +
+                ", trainModeValue_=" + trainModeValue_ +
+                ", forwardForce_=" + forwardForce_ +
+                ", reverseForce_=" + reverseForce_ +
+                ", power_=" + power_ +
+                ", speedRank=" + speedRank +
+                ", finishNum_=" + finishNum_ +
+                ", finishTime_=" + finishTime_ +
+                ", finalDistance_=" + finalDistance_ +
+                ", energy_=" + energy_ +
+                ", heart_rate_list='" + heart_rate_list + '\'' +
+                ", pr_userthoughts='" + pr_userthoughts + '\'' +
+                ", dataId='" + dataId + '\'' +
+                ", bindId_='" + bindId_ + '\'' +
+                ", dpId_=" + dpId_ +
+                '}';
+    }
 }

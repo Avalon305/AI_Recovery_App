@@ -124,7 +124,7 @@ public class ReSendService extends Service {
         Type listType = new TypeToken<TrainResultDTO>() {
         }.getType();
         TrainResultDTO sendMsg = gson.fromJson(sendStr, listType);
-
+        Log.d("训练结果上传结果", sendMsg.toString());
         Log.d("重传service", "数据库id：" + tempStorage.getId());
 
         BdlProto.UploadRequest uploadRequest = BdlProto.UploadRequest.newBuilder()

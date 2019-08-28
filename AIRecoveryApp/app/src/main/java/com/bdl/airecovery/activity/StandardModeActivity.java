@@ -1301,13 +1301,13 @@ public class StandardModeActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String state = intent.getStringExtra("state");
-            if (state != null && state.equals("1")) {
-                if (! isErrorDialogShow) {
-                    startActivity(new Intent(StandardModeActivity.this, ScramActivity.class));
-                    StandardModeActivity.this.finish();
-                }
-
-            }
+//            if (state != null && state.equals("1")) {
+//                if (! isErrorDialogShow) {
+//                    startActivity(new Intent(StandardModeActivity.this, ScramActivity.class));
+//                    StandardModeActivity.this.finish();
+//                }
+//
+//            }
             errorID = intent.getStringExtra("error");
             if (errorID != null && !errorID.equals("0")) {
                 Message message = errorDialogHandler.obtainMessage();

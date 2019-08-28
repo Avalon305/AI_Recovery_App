@@ -165,22 +165,38 @@ public class ByeActivity extends BaseActivity{
          */
         Viewport v = new Viewport(mh_chart.getMaximumViewport());
         v.left = 0;
-        v.right= list.size();
+        try{
+            v.right= list.size();
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.d("心率值为空");
+        }
+
         mh_chart.setCurrentViewport(v);
     }
 
     private  void getAxisXLables() {
         Upload upload = MyApplication.getUpload();
         List<Integer> list = upload.getHeartRateList();
+        try{
             for (int i = 0; i < list.size(); i++) {
-            mAxisXValues.add(new AxisValue(i).setLabel(i + ""));
+                mAxisXValues.add(new AxisValue(i).setLabel(i + ""));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.d("心率值为空");
         }
     }
     private void  getAxisPoints() {
         Upload upload = MyApplication.getUpload();
         List<Integer> list = upload.getHeartRateList();
-        for (int i = 0; i < list.size(); i++) {
-            mPointValues.add(new PointValue(i, list.get(i)));
+        try{
+            for (int i = 0; i < list.size(); i++) {
+                mPointValues.add(new PointValue(i, list.get(i)));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.d("心率值为空");
         }
     }
 
@@ -195,7 +211,6 @@ public class ByeActivity extends BaseActivity{
         Upload upload = MyApplication.getUpload();
         MyApplication.setUpload(null);
         //获取训练结果，显示在页面
-
         //训练结果展示
         //将字符串转为集合
         List<String> result = new ArrayList<>();
@@ -215,20 +230,24 @@ public class ByeActivity extends BaseActivity{
         int sumHeartRate = 0;
         double avgHeartRate;
         List<Integer> heartRateList = upload.getHeartRateList();
-        for (int i = 0; i < heartRateList.size(); i++) {
-            sumHeartRate += heartRateList.get(i);
-            if (minHeartRate > heartRateList.get(i)) {
-                minHeartRate = heartRateList.get(i);
+        try{
+            for (int i = 0; i < heartRateList.size(); i++) {
+                sumHeartRate += heartRateList.get(i);
+                if (minHeartRate > heartRateList.get(i)) {
+                    minHeartRate = heartRateList.get(i);
+                }
+                if (maxHeartRate < heartRateList.get(i)) {
+                    maxHeartRate = heartRateList.get(i);
+                }
             }
-            if (maxHeartRate < heartRateList.get(i)) {
-                maxHeartRate = heartRateList.get(i);
-            }
+            avgHeartRate = sumHeartRate / heartRateList.size();
+            result.add("最小心率：" + minHeartRate + "BPM");
+            result.add("最大心率：" + maxHeartRate + "BPM");
+            result.add("平均心率：" + avgHeartRate + "BPM");
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.d("心率值为空");
         }
-        avgHeartRate = sumHeartRate / heartRateList.size();
-        result.add("最小心率：" + minHeartRate + "BPM");
-        result.add("最大心率：" + maxHeartRate + "BPM");
-        result.add("平均心率：" + avgHeartRate + "BPM");
-
         //将待训练设备信息设置在页面上
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
         listAnalysis.setAdapter(adapter);
@@ -295,21 +314,31 @@ public class ByeActivity extends BaseActivity{
         //转换心率类型
         List<Integer> list = upload.getHeartRateList();
         String HeartRate = "";
-        if (list != null && list.size() > 0) {
-            for (Object item : list) {
-                // 把列表中的每条数据用逗号分割开来，然后拼接成字符串
-                HeartRate += item + "*";
+        try{
+            if (list != null && list.size() > 0) {
+                for (Object item : list) {
+                    // 把列表中的每条数据用逗号分割开来，然后拼接成字符串
+                    HeartRate += item + "*";
+                }
+                // 去掉最后一个逗号
+                HeartRate = HeartRate.substring(0, HeartRate.length() - 1);
             }
-            // 去掉最后一个逗号
-            HeartRate = HeartRate.substring(0, HeartRate.length() - 1);
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.d("心率值为空");
         }
         //保存心率
         trainResultDTO.setHeart_rate_list(HeartRate);
 
         //保存手环id
-        trainResultDTO.setBindId_(MyApplication.getInstance().getUser().getBindId());
-        //保存处方id
-        trainResultDTO.setDpId_(MyApplication.getInstance().getUser().getDpId());
+        try {
+            trainResultDTO.setBindId_(MyApplication.getInstance().getUser().getBindId());
+            //保存处方id
+            trainResultDTO.setDpId_(MyApplication.getInstance().getUser().getDpId());
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.d("空指针异常");
+        }
         //存暂存表
         TempStorage tempStorage = new TempStorage();
         Gson gson = new Gson();

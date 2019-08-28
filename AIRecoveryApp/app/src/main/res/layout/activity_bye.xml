@@ -109,8 +109,8 @@
             android:layout_alignBottom="@+id/rl_train_result">
             <!--折线图底板-->
             <ImageView
-                android:layout_width="700dp"
-                android:layout_height="500dp"
+                android:layout_width="750dp"
+                android:layout_height="450dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/shadow_backboard_right_angle" />
             <!--折线图-->

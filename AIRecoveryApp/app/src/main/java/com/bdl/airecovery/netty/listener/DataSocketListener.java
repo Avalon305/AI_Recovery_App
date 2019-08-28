@@ -34,7 +34,7 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 		if (message.hasLoginResponse()) {
 
 			BdlProto.LoginResponse resp = message.getLoginResponse();
-			logger.info("DataSocket客户端收到登陆结果响应:"+gsonUtil.toJson(resp).toString());
+			LogUtil.e ("DataSocket客户端收到登陆结果响应:"+gsonUtil.toJson(resp).toString());
            //为全局User赋值
 			User loginUser = new User(message);
 			MyApplication.getInstance().setUser(loginUser);

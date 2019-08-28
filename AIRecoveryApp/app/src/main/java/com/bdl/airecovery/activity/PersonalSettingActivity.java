@@ -778,8 +778,8 @@ public class PersonalSettingActivity extends BaseActivity {
         }
 
         //获取用户名
-        if (MyApplication.getInstance().getUser().getUserId() != null && !MyApplication.getInstance().getUser().getUserId().equals("")) {
-            tv_user_name.setText(MyApplication.getInstance().getUser().getUserId());
+        if (MyApplication.getInstance().getUser().getUsername() != null && !MyApplication.getInstance().getUser().getUsername().equals("")) {
+            tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
             iv_ps_state.setImageDrawable(getResources().getDrawable(R.drawable.ic_user));
         }
 
