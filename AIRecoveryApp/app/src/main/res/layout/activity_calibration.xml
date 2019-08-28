@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/timg"
+    android:background="@drawable/timg4"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -10,9 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="-6dp"
-        android:layout_marginTop="-6dp"
-        android:layout_marginRight="-6dp"
-        android:background="@drawable/titlebg">
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
 
         <TextView
             android:layout_width="match_parent"
@@ -37,13 +36,15 @@
             android:layout_marginLeft="25dp"
             android:paddingLeft="5dp"
             android:text="基本设定值"
+            android:textStyle="bold"
             android:textSize="40dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
 
             <TextView
                 android:layout_width="150sp"
@@ -57,7 +58,7 @@
                 android:gravity="center"
                 android:spinnerMode="dropdown"
                 android:textSize="30sp"
-                android:layout_width="wrap_content"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
 
             <TextView
@@ -69,7 +70,7 @@
 
             <Spinner
                 android:id="@+id/calibration_front_limit"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
 
             <TextView
@@ -81,7 +82,7 @@
 
             <Spinner
                 android:id="@+id/calibration_rear_limit"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
 
@@ -93,13 +94,15 @@
             android:layout_marginTop="50dp"
             android:paddingLeft="5dp"
             android:text="标定参数"
+            android:textStyle="bold"
             android:textSize="40dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
 
             <TextView
                 android:layout_width="450sp"
@@ -110,16 +113,8 @@
 
             <Spinner
                 android:id="@+id/calibration_min_torque"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
             <TextView
                 android:layout_width="450sp"
                 android:layout_height="wrap_content"
@@ -129,15 +124,17 @@
 
             <Spinner
                 android:id="@+id/calibration_back_speed"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
 
             <TextView
                 android:layout_width="450sp"
@@ -148,15 +145,8 @@
 
             <Spinner
                 android:id="@+id/calibration_normal_speed"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="450sp"
@@ -167,15 +157,17 @@
 
             <Spinner
                 android:id="@+id/calibration_min_back_torque"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
 
             <TextView
                 android:layout_width="450sp"
@@ -186,15 +178,8 @@
 
             <Spinner
                 android:id="@+id/calibration_bounce"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="450sp"
@@ -205,57 +190,60 @@
 
             <Spinner
                 android:id="@+id/calibration_lead"
-                android:layout_width="100sp"
+                android:layout_width="80sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="440dp">
+        android:paddingLeft="520dp">
 
         <Button
             android:id="@+id/calibration_btn_update"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
+            android:layout_marginRight="20dp"
             android:background="@drawable/button_selector"
             android:enabled="true"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:text="保存设置"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
 
         <Button
             android:id="@+id/calibration_btn_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
+            android:layout_width="280dp"
+            android:layout_height="75dp"
+            android:layout_marginRight="20dp"
             android:background="@drawable/button_selector"
             android:enabled="true"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:text="恢复出厂设置"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
 
         <Button
             android:id="@+id/calibration_btn_return"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
             android:background="@drawable/button_selector"
             android:enabled="true"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="10dp"
             android:text="返回"
-            android:textColor="#2b2b2b"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
             android:textSize="30sp" />
 
     </LinearLayout>

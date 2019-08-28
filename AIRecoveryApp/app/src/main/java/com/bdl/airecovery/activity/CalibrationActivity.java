@@ -225,7 +225,7 @@ public class CalibrationActivity extends BaseActivity {
      * @param list
      */
     private void createSpinner(final Spinner spinner, List<Integer> list, int position) {
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, list);  //创建一个数组适配器
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(this, android.R.layout.select_dialog_item, list);  //创建一个数组适配器
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);     //设置下拉列表框的下拉选项样式
         spinner.setAdapter(adapter);
         spinner.setSelection(position, true);
