@@ -25,6 +25,21 @@
             android:layout_centerVertical="true"
             android:textSize="40dp"
             android:text="再见" />
+        <Button
+            android:id="@+id/btn_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1150dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/return_selector"
+            />
+        <!--<ImageView-->
+            <!--android:id="@+id/btn_return"-->
+            <!--android:layout_marginLeft="1150dp"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_return_3"/>-->
     </RelativeLayout>
 
     <!--待训练设备-->
@@ -105,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_marginBottom="-60dp"
+            android:layout_marginBottom="-120dp"
             android:layout_toRightOf="@id/rl_train_result"
             android:layout_alignBottom="@+id/rl_train_result">
             <!--折线图底板-->
@@ -128,17 +143,6 @@
 
     </RelativeLayout>
 
-    <!--返回按钮-->
-    <Button
-        android:id="@+id/btn_return"
-        android:layout_width="200dp"
-        android:layout_height="75dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="100dp"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/button_selector2"
-        android:text="返回"
-        android:textColor="@color/blue1"
-        android:textSize="30sp" />
+
 
 </RelativeLayout>

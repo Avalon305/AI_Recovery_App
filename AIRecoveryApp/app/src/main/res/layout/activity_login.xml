@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="40sp"
-            android:text="请使用:\n蓝牙手环登录"/>
+            android:text="请将蓝牙手环\n靠近感应板进行登录"/>
 
     </LinearLayout>
 

@@ -119,7 +119,7 @@ public class MyApplication extends MultiDexApplication {
         startBluetoothService();
 
         //启动发卡器Service
-        startCardReaderService();
+        //startCardReaderService();
         //启动电机Service
         startMotorService();
         //启动静态电机Service

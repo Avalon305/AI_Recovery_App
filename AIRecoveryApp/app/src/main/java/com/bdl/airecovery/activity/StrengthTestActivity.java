@@ -72,8 +72,9 @@ public class StrengthTestActivity extends BaseActivity {
             int arg1 = msg.arg1;
             switch (msg.what) {
                 case 1:
-                    uploadResult();
+
                     showCommonDialog();
+                    uploadResult();
                     break;
             }
         }
@@ -130,7 +131,7 @@ public class StrengthTestActivity extends BaseActivity {
     private void setStartTestOnClick(View v) {
         Log.e("------", "启动肌力测试");
         btnStartTest.setVisibility(View.GONE);
-        tvTip.setText("   请用力量拉动力臂");
+        tvTip.setText("\n    请用力拉动力臂");
         tvTip.setTextColor(0xffe67e22);
         final Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -140,6 +141,7 @@ public class StrengthTestActivity extends BaseActivity {
                     strength = Integer.parseInt(getRespData(MotorConstant.READ_TORQUE));
                     if (strength > maxStrength) { //获取最大力矩
                         maxStrength = strength;
+                        resultGrade = resultGrade(maxStrength);
                     }
                     circularRingPercentageView.setProgress(strength / 5);
                     count++;
@@ -183,7 +185,7 @@ public class StrengthTestActivity extends BaseActivity {
     private void showCommonDialog() {
         final CommonDialog commonDialog = new CommonDialog(StrengthTestActivity.this);
         commonDialog.setTitle("测试结果");
-        commonDialog.setMessage("您在肌力测试中使用的最大力量为" + maxStrength + "，肌力测试评级为" + resultGrade(maxStrength) + "级");
+        commonDialog.setMessage("您在肌力测试中使用的最大力量为" + ratingByResult(maxStrength) + "N，肌力测试评级为" + resultGrade + "级");
         commonDialog.setCanceledOnTouchOutside(true);
         commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
