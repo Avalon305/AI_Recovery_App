@@ -1,6 +1,5 @@
 package com.bdl.airecovery.activity;
 
-import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -68,7 +66,12 @@ public class LoginActivity extends BaseActivity {
     private BluetoothReceiver bluetoothReceiver;//蓝牙广播接收器，监听用户的登录广播
     private String nfcMessage;//NFC标签
     private LoginDialog loginDialog;                  //ShowLogin弹模态框
-    private CommonDialog commonDialog;                  //ShowTips弹模态框
+    //ShowTips弹模态框
+    private CommonDialog commonDialog1;
+    private CommonDialog commonDialog2;
+    private CommonDialog commonDialog3;
+    private CommonDialog commonDialog4;
+    private CommonDialog commonDialog5;
     private DbManager db = MyApplication.getInstance().getDbManager();
     //第一用户登录指令的变量
     private volatile int whoLogin = 1;
@@ -95,6 +98,7 @@ public class LoginActivity extends BaseActivity {
     //Button
     @ViewInject(R.id.btn_quick_login)
     private Button btn_quick_login;
+
 
 
     //按钮监听事件，快速登录点击跳转训练模块
@@ -267,9 +271,6 @@ public class LoginActivity extends BaseActivity {
         BindId.append(chars[4]);
         BindId.append(chars[5]);
         usbData=BindId.toString();
-        User user = new User();
-        user.setBindId(usbData);
-        MyApplication.getInstance().setUser(user);
         Log.d("bind_id",usbData);
         return usbData;
     }
@@ -306,9 +307,9 @@ public class LoginActivity extends BaseActivity {
         loginDialog.setTitle("温馨提示");
         loginDialog.setMessage("正在登录");
         //loginDialog.setCancelable(false);//设置点击空白处模态框不消失
+
         loginDialog.show();
     }
-
     //关闭蓝牙连接
     private void closeBluetooth(){
         Intent intentLog = new Intent(LoginActivity.this, BluetoothService.class);
@@ -320,15 +321,18 @@ public class LoginActivity extends BaseActivity {
      * 接收蓝牙连接成功返回广播
      */
     private class BluetoothReceiver extends BroadcastReceiver{
+
         private Gson gson = new Gson();
+
         private CommonMessage transfer(String json){
             return gson.fromJson(json,CommonMessage.class);
         }
         @Override
         public void onReceive(Context context, Intent intent) {
+            User  user = MyApplication.getInstance().getUser();
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
-            LogUtil.d("接收到登录信息："+commonMessage);
+            LogUtil.d("接收到登录信息："+CommonMessage.CONNECT_SUCCESS);
             //LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
             //LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
@@ -337,16 +341,29 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getDpStatus() == 2){
                 //关闭模态框
                 loginDialog.dismiss();
+                unregisterReceiver(bluetoothReceiver);//同上
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                     MyApplication.getInstance().getUser()!=null &&
-                     MyApplication.getInstance().getUser().getInfoResponse() == 6 ){
+                    MyApplication.getInstance().getUser()!=null &&
+                    MyApplication.getInstance().getUser().getInfoResponse() == 6 ){
                 //关闭模态框
                 loginDialog.dismiss();
+                unregisterReceiver(bluetoothReceiver);//同上
                 //登录成功时，执行跳转的逻辑
+                loginSuccess();
+            }
+            //蓝牙连接成功，教练机连接失败
+            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser() == null){
+                //关闭模态框
+                loginDialog.dismiss();
+                unregisterReceiver(bluetoothReceiver);//同上
+                //初始化设备
+                OfflineLogin();
+                //此时为离线登录
                 loginSuccess();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
@@ -356,18 +373,7 @@ public class LoginActivity extends BaseActivity {
                 //提示训练已经完成
                 //关闭模态框
                 loginDialog.dismiss();
-                commonDialog = new CommonDialog(LoginActivity.this);
-                commonDialog.setTitle("温馨提示");
-                commonDialog.setMessage("您以完成本设备训练，请到下一设备训练！");
-                commonDialog.setPositiveBtnText("我知道了");
-                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        commonDialog.dismiss();
-                        //置空用户
-                        MyApplication.getInstance().setUser(null);
-                    }
-                });
-                commonDialog.show();
+                commonDialog1();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方无该设备
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
@@ -375,18 +381,7 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 5){
                 //关闭登录框
                 loginDialog.dismiss();
-                commonDialog = new CommonDialog(LoginActivity.this);
-                commonDialog.setTitle("温馨提示");
-                commonDialog.setMessage("您没有本设备的处方，建议您去教练机设置处方");
-                commonDialog.setPositiveBtnText("我知道了");
-                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        commonDialog.dismiss();
-                        //置空用户
-                        MyApplication.getInstance().setUser(null);
-                    }
-                });
-                commonDialog.show();
+                commonDialog2();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户无处方
             else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
@@ -394,138 +389,198 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 1) {
                 //关闭模态框
                 loginDialog.dismiss();
-                commonDialog = new CommonDialog(LoginActivity.this);
-                commonDialog.setTitle("温馨提示");
-                commonDialog.setMessage("您没有处方，建议您去教练机设置处方");
-                commonDialog.setPositiveBtnText("我知道了");
-                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        commonDialog.dismiss();
-                        //置空用户
-                        MyApplication.getInstance().setUser(null);
-                    }
-                });
-                commonDialog.show();
-            }
-            //蓝牙连接成功，教练机连接失败
-            else if(commonMessage.getMsgType()==CommonMessage.CONNECT_SUCCESS &&
-                    MyApplication.getInstance().getUser().getServerTime() == null){
-                //关闭模态框
-                loginDialog.dismiss();
-                User user = new User();
-                //初始化待训练设备
-                String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
-                user.setUserId("体验者");
-                user.setDeviceTypearrList(str1);
-                user.setUsername("离线登录");
-                user.setExisitSetting(false);
-                user.setMoveWay(0);
-                user.setGroupCount(1);
-                user.setGroupNum(2);
-                user.setRelaxTime(5);
-                user.setSpeedRank(1);
-                user.setAge(30);
-                user.setWeight(60);
-                user.setHeartRatemMax(190);
-                user.setTrainMode("康复模式");
-                if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式划船机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setSeatHeight(0);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式推胸机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setSeatHeight(0);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部推蹬机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腹肌训练机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                    user.setLeverAngle(0);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("三头肌训练机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部外弯机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部内弯机")){
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("蝴蝶机")){
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("反向蝴蝶机")){
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                }
-                else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式背部伸展机")){
-                    user.setForwardLimit(130);
-                    user.setBackLimit(50);
-                    user.setConsequentForce(25);
-                    user.setReverseForce(25);
-                    user.setLeverAngle(0);
-                }
-                MyApplication.getInstance().setUser(user);
-                //此时为离线登录
-                loginSuccess();
+                commonDialog3();
             }
             else if(commonMessage.getMsgType()==CommonMessage.DISCONNECTED){
-                //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
-                commonDialog = new CommonDialog(LoginActivity.this);
-                commonDialog.setMessage("蓝牙连接失败");
-                commonDialog.setPositiveBtnText("我知道了");
-                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        commonDialog.dismiss();
-                        //置空用户
-                        MyApplication.getInstance().setUser(null);
-                    }
-                });
-                commonDialog.show();
+                //提示蓝牙连接失败
+                commonDialog4();
             }
             else{
-                //提示登录失败
                 //关闭模态框
                 loginDialog.dismiss();
-                commonDialog = new CommonDialog(LoginActivity.this);
-                commonDialog.setMessage("登录失败");
-                commonDialog.setPositiveBtnText("我知道了");
-                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        commonDialog.dismiss();
-                        //置空用户
-                        MyApplication.getInstance().setUser(null);
-                    }
-                });
-                commonDialog.show();
+                //提示登录失败
+                commonDialog5();
             }
         }
+    }
+    private void commonDialog1(){
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog1 = new CommonDialog(LoginActivity.this);
+        commonDialog1.setTitle("温馨提示");
+        commonDialog1.setMessage("您以完成本设备训练，请到下一设备训练！");
+        commonDialog1.setPositiveBtnText("我知道了");
+        commonDialog1.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog1.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog1.show();
+    }
+    private void commonDialog2(){
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog2 = new CommonDialog(LoginActivity.this);
+        commonDialog2.setTitle("温馨提示");
+        commonDialog2.setMessage("您没有本设备处方，建议您去教练机设置处方");
+        commonDialog2.setPositiveBtnText("我知道了");
+        commonDialog2.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog2.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog2.show();
+    }
+    private void commonDialog3(){
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog3 = new CommonDialog(LoginActivity.this);
+        commonDialog3.setTitle("温馨提示");
+        commonDialog3.setMessage("您没有处方，建议您去教练机设置处方");
+        commonDialog3.setPositiveBtnText("我知道了");
+        commonDialog3.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog3.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog3.show();
+    }
+    private void commonDialog4(){
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog4 = new CommonDialog(LoginActivity.this);
+        commonDialog4.setMessage("蓝牙连接失败");
+        commonDialog4.setPositiveBtnText("我知道了");
+        commonDialog4.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog4.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog4.show();
+    }
+    private void commonDialog5(){
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog5 = new CommonDialog(LoginActivity.this);
+        commonDialog5.setMessage("登录失败");
+        commonDialog5.setPositiveBtnText("我知道了");
+        commonDialog5.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog5.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog5.show();
+    }
+    //刷新页面
+    public void refresh(){
+        onCreate(null);
+    }
+    private void OfflineLogin(){
+        User user = new User();
+        //初始化待训练设备
+        String str1 ="[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
+        user.setUserId("离线用户");
+        user.setDeviceTypearrList(str1);
+        user.setUsername("离线登录");
+        user.setExisitSetting(false);
+        user.setMoveWay(0);
+        user.setGroupCount(1);
+        user.setGroupNum(2);
+        user.setRelaxTime(5);
+        user.setSpeedRank(1);
+        user.setAge(30);
+        user.setWeight(60);
+        user.setHeartRatemMax(190);
+        user.setTrainMode("康复模式");
+        if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式划船机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setSeatHeight(0);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式推胸机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setSeatHeight(0);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部推蹬机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腹肌训练机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+            user.setLeverAngle(0);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("三头肌训练机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部外弯机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("腿部内弯机")){
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("蝴蝶机")){
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("反向蝴蝶机")){
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+        }
+        else if(MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("坐式背部伸展机")){
+            user.setForwardLimit(130);
+            user.setBackLimit(50);
+            user.setConsequentForce(25);
+            user.setReverseForce(25);
+            user.setLeverAngle(0);
+        }
+        MyApplication.getInstance().setUser(user);
     }
     //跳转主页面
     private void loginSuccess(){
@@ -629,6 +684,6 @@ public class LoginActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         //unregisterReceiver(nfcReceiver);//注册广播解除
-        unregisterReceiver(bluetoothReceiver);//同上
+        //unregisterReceiver(bluetoothReceiver);//同上
     }
 }
