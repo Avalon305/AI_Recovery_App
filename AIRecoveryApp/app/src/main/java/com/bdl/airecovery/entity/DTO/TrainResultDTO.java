@@ -109,7 +109,7 @@ public class TrainResultDTO {
         this.heart_rate_list = heart_rate_list;
     }
 
-    public String getPr_userthoughts() {
+    public String getPr_userthoughts(String userThoughts) {
         return pr_userthoughts;
     }
 

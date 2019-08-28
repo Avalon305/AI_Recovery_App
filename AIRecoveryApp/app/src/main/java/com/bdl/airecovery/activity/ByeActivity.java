@@ -311,6 +311,8 @@ public class ByeActivity extends BaseActivity{
         trainResultDTO.setSpeedRank(upload.getSpeedRank());
         trainResultDTO.setFinishNum_(upload.getFinishNum());
         trainResultDTO.setEnergy_(upload.getEnergy());
+        LogUtil.d("用户感想："+upload.getUserThoughts());
+        trainResultDTO.getPr_userthoughts(upload.getUserThoughts());
         //转换心率类型
         List<Integer> list = upload.getHeartRateList();
         String HeartRate = "";

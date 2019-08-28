@@ -70,9 +70,7 @@ public class User {
     private int heartRatemMax;
 
     //手环id
-
     private String bindId;
-
     //处方id
     private int dpId;
 

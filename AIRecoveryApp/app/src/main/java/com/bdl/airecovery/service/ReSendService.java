@@ -72,26 +72,26 @@ public class ReSendService extends Service {
                             case 1:
                                 Log.d("重传service", "准备发送医护设置");
                                 reSetPersonalSettinglist(tempStorage);
-                                Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
+                                //Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
 
                                 break;
 
                             case 2:
                                 Log.d("重传service", "准备发送训练结果");
                                 SendTrainResult(tempStorage);
-                                Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
+                                //Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
                                 break;
 
                             case 3:
                                 Log.d("重传service", "准备发送肌力测试结果");
                                 sendStrengthTestResult(tempStorage);
-                                Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
+                                //Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
                                 break;
 
                             case 4:
                                 Log.d("重传service", "准备发送错误码结果");
                                 SendErrorInfo(tempStorage);
-                                Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
+                               // Log.d("重传service", "数据库id校验：" + dbManager.findById(TempStorage.class, tempStorage.getId()).getId());
                                 break;
 
                             default:
