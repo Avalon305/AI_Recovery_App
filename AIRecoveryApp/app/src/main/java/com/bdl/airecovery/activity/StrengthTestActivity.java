@@ -61,6 +61,7 @@ public class StrengthTestActivity extends BaseActivity {
     private int count = 0;
     private int strength = 0;
     private int maxStrength = 0;
+    private int resultGrade = 0;
     private CircularRingPercentageView circularRingPercentageView;
     private DbManager db = MyApplication.getInstance().getDbManager();
 
@@ -83,11 +84,11 @@ public class StrengthTestActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         circularRingPercentageView = (CircularRingPercentageView) findViewById(R.id.process_circle);
 
-//        try {
-//            LaunchDialogLocating();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            LaunchDialogLocating();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -107,8 +108,8 @@ public class StrengthTestActivity extends BaseActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String currentTime = dateFormat.format(date);
         StrengthTest strengthTest = new StrengthTest();
-        strengthTest.setUid("7");
-        strengthTest.setResult(String.valueOf(maxStrength));
+        strengthTest.setUid(MyApplication.getInstance().getUser().getUserId());
+        strengthTest.setResult(ratingByResult(maxStrength));
         strengthTest.setTime(currentTime);
 
         //存暂存表
@@ -157,14 +158,32 @@ public class StrengthTestActivity extends BaseActivity {
         timer.schedule(timerTask, 0, 50);
     }
 
-    private int ratingByResult(int result) {
+    private String ratingByResult(int result) {
+        double k = 5.0 / 60.0;
+        double ratedResult = k * result + 3.33;
+        ratedResult = (double) Math.round(ratedResult * 100) / 100;
+        return String.valueOf(ratedResult);
+    }
+
+    private int resultGrade(int result) {
+        if (result > 0 && result <= 20) {
+            return 1;
+        } else if (result > 20 && result <= 80) {
+            return 2;
+        } else if (result > 80 && result <= 140) {
+            return 3;
+        } else if (result > 140 && result <= 200) {
+            return 4;
+        } else if (result > 200) {
+            return 5;
+        }
         return 0;
     }
 
     private void showCommonDialog() {
         final CommonDialog commonDialog = new CommonDialog(StrengthTestActivity.this);
         commonDialog.setTitle("测试结果");
-        commonDialog.setMessage("您在肌力测试中使用的最大力量为" + maxStrength + ",肌力测试评级为");
+        commonDialog.setMessage("您在肌力测试中使用的最大力量为" + maxStrength + "，肌力测试评级为" + resultGrade(maxStrength) + "级");
         commonDialog.setCanceledOnTouchOutside(true);
         commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
