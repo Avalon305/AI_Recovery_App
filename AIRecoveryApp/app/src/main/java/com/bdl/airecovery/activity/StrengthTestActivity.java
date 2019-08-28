@@ -8,6 +8,7 @@ import android.os.Message;
 import android.transition.CircularPropagation;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -82,11 +83,11 @@ public class StrengthTestActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         circularRingPercentageView = (CircularRingPercentageView) findViewById(R.id.process_circle);
 
-        try {
-            LaunchDialogLocating();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            LaunchDialogLocating();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -127,9 +128,9 @@ public class StrengthTestActivity extends BaseActivity {
     @Event(R.id.btn_st_start)
     private void setStartTestOnClick(View v) {
         Log.e("------", "启动肌力测试");
-        btnStartTest.setVisibility(View.INVISIBLE);
-        tvTip.setTextColor(0xff3FDE5C);
-        tvTip.setText("请用力拉动力臂");
+        btnStartTest.setVisibility(View.GONE);
+        tvTip.setText("   请用力量拉动力臂");
+        tvTip.setTextColor(0xffe67e22);
         final Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
