@@ -58,7 +58,7 @@
                 android:gravity="center"
                 android:spinnerMode="dropdown"
                 android:textSize="30sp"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
 
             <TextView
@@ -70,7 +70,7 @@
 
             <Spinner
                 android:id="@+id/calibration_front_limit"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
 
             <TextView
@@ -82,7 +82,7 @@
 
             <Spinner
                 android:id="@+id/calibration_rear_limit"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
 
@@ -113,7 +113,7 @@
 
             <Spinner
                 android:id="@+id/calibration_min_torque"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
             <TextView
                 android:layout_width="450sp"
@@ -124,7 +124,7 @@
 
             <Spinner
                 android:id="@+id/calibration_back_speed"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
 
@@ -145,7 +145,7 @@
 
             <Spinner
                 android:id="@+id/calibration_normal_speed"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
 
             <TextView
@@ -157,7 +157,7 @@
 
             <Spinner
                 android:id="@+id/calibration_min_back_torque"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
 
@@ -178,7 +178,7 @@
 
             <Spinner
                 android:id="@+id/calibration_bounce"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
 
             <TextView
@@ -190,7 +190,7 @@
 
             <Spinner
                 android:id="@+id/calibration_lead"
-                android:layout_width="80sp"
+                android:layout_width="100sp"
                 android:layout_height="50sp"></Spinner>
         </LinearLayout>
 

@@ -289,7 +289,7 @@ public class CalibrationActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            setParameter(rearLimitedPosition * 4856, MotorConstant.SET_FRONTLIMIT);
+                            setParameter(rearLimitedPosition * 4856, MotorConstant.SET_REARLIMIT);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
