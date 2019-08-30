@@ -195,37 +195,8 @@ public class BluetoothService extends Service {
 
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                LogUtil.d("mac发生了连接失败！需要执行下一次扫描");
-                //初始化环境
-                BluetoothService.this.status = Status.NORMAL;
-                reConnect.set(0);
-                tryConnect.set(0);
-                BleManager.getInstance().disconnectAllDevice();
-                //连接的时候，如果最新的指令已经不要求连接了，则停止重连
-                if (BluetoothService.this.status != Status.TRY_CONNECTING){
-                    //把尝试次数归零
-                    reConnect.set(0);
-                    tryConnect.set(0);
-                    //断开应该断开的连接
-                    BleManager.getInstance().disconnectAllDevice();
-                    return;
-                }
-                //重新连接的情况下，如果连接失败会尝试10次，
-                try {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //断开之后，尝试重新连接2次，连不上就滚蛋
-                if(tryConnect.get() >= 2){
-                    disConnect();
-                    tryConnect.set(0);
-                }else{
-                    //尝试次数加一。
-                    tryConnect.incrementAndGet();
-                    connectMAC(mac);
-                }
-
+                LogUtil.d("mac连接失败!");
+                disConnect();
             }
 
             @Override
