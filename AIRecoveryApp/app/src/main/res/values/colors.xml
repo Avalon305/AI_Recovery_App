@@ -18,6 +18,9 @@
     <color name="yellow">#FFB90F</color>
     <color name="tintRed">#FF6347</color>
     <color name="purple">#D02090</color>
+
+    <color name="warning_red_2">#C75C5C</color>
+    <color name="warning_red">#FF0000</color>
     <!--一组蓝色-->
     <color name="blue1">#EBF5FB</color>
     <color name="blue2">#D6EAF8</color>

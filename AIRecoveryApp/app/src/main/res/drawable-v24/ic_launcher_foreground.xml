@@ -25,6 +25,7 @@
             </gradient>
         </aapt:attr>
     </path>
+
     <path
         android:fillColor="#FFFFFF"
         android:fillType="nonZero"

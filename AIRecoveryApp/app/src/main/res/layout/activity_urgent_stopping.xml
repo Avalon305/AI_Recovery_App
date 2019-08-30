@@ -4,40 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/iv_urgent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/timg4">
 
     <!--标题栏设置-->
     <RelativeLayout
         android:id="@+id/rl_top_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        tools:background="@color/qmui_config_color_75_white">
+        android:layout_marginLeft="-6dp"
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
         <!--急停页面标题-->
+        <ImageView
+            android:id="@+id/warning"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_warning"/>
         <TextView
-            android:id="@+id/tv_title"
+            android:layout_toRightOf="@id/warning"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/iv_urgent"
-            android:layout_toRightOf="@+id/iv_urgent"
-            android:text="急停模式"
-            android:textColor="@color/qmui_config_color_red"
+            android:textColor="@color/warning_red_2"
+            android:paddingLeft="5dp"
+            android:text="急停"
             android:textSize="40dp" />
 
-        <!--紧急停止的标识图片-->
-        <!--tools:ignore="DuplicateIds"此行用来注释掉id已被注册的error不可删-->
-        <ImageView
-            android:layout_width="100sp"
-            android:layout_height="80sp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/urgent"
-            android:id="@+id/iv_urgent"
-            tools:ignore="DuplicateIds" />
     </RelativeLayout>
 
     <!--页面正文-->
@@ -46,12 +41,10 @@
         android:id="@+id/exit_tip_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/step1_text"
-        android:layout_alignStart="@+id/step1_text"
         android:layout_below="@+id/rl_top_title"
-        android:layout_marginLeft="72dp"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="55dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:text="提示"
         android:textSize="40sp" />
 
@@ -66,72 +59,127 @@
         android:layout_marginTop="27dp"
         android:layout_toEndOf="@+id/exit_tip_title"
         android:layout_toRightOf="@+id/exit_tip_title"
-        android:text="很抱歉，'系统用户界面'已停止运行!
+        android:lineSpacingExtra="20dp"
+        android:text="急停按钮已被按下，APP已停止运行!
 请按照下述操作步骤重启本设备！"
         android:textSize="40sp" />
 
-    <TextView
-        android:id="@+id/step1_text"
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/iv_quka"
-        android:layout_alignTop="@+id/step3_text"
-        android:text="步骤一：请先拔出您的宝德龙卡"
-        android:textSize="30sp" />
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="100dp"
+        android:layout_below="@+id/exit_tip_text">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="100dp"
+            android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_step_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="35dp"
+                    android:text="步骤一：转动急停按钮"
+                    />
 
-    <TextView
-        android:id="@+id/step2_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/step1_text"
-        android:layout_alignBottom="@+id/step1_text"
-        android:layout_centerHorizontal="true"
-        android:text="步骤二：拔出急停按钮"
-        android:textSize="30sp" />
 
-    <TextView
-        android:id="@+id/step3_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/exit_tip_text"
-        android:layout_marginStart="49dp"
-        android:layout_marginTop="33dp"
-        android:layout_toEndOf="@+id/iv_babtn"
-        android:text="步骤三：按动双向开关重启"
-        android:textSize="30sp"
-        android:layout_marginLeft="49dp"
-        android:layout_toRightOf="@+id/iv_babtn" />
 
-    <ImageView
-        android:id="@+id/iv_quka"
-        android:layout_width="350sp"
-        android:layout_height="280sp"
-        android:layout_below="@+id/step1_text"
-        android:background="@drawable/quka"
-        android:layout_marginLeft="52dp"
-        android:layout_alignParentLeft="true" />
 
-    <ImageView
-        android:id="@+id/iv_babtn"
-        android:layout_width="300sp"
-        android:layout_height="280sp"
-        android:layout_below="@+id/step2_text"
-        android:layout_alignStart="@+id/step2_text"
-        android:layout_alignLeft="@+id/step2_text"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/pressbtn" />
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_below="@+id/tv_step_1"
+                android:src="@drawable/pressbtn"/>
+        </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_pressbtn"
-        android:layout_width="200sp"
-        android:layout_height="280sp"
-        android:layout_alignLeft="@+id/step3_text"
-        android:layout_alignTop="@+id/iv_babtn"
-        android:layout_marginLeft="82dp"
-        android:layout_marginTop="-2dp"
-        android:background="@drawable/rebtn" />
+        <LinearLayout
+            android:layout_below="@+id/exit_tip_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_step_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="35dp"
+                android:text="步骤二：拨动双向开关重启设备"
+                />
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_below="@+id/tv_step_2"
+                android:src="@drawable/rebtn"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/step1_text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@+id/iv_quka"-->
+        <!--android:layout_alignTop="@+id/step3_text"-->
+        <!--android:text="步骤一：转动急停按钮"-->
+        <!--android:textSize="30sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/step2_text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBaseline="@+id/step1_text"-->
+        <!--android:layout_alignBottom="@+id/step1_text"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:text="步骤二：按动双向开关重启"-->
+        <!--android:textSize="30sp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/step3_text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/exit_tip_text"-->
+        <!--android:layout_marginStart="49dp"-->
+        <!--android:layout_marginTop="33dp"-->
+        <!--android:layout_toEndOf="@+id/iv_babtn"-->
+        <!--android:text="步骤三：按动双向开关重启"-->
+        <!--android:textSize="30sp"-->
+        <!--android:layout_marginLeft="49dp"-->
+        <!--android:layout_toRightOf="@+id/iv_babtn" />-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/iv_quka"-->
+        <!--android:layout_width="350sp"-->
+        <!--android:layout_height="280sp"-->
+        <!--android:layout_below="@+id/step1_text"-->
+        <!--android:background="@drawable/quka"-->
+        <!--android:layout_marginLeft="52dp"-->
+        <!--android:layout_alignParentLeft="true" />-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/iv_babtn"-->
+        <!--android:layout_width="300sp"-->
+        <!--android:layout_height="280sp"-->
+        <!--android:layout_below="@+id/step2_text"-->
+        <!--android:layout_alignStart="@+id/step2_text"-->
+        <!--android:layout_alignLeft="@+id/step2_text"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:layout_marginLeft="0dp"-->
+        <!--android:layout_marginTop="1dp"-->
+        <!--android:background="@drawable/pressbtn" />-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/iv_pressbtn"-->
+        <!--android:layout_width="200sp"-->
+        <!--android:layout_height="280sp"-->
+        <!--android:layout_alignLeft="@+id/step3_text"-->
+        <!--android:layout_alignTop="@+id/iv_babtn"-->
+        <!--android:layout_marginLeft="82dp"-->
+        <!--android:layout_marginTop="-2dp"-->
+        <!--android:background="@drawable/rebtn" />-->
 
 
 </RelativeLayout>
