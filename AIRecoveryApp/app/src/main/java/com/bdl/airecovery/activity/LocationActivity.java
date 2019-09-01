@@ -425,71 +425,65 @@ public class LocationActivity extends BaseActivity {
         }
     }
 
-//    /**
-//     * 系统设置的点击事件
-//     *
-//     * @param v
-//     */
-//    @Event(R.id.iv_location_wheel)
-//    private void sysClick(View v) {
-//        //sysset.setText(" 系统设置");
-//        b = 1;
-//
-//        //直接跳转系统设置，不需要密码
-//        startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
-//
-//        //创建对话框对象的时候对对话框进行监听
-//        /*String info = "请输入密码";
-//        final int[] cnt = {0};
-//        final boolean[] flag = {false};
-//        final SmallPwdDialog dialog = new SmallPwdDialog(LocationActivity.this, info, R.style.CustomDialog,
-//                new SmallPwdDialog.DataBackListener() {
-//                    @Override
-//                    public void getData(String data) {
-//                        String result = data;
-//                        if (result.equals(MyApplication.ADMIN_PASSWORD)) {
-//                            flag[0] = true;
-//                        } else {
-//                            flag[0] = false;
-//                        }
-//                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+result+"  ADMIN_PWD:"+MyApplication.ADMIN_PASSWORD);
-//                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+flag[0]);
-//                        if (flag[0]) {
-//                            startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
-//                        } else if (cnt[0] != 0) {
-//                            Toast.makeText(LocationActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
-//                        }
-//                        cnt[0]++;
-//                    }
-//                });*/
-//
-//        /*
-//        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-//        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-//        params.y = 100;
-//        dialog.getWindow().setGravity(Gravity.TOP);
-//        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-//            @Override
-//            public void onSystemUiVisibilityChange(int visibility) {
-//                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-//                        //布局位于状态栏下方
-//                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-//                        //全屏
-////                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-//                        //隐藏导航栏
-//                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-//                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-//                if (Build.VERSION.SDK_INT >= 19) {
-//                    uiOptions |= 0x00001000;
-//                } else {
-//                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-//                }
-//                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-//            }
-//        });
-//        dialog.show();
-//        initImmersiveMode(); //隐藏虚拟按键和状态栏*/
-//    }
+    /**
+     * 系统设置的点击事件
+     *
+     * @param v
+     */
+    @Event(R.id.gear)
+    private void sysClick(View v) {
+        b = 1;
+        //创建对话框对象的时候对对话框进行监听
+        String info = "请输入密码";
+        final int[] cnt = {0};
+        final boolean[] flag = {false};
+        final SmallPwdDialog dialog = new SmallPwdDialog(LocationActivity.this, info, R.style.CustomDialog,
+                new SmallPwdDialog.DataBackListener() {
+                    @Override
+                    public void getData(String data) {
+                        String result = data;
+                        if (result.equals(MyApplication.ADMIN_PASSWORD)) {
+                            flag[0] = true;
+                        } else {
+                            flag[0] = false;
+                        }
+                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+result+"  ADMIN_PWD:"+MyApplication.ADMIN_PASSWORD);
+                        //Log.d(LocationActivity.ACTIVITY_TAG, "result:"+flag[0]);
+                        if (flag[0]) {
+                            startActivity(new Intent(LocationActivity.this, SystemSettingActivity.class));
+                        } else if (cnt[0] != 0) {
+                            Toast.makeText(LocationActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
+                        }
+                        cnt[0]++;
+                    }
+                });
+
+        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.y = 100;
+        dialog.getWindow().setGravity(Gravity.TOP);
+        dialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                dialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        dialog.show();
+        initImmersiveMode(); //隐藏虚拟按键和状态栏
+    }
 
     @Event(R.id.btn_test)
     private void testClick(View v) {

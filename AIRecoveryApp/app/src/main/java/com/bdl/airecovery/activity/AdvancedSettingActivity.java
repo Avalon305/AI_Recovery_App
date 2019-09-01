@@ -359,7 +359,6 @@ public class AdvancedSettingActivity extends BaseActivity {
             commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     commonDialog.dismiss();
-                    startActivity(new Intent(AdvancedSettingActivity.this, LocationActivity.class));
                     AdvancedSettingActivity.this.finish();
                 }
             });

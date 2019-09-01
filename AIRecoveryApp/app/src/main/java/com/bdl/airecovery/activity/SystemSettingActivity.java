@@ -347,13 +347,11 @@ public class SystemSettingActivity extends BaseActivity {
             commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     commonDialog.dismiss();
-                    startActivity(new Intent(SystemSettingActivity.this, LocationActivity.class));
                     SystemSettingActivity.this.finish();
                 }
             });
             commonDialog.show();
         } else {
-            startActivity(new Intent(SystemSettingActivity.this, LocationActivity.class));
             SystemSettingActivity.this.finish();
         }
     }

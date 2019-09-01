@@ -54,6 +54,9 @@ public class StrengthTestActivity extends BaseActivity {
     @ViewInject(R.id.btn_st_start)
     private Button btnStartTest;
 
+    @ViewInject(R.id.btn_st_end)
+    private Button btnEndTest;
+
     @ViewInject(R.id.tv_st_tip)
     private TextView tvTip;
 
@@ -64,7 +67,7 @@ public class StrengthTestActivity extends BaseActivity {
     private int resultGrade = 0;
     private CircularRingPercentageView circularRingPercentageView;
     private DbManager db = MyApplication.getInstance().getDbManager();
-
+    Timer timer = new Timer();
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -72,7 +75,6 @@ public class StrengthTestActivity extends BaseActivity {
             int arg1 = msg.arg1;
             switch (msg.what) {
                 case 1:
-
                     showCommonDialog();
                     uploadResult();
                     break;
@@ -84,12 +86,11 @@ public class StrengthTestActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         circularRingPercentageView = (CircularRingPercentageView) findViewById(R.id.process_circle);
-
-        try {
-            LaunchDialogLocating();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            LaunchDialogLocating();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -125,15 +126,21 @@ public class StrengthTestActivity extends BaseActivity {
         }
 
     }
-
+    @Event(R.id.btn_st_end)
+    private void setEndTestOnClick(View v) {
+        Message message = mHandler.obtainMessage();
+        message.what = 1;
+        message.arg1 = 1;
+        mHandler.sendMessage(message);
+        timer.cancel();
+    }
     //点击事件
     @Event(R.id.btn_st_start)
     private void setStartTestOnClick(View v) {
-        Log.e("------", "启动肌力测试");
-        btnStartTest.setVisibility(View.GONE);
+        btnStartTest.setEnabled(false);
+        btnEndTest.setEnabled(true);
         tvTip.setText("\n    请用力拉动力臂");
         tvTip.setTextColor(0xffe67e22);
-        final Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {

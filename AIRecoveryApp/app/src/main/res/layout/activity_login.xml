@@ -7,6 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity">
 
+    <ImageView
+        android:id="@+id/start_system_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_setting_3"/>
     <!--设备ID-->
     <RelativeLayout
         android:id="@+id/rl_top"
@@ -54,7 +60,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="40dp"
-        android:background="@drawable/logolight" />
+        android:background="@drawable/baodelong_logo_2" />
 
     <!--设备名称-->
     <TextView
@@ -69,24 +75,28 @@
         android:text="设备名称"/>
 
     <LinearLayout
+        android:layout_marginLeft="-80dp"
         android:id="@+id/ll_note"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_below="@id/tv_dev_name"
         android:layout_alignLeft="@id/tv_dev_name"
         android:orientation="horizontal">
         <!--IC卡图标-->
         <ImageView
             android:id="@+id/iv_card"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/card" />
+            android:src="@drawable/ic_band_2" />
         <!--提示语-->
         <TextView
+            android:layout_marginTop="7dp"
             android:id="@+id/tv_login_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="40sp"
+            android:lineSpacingExtra="10dp"
             android:text="请将蓝牙手环\n靠近感应板进行登录"/>
 
     </LinearLayout>
@@ -114,24 +124,90 @@
             android:singleLine="true"/>
     </LinearLayout>
 
+    <!--&lt;!&ndash;快速登录按钮&ndash;&gt;-->
+    <!--<Button-->
+        <!--android:layout_toRightOf="@+id/iv_muscle_image"-->
+        <!--android:layout_below="@+id/ll_time"-->
+        <!--android:id="@+id/btn_quick_login"-->
+        <!--android:enabled="true"-->
+        <!--android:layout_marginLeft="50sp"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="75dp"-->
+        <!--android:textColor="@color/blue1"-->
+        <!--android:gravity="center"-->
+        <!--android:paddingLeft="20dp"-->
+        <!--android:paddingRight="20dp"-->
+        <!--android:layout_marginBottom="15dp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:text="快速开始"-->
+        <!--android:background="@drawable/button_selector2"-->
+        <!--android:textSize="30dp"/>-->
+
     <!--快速登录按钮-->
-    <Button
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
         android:layout_toRightOf="@+id/iv_muscle_image"
-        android:layout_below="@+id/ll_time"
-        android:id="@+id/btn_quick_login"
-        android:enabled="true"
-        android:layout_marginLeft="110sp"
-        android:layout_width="200dp"
-        android:layout_height="75dp"
-        android:textColor="@color/blue1"
-        android:gravity="center"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:layout_marginBottom="15dp"
-        android:textStyle="bold"
-        android:text="快速开始"
-        android:background="@drawable/button_selector2"
-        android:textSize="30dp"/>
+        android:layout_below="@+id/ll_time">
+
+        <!--<ImageView-->
+            <!--android:layout_marginTop="12dp"-->
+            <!--android:layout_marginLeft="80dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_quick"-->
+            <!--/>-->
+        <!--<Button-->
+            <!--android:id="@+id/btn_quick_login"-->
+            <!--android:enabled="true"-->
+            <!--android:layout_marginLeft="50sp"-->
+            <!--android:layout_width="350dp"-->
+            <!--android:layout_height="90dp"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingLeft="20dp"-->
+            <!--android:paddingRight="20dp"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:text="    快速开始"-->
+            <!--android:background="@drawable/login_button_shape"-->
+
+            <!--android:textSize="45dp"/>-->
+
+        <com.bdl.airecovery.button.NbButton
+            android:id="@+id/btn_quick_login"
+            android:textSize="35dp"
+            android:layout_marginBottom="100dp"
+            android:textColor="#fff"
+            android:text="快速登录"
+            android:layout_marginLeft="50dp"
+            android:layout_width="220dp"
+            android:layout_height="75dp" />
+        <ImageView
+            android:id="@+id/flash"
+            android:visibility="invisible"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="128dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_flash_and_update"
+            />
+        <ImageView
+            android:id="@+id/update"
+            android:visibility="invisible"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="128dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_update2"
+            />
+
+
+
+
+    </RelativeLayout>
+
 
 
 </RelativeLayout>
