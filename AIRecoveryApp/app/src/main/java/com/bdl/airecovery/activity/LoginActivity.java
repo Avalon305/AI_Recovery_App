@@ -79,6 +79,7 @@ public class LoginActivity extends BaseActivity {
     private CommonDialog commonDialog3;
     private CommonDialog commonDialog4;
     private CommonDialog commonDialog5;
+    private CommonDialog commonDialog6;
     private DbManager db = MyApplication.getInstance().getDbManager();
     //第一用户登录指令的变量
     private volatile int whoLogin = 1;
@@ -387,7 +388,6 @@ public class LoginActivity extends BaseActivity {
         loginDialog.setTitle("温馨提示");
         loginDialog.setMessage("正在登录");
         //loginDialog.setCancelable(false);//设置点击空白处模态框不消失
-
         loginDialog.show();
     }
     //关闭蓝牙连接
@@ -410,9 +410,10 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             User  user = MyApplication.getInstance().getUser();
+            LogUtil.d("接收到登录信息："+user);
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
-            LogUtil.d("接收到登录信息："+CommonMessage.CONNECT_SUCCESS);
+            LogUtil.d("接收到登录信息："+commonMessage);
             //LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
             //LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
@@ -476,6 +477,11 @@ public class LoginActivity extends BaseActivity {
                 loginDialog.dismiss();
                 //提示蓝牙连接失败
                 commonDialog4();
+            }else if(MyApplication.getInstance().getUser().getInfoResponse() == 0){
+                //关闭模态框
+                loginDialog.dismiss();
+                //提示无该用户
+                commonDialog6();
             }
             else{
                 //关闭模态框
@@ -565,7 +571,7 @@ public class LoginActivity extends BaseActivity {
         //关闭蓝牙
         closeBluetooth();
         commonDialog5 = new CommonDialog(LoginActivity.this);
-        commonDialog5.setMessage("登录失败");
+        commonDialog5.setMessage("蓝牙手环未绑定");
         commonDialog5.setPositiveBtnText("我知道了");
         commonDialog5.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -577,6 +583,24 @@ public class LoginActivity extends BaseActivity {
             }
         });
         commonDialog5.show();
+    }
+    private void commonDialog6(){
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog6 = new CommonDialog(LoginActivity.this);
+        commonDialog6.setMessage("登录失败");
+        commonDialog6.setPositiveBtnText("我知道了");
+        commonDialog6.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog6.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog6.show();
     }
     //刷新页面
     public void refresh(){

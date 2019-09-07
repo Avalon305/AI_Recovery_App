@@ -377,6 +377,7 @@ public class SystemSettingActivity extends BaseActivity {
                         }
                         if (flag[0]) {
                             startActivity(new Intent(SystemSettingActivity.this, AdvancedSettingActivity.class));
+                            SystemSettingActivity.this.finish();
                         } else if (cnt[0] != 0) {
                             Toast.makeText(SystemSettingActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
                         }

@@ -372,6 +372,7 @@ public class MainActivity extends BaseActivity {
                         }
                         if (flag[0]) {
                             startActivity(new Intent(MainActivity.this, PersonalSettingActivity.class));
+                            MainActivity.this.finish();
                         } else if (cnt[0] != 0) {
                             Toast.makeText(MainActivity.this, "密码错误请重试!", Toast.LENGTH_SHORT).show();
                         }

@@ -74,6 +74,42 @@ public class User {
     //处方id
     private int dpId;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", deviceTypearrList='" + deviceTypearrList + '\'' +
+                ", exisitSetting=" + exisitSetting +
+                ", trainMode='" + trainMode + '\'' +
+                ", seatHeight=" + seatHeight +
+                ", backDistance=" + backDistance +
+                ", footboardDistance=" + footboardDistance +
+                ", leverAngle=" + leverAngle +
+                ", forwardLimit=" + forwardLimit +
+                ", backLimit=" + backLimit +
+                ", consequentForce=" + consequentForce +
+                ", reverseForce=" + reverseForce +
+                ", power=" + power +
+                ", dpStatus=" + dpStatus +
+                ", moveWay=" + moveWay +
+                ", memo='" + memo + '\'' +
+                ", groupCount=" + groupCount +
+                ", groupNum=" + groupNum +
+                ", relaxTime=" + relaxTime +
+                ", speedRank=" + speedRank +
+                ", sysVersion='" + sysVersion + '\'' +
+                ", weight=" + weight +
+                ", age=" + age +
+                ", heartRatemMax=" + heartRatemMax +
+                ", bindId='" + bindId + '\'' +
+                ", dpId=" + dpId +
+                ", clientTime='" + clientTime + '\'' +
+                ", serverTime='" + serverTime + '\'' +
+                ", infoResponse=" + infoResponse +
+                '}';
+    }
+
     //客户端时间戳
     private String clientTime;
 

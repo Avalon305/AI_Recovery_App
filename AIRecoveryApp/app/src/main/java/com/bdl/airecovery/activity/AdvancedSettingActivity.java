@@ -364,7 +364,7 @@ public class AdvancedSettingActivity extends BaseActivity {
             });
             commonDialog.show();
         } else {
-            startActivity(new Intent(AdvancedSettingActivity.this, LocationActivity.class));
+            startActivity(new Intent(AdvancedSettingActivity.this, SystemSettingActivity.class));
             AdvancedSettingActivity.this.finish();
         }
     }
