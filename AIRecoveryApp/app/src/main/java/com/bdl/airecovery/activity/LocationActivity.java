@@ -68,8 +68,7 @@ public class LocationActivity extends BaseActivity {
     //TextView
     @ViewInject(R.id.tv_location_tips)  //提示信息文本
     private TextView tips;
-    @ViewInject(R.id.tv_location_sysset)  //系统设置文本
-    private TextView sysset;
+
     @ViewInject(R.id.tv_location_item1)
     private TextView item1;              //要显示的连测参数1
     @ViewInject(R.id.tv_location_item2)

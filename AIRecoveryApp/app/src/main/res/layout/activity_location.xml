@@ -24,6 +24,15 @@
             android:layout_centerVertical="true"
             android:text="连测定位"
             android:textSize="40dp" />
+
+        <Button
+            android:id="@+id/btn_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1000dp"
+            android:layout_marginTop="40dp"
+            android:textSize="25dp"
+            android:text="跳转待机页面[测试]" />
     </RelativeLayout>
     <!--连测定位-->
     <TextView
@@ -193,7 +202,7 @@
             android:textSize="40sp"
             android:layout_weight="1"
             android:text="" />
-        <!--再次定位按钮-->
+
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/btn_location_again"
             android:layout_width="wrap_content"
@@ -208,36 +217,15 @@
             android:text="再次定位"
             android:textColor="@color/qmui_config_color_white"
             android:textSize="30sp"
-            android:visibility="gone"
+
             app:qmui_radius="4dp"
             app:qmui_backgroundColor="#FF059CFF"
             app:qmui_borderWidth="0dp"
             app:qmui_isRadiusAdjustBounds="true"
              />
 
-        <Button
-            android:id="@+id/btn_test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="跳转待机UI[测试用]" />
+
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!--系统设置-->
-        <TextView
-            android:id="@+id/tv_location_sysset"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:paddingTop="10dp"
-            android:layout_alignParentBottom="true"
-            android:background="#f0f0f0"
-            android:visibility="invisible"
-            android:gravity="center_horizontal"
-            android:text="系统设置"
-            android:textSize="25dp" />
-    </RelativeLayout>
 
 </LinearLayout>
