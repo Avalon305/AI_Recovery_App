@@ -100,6 +100,7 @@ public class MainActivity extends BaseActivity {
     private int locateTodo = 1;                 //需要定位的项目数量
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
     private DbManager db = MyApplication.getInstance().getDbManager();
+    private Timer locationTimer;
 
     //控件绑定
     //TextView
@@ -820,7 +821,7 @@ public class MainActivity extends BaseActivity {
     }
     public void CreateTheard() {
         //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-        Timer timer = new Timer();
+        locationTimer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -834,7 +835,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
-        timer.schedule(timerTask, 0, 1000);
+        locationTimer.schedule(timerTask, 0, 1000);
     }
     @Override
     public void onDestroy() {
@@ -850,6 +851,7 @@ public class MainActivity extends BaseActivity {
         unregisterReceiver(eStopReceiver);
         //结束扫描蓝牙的定时任务
         timer.cancel();
+        locationTimer.cancel();
     }
 
 }
