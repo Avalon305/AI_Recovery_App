@@ -96,10 +96,9 @@ public class ByeActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        arrHeartRate();
         //本次结束心率折线图
-        getAxisXLables();
-        getAxisPoints();
-        initAxisView();
+        heartRateDraw();
         //隐藏状态栏，导航栏
         initImmersiveMode();
         //获取设备名称、操作电机复位、页面跳转、待训练设备列表
@@ -107,13 +106,44 @@ public class ByeActivity extends BaseActivity{
         //将训练结果显示在页面并存到暂存表，由重传service上传
         trainResult();
     }
+
+    void heartRateDraw() {
+        if (heartRateList == null || heartRateList.isEmpty()) {
+            return;
+        }
+        getAxisXLables();
+        getAxisPoints();
+        initAxisView();
+    }
+
+    List<Integer> heartRateList;
+    void arrHeartRate() {
+        heartRateList = new ArrayList<>();
+        List<Integer> oldList = MyApplication.getUpload().getHeartRateList();
+        if (oldList == null || oldList.isEmpty()) {
+            LogUtil.e("心率为空，无法展示");
+            return;
+        }
+        int temp = oldList.size() / 15;
+        if (temp == 0) {
+            heartRateList = oldList;
+            return;
+        }
+        for (int i = 0; i < 15; i++) {
+            int tempSum = 0;
+            for (int j = 0; j < temp; j++) {
+                tempSum += oldList.get(i*temp+j);
+            }
+            heartRateList.add(tempSum/temp);
+        }
+    }
+
     /**
      * 折线图动画效果
      */
     private void initAxisView() {
         //获取upload对象
-        Upload upload = MyApplication.getUpload();
-        List<Integer> list=upload.getHeartRateList();
+        List<Integer> list = heartRateList;
         Line line = new Line(mPointValues).setColor(Color.parseColor("#1E90FF"));//折线的颜色
         List<Line> lines = new ArrayList<Line>();
         line.setShape(ValueShape.CIRCLE);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.SQUARE）
@@ -176,8 +206,7 @@ public class ByeActivity extends BaseActivity{
     }
 
     private  void getAxisXLables() {
-        Upload upload = MyApplication.getUpload();
-        List<Integer> list = upload.getHeartRateList();
+        List<Integer> list = heartRateList;
         try{
             for (int i = 0; i < list.size(); i++) {
                 mAxisXValues.add(new AxisValue(i).setLabel(i + ""));
@@ -188,8 +217,7 @@ public class ByeActivity extends BaseActivity{
         }
     }
     private void  getAxisPoints() {
-        Upload upload = MyApplication.getUpload();
-        List<Integer> list = upload.getHeartRateList();
+        List<Integer> list = heartRateList;
         try{
             for (int i = 0; i < list.size(); i++) {
                 mPointValues.add(new PointValue(i, list.get(i)));
@@ -229,8 +257,7 @@ public class ByeActivity extends BaseActivity{
         int maxHeartRate = Integer.MIN_VALUE;
         int sumHeartRate = 0;
         double avgHeartRate;
-        List<Integer> heartRateList = upload.getHeartRateList();
-        try{
+        try {
             for (int i = 0; i < heartRateList.size(); i++) {
                 sumHeartRate += heartRateList.get(i);
                 if (minHeartRate > heartRateList.get(i)) {
@@ -241,14 +268,14 @@ public class ByeActivity extends BaseActivity{
                 }
             }
             avgHeartRate = sumHeartRate / heartRateList.size();
-            result.add("最小心率：" + minHeartRate + "BPM");
-            result.add("最大心率：" + maxHeartRate + "BPM");
-            result.add("平均心率：" + avgHeartRate + "BPM");
-        }catch (Exception e){
+            result.add("最小心率：" + minHeartRate + " BPM");
+            result.add("最大心率：" + maxHeartRate + " BPM");
+            result.add("平均心率：" + avgHeartRate + " BPM");
+        } catch (Exception e){
             e.printStackTrace();
             LogUtil.d("心率值为空");
         }
-        //将待训练设备信息设置在页面上
+        //将结果设置在页面上
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
         listAnalysis.setAdapter(adapter);
 
@@ -314,9 +341,9 @@ public class ByeActivity extends BaseActivity{
         LogUtil.d("用户感想："+upload.getUserThoughts());
         trainResultDTO.getPr_userthoughts(upload.getUserThoughts());
         //转换心率类型
-        List<Integer> list = upload.getHeartRateList();
+        List<Integer> list = heartRateList;
         String HeartRate = "";
-        try{
+        try {
             if (list != null && list.size() > 0) {
                 for (Object item : list) {
                     // 把列表中的每条数据用逗号分割开来，然后拼接成字符串
@@ -325,7 +352,7 @@ public class ByeActivity extends BaseActivity{
                 // 去掉最后一个逗号
                 HeartRate = HeartRate.substring(0, HeartRate.length() - 1);
             }
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
             LogUtil.d("心率值为空");
         }
@@ -433,7 +460,8 @@ public class ByeActivity extends BaseActivity{
             layoutParams.gravity = Gravity.CENTER;
             layoutParams.setMargins(20, 10, 20, 10);
 
-            for (int i = 0; i < allDevice.size(); i++) {
+            //第一个设备完成，去掉第一个
+            for (int i = 1; i < allDevice.size(); i++) {
                 TextView textView = new TextView(this);
                 textView.setText(allDevice.get(i));
                 textView.setTextColor(Color.parseColor("#2c2c2c"));

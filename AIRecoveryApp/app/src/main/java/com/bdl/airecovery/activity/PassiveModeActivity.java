@@ -109,6 +109,7 @@ public class PassiveModeActivity extends BaseActivity {
                 tv_curr_groupnum.setText(String.valueOf(currGroupNum)); //当前组的次数
                 allowRecordNum = false;
                 //btn_pause.setText("结束"); //暂停按钮修改为结束按钮
+                MotorProcess.motorInitialization();
                 //弹出评级模态框
                 openRatingDialog();
                 return ;
@@ -623,8 +624,8 @@ public class PassiveModeActivity extends BaseActivity {
         ball.speedY = 0; //电机传进来的推拉速度
         ball.MaxR = 999; //合理的速度范围的最大边界值
         ball.MinR = 0; //合理的速度范围的最小边界值
-        ball.frontLimit = frontLimitedPosition / 10000; //前方限制
-        ball.backLimit = rearLimitedPosition / 10000; //后方限制
+        ball.frontLimit = frontLimitedPosition / 10000 - 10; //前方限制
+        ball.backLimit = rearLimitedPosition / 10000 + 10; //后方限制
         ball.stateS = 1; //设置小球状态：可运动
     }
     /*//扫描教练的定时任务
@@ -977,18 +978,6 @@ public class PassiveModeActivity extends BaseActivity {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             switch (commonMessage.getMsgType()){
-                //用户登录成功
-                case CommonMessage.LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.LOGIN_REGISTER_ONLINE:
-                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
-                //用户下线成功
-                case CommonMessage.LOGOUT:
-                case CommonMessage.DISCONNECTED:
-                    LogUtil.d("广播接收器收到："+ commonMessage.toString());
-                    break;
                 //获得心率
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());

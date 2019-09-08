@@ -108,6 +108,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                 allowRecordNum = false;
                 //btn_pause.setText("结束"); //暂停按钮修改为结束按钮
                 //弹出评级模态框
+                MotorProcess.motorInitialization();
                 openRatingDialog();
                 return ;
             }
@@ -1074,18 +1075,6 @@ public class ActivePassiveModeActivity extends BaseActivity {
             CommonMessage commonMessage = transfer(messageJson);
             Log.e("BtTest", "收到message：" + commonMessage.toString());
             switch (commonMessage.getMsgType()) {
-                //用户登录成功
-                case CommonMessage.LOGIN_REGISTER_OFFLINE:
-                case CommonMessage.LOGIN_REGISTER_ONLINE:
-                case CommonMessage.LOGIN_SUCCESS_OFFLINE:
-                case CommonMessage.LOGIN_SUCCESS_ONLINE:
-                    LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    break;
-                //用户下线成功
-                case CommonMessage.LOGOUT:
-                case CommonMessage.DISCONNECTED:
-                    LogUtil.d("广播接收器收到：" + commonMessage.toString());
-                    break;
                 //获得心率
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());

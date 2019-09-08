@@ -628,7 +628,7 @@ public class LoginActivity extends BaseActivity {
         String str1 = "[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
         user.setUserId("离线用户");
         user.setDeviceTypearrList(str1);
-        user.setUsername("离线登录");
+        user.setUsername("离线用户");
         user.setExisitSetting(false);
         user.setMoveWay(0);
         user.setGroupCount(1);
