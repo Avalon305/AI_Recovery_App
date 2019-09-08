@@ -494,6 +494,42 @@ public class PersonalSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_save)
     private void btn_save_onClick(View v) {
+        if (MyApplication.getInstance().getUser().getUsername().equals("离线用户")) {
+            final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
+            commonDialog.setTitle("温馨提示");
+            commonDialog.setMessage("当前用户处于离线状态，不能使用保存功能！");
+            commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    commonDialog.dismiss();
+                    Intent intent = new Intent(PersonalSettingActivity.this, MainActivity.class); //新建一个跳转到主界面Activity的显式意图
+                    startActivity(intent); //启动
+                    PersonalSettingActivity.this.finish(); //结束当前Activity
+                }
+            });
+            commonDialog.setPositiveBtnText("我知道了");
+            //模态框隐藏导航栏
+            commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                            //布局位于状态栏下方
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                            //全屏
+                            //View.SYSTEM_UI_FLAG_FULLSCREEN |
+                            //隐藏导航栏
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        uiOptions |= 0x00001000;
+                    } else {
+                        uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                    }
+                    commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                }
+            });
+            commonDialog.show();
+        }
         //如果标识为假，表明有修改过医护设置且未保存，此时点击保存按钮可以保存
         if (!isSave) {
             int hasFrontBackLimit = 0; //判断是否既有前方限制，又有后方限制
@@ -597,18 +633,22 @@ public class PersonalSettingActivity extends BaseActivity {
                 e.printStackTrace();
             }
 
-
             //5.打包医护设置
             PersonalSettingDTO personalSettingDTO = new PersonalSettingDTO();
             if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
                 personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
                 personalSettingDTO.setBind_id(MyApplication.getInstance().getUser().getBindId());
+                personalSettingDTO.setDeviceTypeValue_(MyApplication.getInstance().getCurrentDevice().getDeviceType());
+                personalSettingDTO.setTrainMode(curModeIndex);
                 personalSettingDTO.setSeatHeight(seatHeight);
                 personalSettingDTO.setBackDistance(backDistance);
+                //无踏板距离
                 personalSettingDTO.setLeverAngle(leverAngle);
                 personalSettingDTO.setForwardLimit(frontLimit);
                 personalSettingDTO.setBackLimit(backLimit);
-                personalSettingDTO.setTrainMode(curModeIndex);
+                personalSettingDTO.setConsequentForce(Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getConsequentForce()));
+                personalSettingDTO.setReverseForce(Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getReverseForce()));
+                //无功率
             }
             //6.存暂存表
             Log.d("暂存业务", "保存医护设置数据至暂存表：" + personalSettingDTO.toString());
@@ -700,7 +740,7 @@ public class PersonalSettingActivity extends BaseActivity {
     @Event(R.id.btn_back)
     private void btn_back_onClick(View v) {
         //如果标识为真，表明已经保存或未修改医护设置，此时可以返回主界面
-        if (isSave) {
+        if (isSave || MyApplication.getInstance().getUser().getUsername().equals("离线用户")) {
             Intent intent = new Intent(PersonalSettingActivity.this, MainActivity.class); //新建一个跳转到主界面Activity的显式意图
             startActivity(intent); //启动
             PersonalSettingActivity.this.finish(); //结束当前Activity

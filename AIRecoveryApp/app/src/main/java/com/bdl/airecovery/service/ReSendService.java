@@ -136,6 +136,8 @@ public class ReSendService extends Service {
                 .setPower(sendMsg.getPower_())
                 .setSpeedRank(sendMsg.getSpeedRank())
                 .setFinishNum(sendMsg.getFinishNum_())
+                .setFinishTime(sendMsg.getFinishTime_())
+                .setPrUserthoughts(sendMsg.getPr_userthoughts())
                 .setDistance(sendMsg.getFinalDistance_())
                 .setEnergy(sendMsg.getEnergy_())
                 .setHeartRateList(sendMsg.getHeart_rate_list())
@@ -187,7 +189,7 @@ public class ReSendService extends Service {
                 .setForwardLimit(sendMsg.getForwardLimit()) //前方限制
                 .setBackLimit(sendMsg.getBackLimit()) //后方限制
                 .setConsequentForce(sendMsg.getConsequentForce())//顺向力
-                .setReverseForce(sendMsg.getReverseForce())
+                .setReverseForce(sendMsg.getReverseForce()) //反向力
                 .setPower(sendMsg.getPower())
                 .setDataId(String.valueOf(tempStorage.getId()))
                 .build();

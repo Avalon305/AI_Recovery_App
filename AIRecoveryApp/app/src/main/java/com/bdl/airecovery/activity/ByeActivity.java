@@ -290,6 +290,11 @@ public class ByeActivity extends BaseActivity{
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.list_equipment_bye,result);
         listAnalysis.setAdapter(adapter);
 
+        //离线用户不需要上传训练结果，直接
+        if (MyApplication.getInstance().getUser().getUsername().equals("离线用户")) {
+            return;
+        }
+
         //从user获取上传的信息
         if (MyApplication.getInstance().getUser() != null){
             upload.setUid(MyApplication.getInstance().getUser().getUserId());;
@@ -348,9 +353,10 @@ public class ByeActivity extends BaseActivity{
         trainResultDTO.setPower_(upload.getPower());
         trainResultDTO.setSpeedRank(upload.getSpeedRank());
         trainResultDTO.setFinishNum_(upload.getFinishNum());
+        trainResultDTO.setFinishTime_(upload.getFinishTime());
         trainResultDTO.setEnergy_(upload.getEnergy());
         LogUtil.d("用户感想："+upload.getUserThoughts());
-        trainResultDTO.getPr_userthoughts(upload.getUserThoughts());
+        trainResultDTO.setPr_userthoughts(upload.getUserThoughts());
         //转换心率类型
         List<Integer> list = heartRateList;
         String HeartRate = "";
