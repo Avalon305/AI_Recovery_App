@@ -35,6 +35,7 @@ import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.dialog.LargeDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
+import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.MotorService;
@@ -149,6 +150,7 @@ public class MainActivity extends BaseActivity {
         initMotor();
         queryDevInfo();     //查询设备信息
         queryUserInfo();    //查询用户信息,设置用户名
+        CreateTheard();
         //注册广播
         filterHR.addAction("heartrate");
         filterHR.addAction("log");
@@ -816,7 +818,24 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
-
+    public void CreateTheard() {
+        //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (handler_dialoglocating != null && !isDialogReadyDisplay) {
+                    Log.d("静态", "locateDone:"+locateDone+"   locateTodo:"+locateTodo);//TODO
+                    if (locateDone == 1){
+                        Message message1 = handler_dialoglocating.obtainMessage();
+                        message1.what = 1;
+                        handler_dialoglocating.sendMessage(message1);
+                    }
+                }
+            }
+        };
+        timer.schedule(timerTask, 0, 1000);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
