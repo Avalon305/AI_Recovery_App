@@ -403,7 +403,7 @@ public class LoginActivity extends BaseActivity {
         Intent intentLog = new Intent(LoginActivity.this, BluetoothService.class);
         intentLog.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog);
-        LogUtil.e("蓝牙第一用户退出");
+        LogUtil.e("蓝牙用户退出");
     }
 
     /**

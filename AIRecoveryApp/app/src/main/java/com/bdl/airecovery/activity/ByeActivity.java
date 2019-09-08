@@ -96,6 +96,7 @@ public class ByeActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        disConnectBLE();
         arrHeartRate();
         //本次结束心率折线图
         heartRateDraw();
@@ -105,6 +106,16 @@ public class ByeActivity extends BaseActivity{
         mainEvent();
         //将训练结果显示在页面并存到暂存表，由重传service上传
         trainResult();
+    }
+
+    void disConnectBLE() {
+        //断开蓝牙连接
+        if (MyApplication.getInstance().getUser() != null){
+            Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
+            intentLog.putExtra("command", CommonCommand.LOGOUT.value());
+            startService(intentLog);
+            LogUtil.e("再见页面结束时，蓝牙第一用户退出");
+        }
     }
 
     void heartRateDraw() {
@@ -483,13 +494,7 @@ public class ByeActivity extends BaseActivity{
         t.schedule(new TimerTask() {
             @Override
             public void run() {
-                //断开蓝牙连接
-                if (MyApplication.getInstance().getUser() != null){
-                    Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
-                    startService(intentLog);
-                    LogUtil.e("再见页面结束时，蓝牙第一用户退出");
-                }
+
                 //置空用户
                 MyApplication.getInstance().setUser(null);
                 startActivity(new Intent(ByeActivity.this,LoginActivity.class));
@@ -502,13 +507,7 @@ public class ByeActivity extends BaseActivity{
     //按钮监听事件，返回待机页面
     @Event(R.id.btn_return)
     private void setBtn_return(View v) {
-        //断开蓝牙连接
-        if (MyApplication.getInstance().getUser() != null){
-            Intent intentLog = new Intent(ByeActivity.this, BluetoothService.class);
-            intentLog.putExtra("command", CommonCommand.LOGOUT.value());
-            startService(intentLog);
-            LogUtil.e("再见页面结束时，蓝牙用户退出");
-        }
+
         //置空用户
         MyApplication.getInstance().setUser(null);
         startActivity(new Intent(ByeActivity.this,LoginActivity.class));

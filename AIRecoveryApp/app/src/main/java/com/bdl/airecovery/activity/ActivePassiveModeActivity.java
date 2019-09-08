@@ -108,7 +108,6 @@ public class ActivePassiveModeActivity extends BaseActivity {
                 allowRecordNum = false;
                 //btn_pause.setText("结束"); //暂停按钮修改为结束按钮
                 //弹出评级模态框
-                MotorProcess.motorInitialization();
                 openRatingDialog();
                 return ;
             }
@@ -138,8 +137,6 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private Thread seekBarThread;           //电机速度与位移的SeekBar线程
     private float lastPosition, curPosition; //上一次电机位置、当前电机位置
     private float lastSpeed = -1, curSpeed; //上一次电机速度，当前电机速度
-    Timer passiveModeTimer = new Timer();
-    Timer standardModeTimer = new Timer();
     //    Timer monitorTorqueTimer = new Timer();
     private Upload upload = new Upload();
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
@@ -699,8 +696,6 @@ public class ActivePassiveModeActivity extends BaseActivity {
         unregisterReceiver(eStopReceiver);
         unregisterReceiver(bluetoothReceiver);
         timer.cancel();
-        passiveModeTimer.cancel();
-        standardModeTimer.cancel();
         if (needAfterMotion) {
             MotorProcess.motorInitialization();
         }
@@ -864,6 +859,9 @@ public class ActivePassiveModeActivity extends BaseActivity {
     RatingDialog ratingDialog;
     //打开评级模态框
     private void openRatingDialog() {
+        timer.cancel();
+        MotorProcess.motorInitialization();
+
         ratingDialog = new RatingDialog(ActivePassiveModeActivity.this);
         ratingDialog.setTitle("完成训练");
         ratingDialog.setMessage("本次训练感受？");

@@ -121,7 +121,7 @@ public class MyApplication extends MultiDexApplication {
         //启动发卡器Service
         //startCardReaderService();
         //启动电机Service
-        //startMotorService();
+        startMotorService();
         //启动静态电机Service
         startStaticMotorService();
         //启动usb的service
