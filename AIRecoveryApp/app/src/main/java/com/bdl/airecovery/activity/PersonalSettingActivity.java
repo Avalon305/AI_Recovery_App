@@ -614,7 +614,7 @@ public class PersonalSettingActivity extends BaseActivity {
             if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
                 personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
                 personalSettingDTO.setBind_id(MyApplication.getInstance().getUser().getBindId());
-                personalSettingDTO.setDeviceTypeValue_(MyApplication.getInstance().getCurrentDevice().getDeviceType());
+                personalSettingDTO.setDeviceTypeValue_(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()));
                 personalSettingDTO.setTrainMode(curModeIndex);
                 personalSettingDTO.setSeatHeight(seatHeight);
                 personalSettingDTO.setBackDistance(backDistance);

@@ -89,6 +89,9 @@ public class LoginActivity extends BaseActivity {
     private String bind_id;
     //手环id
     private String usbData;
+    //设备类型id
+    private String deviceIds;
+    private String str1;
     /**
      * 控件绑定
      */
@@ -166,8 +169,6 @@ public class LoginActivity extends BaseActivity {
         });
         dialog.show();
     }
-
-
     private void setBtnQuickLoginOnClick() {
         btn_quick_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,31 +265,6 @@ public class LoginActivity extends BaseActivity {
 
 
     }
-
-
-    /**
-     * NFC标签广播接受的注册
-     */
-//    private void registerNfcReceiver() {
-//        //注册登录广播监听器
-//        nfcReceiver = new NfcReceiver();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("com.bdl.airecovery.service.UsbService");
-//        registerReceiver(nfcReceiver,intentFilter);
-//    }
-//    /**
-//     * 接收NFC标签广播
-//     */
-//    private class NfcReceiver extends BroadcastReceiver{
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            nfcMessage=intent.getStringExtra("bind_id");
-//            showLogin();//弹出登录模态框
-//            loginExecute(nfcMessage);//请求登录
-//            startBluetooth();//开启蓝牙扫描
-//        }
-//    }
-
     /**
      * NFC数据获取
      */
@@ -405,20 +381,36 @@ public class LoginActivity extends BaseActivity {
         startService(intentLog);
         LogUtil.e("蓝牙用户退出");
     }
+    /**
+     * 截取并拼接设备id
+     * 截取在线登录的设备号
+     */
+    private void equipment(){
+        int deviceId = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID());
+        deviceIds = "P0" + String.valueOf(deviceId);
+        String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
+        str1 =str.substring(1,4);
+    }
 
     /**
      * 接收蓝牙连接成功返回广播
      */
     private class BluetoothReceiver extends BroadcastReceiver {
-
         private Gson gson = new Gson();
-
         private CommonMessage transfer(String json) {
             return gson.fromJson(json, CommonMessage.class);
         }
-
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(MyApplication.getInstance().getUser() == null){
+                LogUtil.d("用户值为空");
+            }else {
+                equipment();
+                String test = MyApplication.getInstance().getUser().getDeviceTypearrList();
+                LogUtil.d("登录之后设备类型："+test);
+//                LogUtil.d("当前设备类型："+deviceIds);
+//                LogUtil.d("登录之后设备类型："+str1);
+            }
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             LogUtil.d("接收到登录信息：" + commonMessage);
@@ -435,7 +427,8 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() == 6) {
+                    MyApplication.getInstance().getUser().getInfoResponse() == 6   &&
+                    deviceIds.equals(str1) == true) {
                 //关闭模态框
                 loginDialog.dismiss();
                 unregisterReceiver(bluetoothReceiver);//同上
@@ -456,7 +449,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() == 3) {
+                    deviceIds.equals(str1) == false) {
                 //提示训练已经完成
                 //关闭模态框
                 loginDialog.dismiss();
@@ -703,7 +696,14 @@ public class LoginActivity extends BaseActivity {
         startActivity(skipIntent); //启动
         LoginActivity.this.finish(); //结束当前Activity
     }
-
+    /**
+     * 转换设备id
+     */
+//    private void transformation(){
+//        switch (MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()){
+//
+//        }
+//    }
     /**
      * 查询设备信息，包括设备ID与设备名称，传给前端
      */
@@ -768,7 +768,6 @@ public class LoginActivity extends BaseActivity {
             btn_quick_login.setVisibility(View.INVISIBLE);
         }
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -804,4 +803,29 @@ public class LoginActivity extends BaseActivity {
         //unregisterReceiver(nfcReceiver);//注册广播解除
         //unregisterReceiver(bluetoothReceiver);//同上
     }
+
+
+
+    /**
+     * NFC标签广播接受的注册
+     */
+//    private void registerNfcReceiver() {
+//        //注册登录广播监听器
+//        nfcReceiver = new NfcReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("com.bdl.airecovery.service.UsbService");
+//        registerReceiver(nfcReceiver,intentFilter);
+//    }
+//    /**
+//     * 接收NFC标签广播
+//     */
+//    private class NfcReceiver extends BroadcastReceiver{
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            nfcMessage=intent.getStringExtra("bind_id");
+//            showLogin();//弹出登录模态框
+//            loginExecute(nfcMessage);//请求登录
+//            startBluetooth();//开启蓝牙扫描
+//        }
+//    }
 }
