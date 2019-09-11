@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
     private int locateTodo = 1;                 //需要定位的项目数量
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
     private DbManager db = MyApplication.getInstance().getDbManager();
-    private Timer locationTimer;
+    private Timer locationTimer = new Timer();
 
     //控件绑定
     //TextView
@@ -203,8 +203,8 @@ public class MainActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String state = intent.getStringExtra("state");
             if (state != null && state.equals("1")) {
-                startActivity(new Intent(MainActivity.this, ScramActivity.class));
-                MainActivity.this.finish();
+//                startActivity(new Intent(MainActivity.this, ScramActivity.class));
+//                MainActivity.this.finish();
             }
         }
     }
@@ -821,13 +821,12 @@ public class MainActivity extends BaseActivity {
     }
     public void CreateTheard() {
         //创建Handler，用于在UI线程中获取倒计时线程创建的Message对象，得到倒计时秒数与时间类型
-        locationTimer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 if (handler_dialoglocating != null && !isDialogReadyDisplay) {
                     Log.d("静态", "locateDone:"+locateDone+"   locateTodo:"+locateTodo);//TODO
-                    if (locateDone == 1){
+                    if (locateDone == locateTodo){
                         Message message1 = handler_dialoglocating.obtainMessage();
                         message1.what = 1;
                         handler_dialoglocating.sendMessage(message1);
