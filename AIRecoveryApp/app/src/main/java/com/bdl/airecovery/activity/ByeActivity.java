@@ -346,9 +346,8 @@ public class ByeActivity extends BaseActivity{
         //打包训练结果
         TrainResultDTO trainResultDTO = new TrainResultDTO();
         trainResultDTO.setUid_(upload.getUid());
-        trainResultDTO.setBindId_(MyApplication.getInstance().getUser().getBindId());
         trainResultDTO.setTrainModeValue_(upload.getTrainMode());
-        trainResultDTO.setDeviceTypeValue_(upload.getDeviceType());
+        trainResultDTO.setDeviceTypeValue_(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()));
         trainResultDTO.setReverseForce_(upload.getReverseForce());
         trainResultDTO.setForwardForce_(upload.getConsequentForce());
         trainResultDTO.setPower_(upload.getPower());
@@ -380,6 +379,7 @@ public class ByeActivity extends BaseActivity{
         //保存手环id
         try {
             trainResultDTO.setBindId_(MyApplication.getInstance().getUser().getBindId());
+            LogUtil.d("设置BindId:" + MyApplication.getInstance().getUser().getBindId());
             //保存处方id
             trainResultDTO.setDpId_(MyApplication.getInstance().getUser().getDpId());
         }catch (Exception e){

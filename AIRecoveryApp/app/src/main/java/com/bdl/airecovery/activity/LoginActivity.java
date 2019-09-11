@@ -319,6 +319,11 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    /**
+     * 将NFC标签转换成BindId
+     * @param readContent
+     * @return
+     */
     private String readerConvertIntoBindId(String readContent) {
         Log.d("readerINfo", readContent);
         char[] chars = readContent.toUpperCase().toCharArray();
@@ -423,6 +428,8 @@ public class LoginActivity extends BaseActivity {
                 //关闭模态框
                 loginDialog.dismiss();
                 unregisterReceiver(bluetoothReceiver);//同上
+                String bindId = readerConvertIntoBindId(usb_edittext.getText().toString());
+                MyApplication.getInstance().getUser().setBindId(bindId);
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
@@ -434,6 +441,9 @@ public class LoginActivity extends BaseActivity {
                 //关闭模态框
                 loginDialog.dismiss();
                 unregisterReceiver(bluetoothReceiver);//同上
+
+                String bindId = readerConvertIntoBindId(usb_edittext.getText().toString());
+                MyApplication.getInstance().getUser().setBindId(bindId);
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
