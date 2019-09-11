@@ -1,6 +1,8 @@
 package com.bdl.airecovery.entity.login;
 
+import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.biz.LoginUtils;
+import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.proto.BdlProto;
 
 public class User {
@@ -116,7 +118,13 @@ public class User {
     //服务端时间
     private String serverTime;
 
-    private int infoResponse; // 0:用户不存在，1:无大处方，2：有大处方没做完 ，3：大处方已经做完 ，4：大处方以废弃，5：有可用大处方，没有该台设备训练计划，6：有可用大处方，有该台设备训练计划
+    private int infoResponse;   // 0：用户不存在             提示：请去教练机绑定手环
+                                // 1：无大处方               提示：您没有处方，建议您去教练机设置处方
+                                // 2：有大处方没做完         废弃
+                                // 3：大处方已经做完         提示：您以完成本设备训练，请到下一设备训练！
+                                // 4：大处方已废弃           提示：您没有处方，建议您去教练机设置处方
+                                // 5：有可用大处方，没有该台设备训练计划  提示：您的训练处方中没有该台设备
+                                // 6：有可用大处方，有该台设备训练计划    成功跳转
 
     public User() {
 
@@ -135,7 +143,7 @@ public class User {
                 this.trainMode = "康复模式";
                 break;
             case ActiveModel:
-                this.trainMode = "主动模式";
+                this.trainMode = "主被动模式";
                 break;
             case PassiveModel:
                 this.trainMode = "被动模式";
@@ -149,11 +157,14 @@ public class User {
         this.backDistance = message.getLoginResponse().getBackDistance();
         this.footboardDistance = message.getLoginResponse().getFootboardDistance();
         this.leverAngle = message.getLoginResponse().getLeverAngle();
-        this.forwardLimit = message.getLoginResponse().getForwardLimit();
-        this.backLimit = message.getLoginResponse().getBackLimit();
         this.consequentForce = message.getLoginResponse().getConsequentForce();
         this.reverseForce = message.getLoginResponse().getReverseForce();
         this.power = message.getLoginResponse().getPower();
+        this.forwardLimit = message.getLoginResponse().getForwardLimit();
+        this.backLimit = message.getLoginResponse().getBackLimit();
+        Device device = MyApplication.getInstance().getCurrentDevice();
+        device.setConsequentForce(String.valueOf(message.getLoginResponse().getConsequentForce()));
+        device.setReverseForce(String.valueOf(message.getLoginResponse().getReverseForce()));
 
         //--------处方信息 ↓
         this.dpStatus = message.getLoginResponse().getDpStatus();

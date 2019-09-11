@@ -55,16 +55,18 @@ public class CommonUtils {
      *  @time 2019/8/14  21:07
      *  @describe 根据当前设备类型转化为proto用户运动模式枚举对象
      */
-    //public static  BdlProto.SportMode getSportMode(){
-//        switch (MyApplication.getInstance().getCurrentDevice().getSportMode()){
-//            case 0:
-//                return BdlProto.getSportMode.forNumber(0);
-//            case 1:
-//                return BdlProto.getSportMode.forNumber(1);
-//            default:
-//                return BdlProto.getSportMode.forNumber(-1);
-//        }
-// }
+    public static  BdlProto.TrainMode getTrainMode(){
+        switch (MyApplication.getInstance().getUser().getTrainMode()){
+            case "康复模式":
+                return BdlProto.TrainMode.RehabilitationModel;
+            case "主被动模式":
+                return BdlProto.TrainMode.ActiveModel;
+            case "被动模式":
+                return BdlProto.TrainMode.PassiveModel;
+            default:
+                return BdlProto.TrainMode.UNRECOGNIZED;
+        }
+ }
 
 
 

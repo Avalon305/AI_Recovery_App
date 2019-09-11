@@ -40,7 +40,7 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 				//TODO 在这里处理获取到的登陆信息
 			LogUtil.e("收到教练机反馈-开始");
 			//根据反馈情况进行设置
-			LoginUtils.parseLoginRespMsg(message);
+			LoginUtils.parseLoginRespMsg();
 			//有了登录请求的反馈了，最后解锁
 			LoginBiz.getInstance().COUNT_DOWN_LATCH.countDown();
 			LogUtil.e("收到教练机反馈-结束");

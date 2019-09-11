@@ -66,9 +66,9 @@ public class PersonalSettingActivity extends BaseActivity {
     private int curModeIndex = 0;               //选择模式的索引值（默认为0，即“标准模式”）
     private Boolean isSave = true;              //标识用户是否保存医护设置（一旦对 参数/模式 进行修改，则为false）
     String[] modeItems = new String[]{          //设置菜单选项内容（有5种训练模式可设置）（通过curModeIndex选择，默认为0，即“标准模式”）
+            "康复模式",
             "主被动模式",
-            "被动模式",
-            "康复模式"};
+            "被动模式"};
     //发送保存医护设置请求需要打包的参数
     private int deviceTypeValue;            //设备类型
     private int activityTypeValue;          //循环类型
@@ -139,30 +139,6 @@ public class PersonalSettingActivity extends BaseActivity {
         defaultSetting(); //控件内容的默认设置
         queryUserInfo(); //获取用户相关信息
 //        isOpenFatLossModeEvent(); //减脂模式CheckBox事件监听
-    }
-
-    /**
-     * 测试训练场景
-     */
-    private void test() {
-        User newUser = new User();
-        newUser.setUserId("离线用户");
-        newUser.setExisitSetting(false);
-        newUser.setDeviceTypearrList("[P00,P01,P02,P03,P04,P05,P06,P07]");
-        newUser.setMoveWay(0);
-        newUser.setGroupCount(2);
-        newUser.setGroupNum(3);
-        newUser.setRelaxTime(10);
-        newUser.setSpeedRank(1);
-        newUser.setAge(30);
-        newUser.setWeight(60);
-        newUser.setHeartRatemMax(190);
-        newUser.setTrainMode("康复模式");
-        newUser.setForwardLimit(123);
-        newUser.setBackLimit(23);
-        newUser.setSeatHeight(5);
-        newUser.setLeverAngle(8);
-        MyApplication.getInstance().setUser(newUser);
     }
 
     @Override

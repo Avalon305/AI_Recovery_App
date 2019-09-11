@@ -14,6 +14,7 @@ import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.netty.DataSocketClient;
 import com.bdl.airecovery.proto.BdlProto;
 import com.bdl.airecovery.proto.DataProtoUtil;
+import com.bdl.airecovery.util.CommonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -182,6 +183,7 @@ public class ReSendService extends Service {
                 .setUid(sendMsg.getUid()) //用户ID
                 .setBindId(sendMsg.getBind_id())
                 .setDeviceTypeValue(sendMsg.getDeviceTypeValue_())
+                .setTrainMode(CommonUtils.getTrainMode())
                 .setSeatHeight(sendMsg.getSeatHeight()) //座位高度
                 .setBackDistance(sendMsg.getBackDistance()) //靠背距离
                 .setFootboardDistance(sendMsg.getFootboardDistance())//踏板距离

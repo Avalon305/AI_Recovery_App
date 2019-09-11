@@ -346,6 +346,7 @@ public class ByeActivity extends BaseActivity{
         //打包训练结果
         TrainResultDTO trainResultDTO = new TrainResultDTO();
         trainResultDTO.setUid_(upload.getUid());
+        trainResultDTO.setBindId_(MyApplication.getInstance().getUser().getBindId());
         trainResultDTO.setTrainModeValue_(upload.getTrainMode());
         trainResultDTO.setDeviceTypeValue_(upload.getDeviceType());
         trainResultDTO.setReverseForce_(upload.getReverseForce());
