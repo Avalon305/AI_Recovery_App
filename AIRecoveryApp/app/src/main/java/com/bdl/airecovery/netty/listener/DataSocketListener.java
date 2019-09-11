@@ -32,7 +32,6 @@ public class DataSocketListener extends ChannelInboundHandlerAdapter {
 		BdlProto.Message message = (BdlProto.Message) msg;
 		//Log.e("BtService","channelRead");
 		if (message.hasLoginResponse()) {
-
 			BdlProto.LoginResponse resp = message.getLoginResponse();
 			LogUtil.e ("DataSocket客户端收到登陆结果响应:"+gsonUtil.toJson(resp).toString());
            //为全局User赋值

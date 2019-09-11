@@ -22,6 +22,7 @@ public class ScramActivity extends BaseActivity {
         if(MyApplication.getInstance().getUser().getUsername().equals("体验者")){
             return;
         }else {
+            MyApplication.getInstance().setUser(null);
             //关闭蓝牙连接
             Intent intentLog = new Intent(ScramActivity.this, BluetoothService.class);
             intentLog.putExtra("command", CommonCommand.LOGOUT.value());

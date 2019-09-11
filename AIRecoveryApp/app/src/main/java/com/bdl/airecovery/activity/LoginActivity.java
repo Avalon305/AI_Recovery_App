@@ -307,8 +307,8 @@ public class LoginActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 if (usb_edittext.length() == 16) {
                     showLogin();//弹出登录模态框
-                    startBluetooth(readerConvertIntoMAC(usb_edittext.getText().toString()));//开启蓝牙扫描
                     loginExecute(readerConvertIntoBindId(usb_edittext.getText().toString()));//请求登录
+                    startBluetooth(readerConvertIntoMAC(usb_edittext.getText().toString()));//开启蓝牙扫描
                     usb_edittext.setText(null);
                 }
             }
@@ -403,7 +403,7 @@ public class LoginActivity extends BaseActivity {
         Intent intentLog = new Intent(LoginActivity.this, BluetoothService.class);
         intentLog.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog);
-        LogUtil.e("蓝牙第一用户退出");
+        LogUtil.e("蓝牙用户退出");
     }
 
     /**
@@ -419,13 +419,9 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            User user = MyApplication.getInstance().getUser();
-            LogUtil.d("接收到登录信息：" + user);
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             LogUtil.d("接收到登录信息：" + commonMessage);
-            //LogUtil.d("接收到用户登录状态："+MyApplication.getInstance().getUser().getInfoResponse());
-            //LogUtil.d("接收到用户姓名："+MyApplication.getInstance().getUser().getUsername());
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
             if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
@@ -490,12 +486,12 @@ public class LoginActivity extends BaseActivity {
                 //关闭模态框
                 loginDialog.dismiss();
                 //提示无该用户
-                commonDialog6();
+                commonDialog5();
             } else {
                 //关闭模态框
                 loginDialog.dismiss();
                 //提示登录失败
-                commonDialog5();
+                commonDialog6();
             }
         }
     }
@@ -622,6 +618,9 @@ public class LoginActivity extends BaseActivity {
         onCreate(null);
     }
 
+    /**
+     * 离线用户全局
+     */
     private void OfflineLogin() {
         User user = new User();
         //初始化待训练设备

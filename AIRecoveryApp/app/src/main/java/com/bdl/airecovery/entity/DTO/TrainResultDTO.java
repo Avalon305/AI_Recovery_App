@@ -18,9 +18,10 @@ public class TrainResultDTO {
     String bindId_="";                //手环id
     int dpId_=0;                      //处方id
 
-
     public TrainResultDTO() {
+
     }
+
     public String getUid_() {
         return uid_;
     }
@@ -85,6 +86,14 @@ public class TrainResultDTO {
         this.finishNum_ = finishNum_;
     }
 
+    public int getFinishTime_() {
+        return finishTime_;
+    }
+
+    public void setFinishTime_(int finishTime_) {
+        this.finishTime_ = finishTime_;
+    }
+
     public double getFinalDistance_() {
         return finalDistance_;
     }
@@ -109,7 +118,7 @@ public class TrainResultDTO {
         this.heart_rate_list = heart_rate_list;
     }
 
-    public String getPr_userthoughts(String userThoughts) {
+    public String getPr_userthoughts() {
         return pr_userthoughts;
     }
 
@@ -139,14 +148,6 @@ public class TrainResultDTO {
 
     public void setDpId_(int dpId_) {
         this.dpId_ = dpId_;
-    }
-
-    public int getFinishTime_() {
-        return finishTime_;
-    }
-
-    public void setFinishTime_(int finishTime_) {
-        this.finishTime_ = finishTime_;
     }
 
     @Override
