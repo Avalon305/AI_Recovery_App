@@ -80,6 +80,8 @@ public class LoginActivity extends BaseActivity {
     private CommonDialog commonDialog4;
     private CommonDialog commonDialog5;
     private CommonDialog commonDialog6;
+    private CommonDialog commonDialog7;
+    private CommonDialog commonDialog8;
     private DbManager db = MyApplication.getInstance().getDbManager();
     //第一用户登录指令的变量
     private volatile int whoLogin = 1;
@@ -463,6 +465,22 @@ public class LoginActivity extends BaseActivity {
                 loginDialog.dismiss();
                 commonDialog2();
             }
+            //处方已经做完
+            else if(commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser() != null &&
+                    MyApplication.getInstance().getUser().getInfoResponse() == 3){
+                //关闭模态框
+                loginDialog.dismiss();
+                commonDialog7();
+            }
+            //处方已经废弃
+            else if(commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
+                    MyApplication.getInstance().getUser() != null &&
+                    MyApplication.getInstance().getUser().getInfoResponse() == 4 ){
+                //关闭模态框
+                loginDialog.dismiss();
+                commonDialog8();
+            }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户无处方
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
@@ -480,7 +498,7 @@ public class LoginActivity extends BaseActivity {
                 loginDialog.dismiss();
                 //提示无该用户
                 commonDialog5();
-            } else {
+            }else {
                 //关闭模态框
                 loginDialog.dismiss();
                 //提示登录失败
@@ -567,7 +585,6 @@ public class LoginActivity extends BaseActivity {
         });
         commonDialog4.show();
     }
-
     private void commonDialog5() {
         unregisterReceiver(bluetoothReceiver);//同上
         //关闭蓝牙
@@ -586,7 +603,6 @@ public class LoginActivity extends BaseActivity {
         });
         commonDialog5.show();
     }
-
     private void commonDialog6() {
         unregisterReceiver(bluetoothReceiver);//同上
         //关闭蓝牙
@@ -604,6 +620,42 @@ public class LoginActivity extends BaseActivity {
             }
         });
         commonDialog6.show();
+    }
+    private void commonDialog7() {
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog7 = new CommonDialog(LoginActivity.this);
+        commonDialog7.setMessage("该处方已经做完");
+        commonDialog7.setPositiveBtnText("我知道了");
+        commonDialog7.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog7.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog7.show();
+    }
+    private void commonDialog8() {
+        unregisterReceiver(bluetoothReceiver);//同上
+        //关闭蓝牙
+        closeBluetooth();
+        commonDialog8 = new CommonDialog(LoginActivity.this);
+        commonDialog8.setMessage("该处方已经废弃");
+        commonDialog8.setPositiveBtnText("我知道了");
+        commonDialog8.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                commonDialog6.dismiss();
+                //置空用户
+                MyApplication.getInstance().setUser(null);
+                //刷新页面
+                refresh();
+            }
+        });
+        commonDialog8.show();
     }
 
     //刷新页面

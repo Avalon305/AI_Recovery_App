@@ -302,7 +302,7 @@ public class ByeActivity extends BaseActivity{
             if (MyApplication.getInstance().getUser().getTrainMode().equals("康复模式")){
                 upload.setTrainMode(0);
             }
-            if (MyApplication.getInstance().getUser().getTrainMode().equals("主动模式")){
+            if (MyApplication.getInstance().getUser().getTrainMode().equals("主被动模式")){
                 upload.setTrainMode(1);
             }
             if (MyApplication.getInstance().getUser().getTrainMode().equals("被动模式")){
