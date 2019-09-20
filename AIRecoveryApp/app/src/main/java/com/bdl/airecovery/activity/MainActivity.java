@@ -323,6 +323,7 @@ public class MainActivity extends BaseActivity {
         /*Intent intentLog2 = new Intent(this, CardReaderService.class);
         intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog2);*/
+        MyApplication.getInstance().setUser(null);
         Intent intentLog = new Intent(this, BluetoothService.class);
         intentLog.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog);

@@ -187,7 +187,7 @@ public class LoginActivity extends BaseActivity {
                     public void run() {
                         User user = new User();
                         //初始化待训练设备
-                        String str1 = "[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
+                        String str1 = "[P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
                         user.setUserId("体验者");
                         user.setDeviceTypearrList(str1);
                         user.setUsername("体验者");
@@ -428,8 +428,7 @@ public class LoginActivity extends BaseActivity {
                 //关闭模态框
                 loginDialog.dismiss();
                 unregisterReceiver(bluetoothReceiver);//同上
-                String bindId = readerConvertIntoBindId(usb_edittext.getText().toString());
-                MyApplication.getInstance().getUser().setBindId(bindId);
+                MyApplication.getInstance().getUser().setBindId(usbData);
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
@@ -441,9 +440,7 @@ public class LoginActivity extends BaseActivity {
                 //关闭模态框
                 loginDialog.dismiss();
                 unregisterReceiver(bluetoothReceiver);//同上
-
-                String bindId = readerConvertIntoBindId(usb_edittext.getText().toString());
-                MyApplication.getInstance().getUser().setBindId(bindId);
+                MyApplication.getInstance().getUser().setBindId(usbData);
                 //登录成功时，执行跳转的逻辑
                 loginSuccess();
             }
@@ -679,7 +676,7 @@ public class LoginActivity extends BaseActivity {
     private void OfflineLogin() {
         User user = new User();
         //初始化待训练设备
-        String str1 = "[ P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
+        String str1 = "[P00,P01,P02,P03,P04,P05,P06,P07,P08,P09]";
         user.setUserId("离线用户");
         user.setDeviceTypearrList(str1);
         user.setUsername("离线用户");
