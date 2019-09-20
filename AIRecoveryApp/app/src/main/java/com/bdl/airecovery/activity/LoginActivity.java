@@ -371,9 +371,6 @@ public class LoginActivity extends BaseActivity {
      */
     private void showLogin() {
         //弹出对话框之前，先检查当前界面是否存在对话框，如果存在，先关闭，在执行下方的逻辑
-        if (loginDialog != null && loginDialog.isShowing()) {
-            return;
-        }
         loginDialog = new LoginDialog(LoginActivity.this);
         loginDialog.setTitle("温馨提示");
         loginDialog.setMessage("正在登录");
@@ -395,9 +392,15 @@ public class LoginActivity extends BaseActivity {
     private void equipment(){
         int deviceId = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID());
         deviceIds = "P0" + String.valueOf(deviceId);
-        String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
-        str1 =str.substring(1,4);
+        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]") {
+            str1 = "";
+        }else{
+            String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
+            LogUtil.d("设备类型：" + str);
+            str1 = str.substring(1, 4);
+        }
     }
+
 
     /**
      * 接收蓝牙连接成功返回广播
@@ -425,8 +428,12 @@ public class LoginActivity extends BaseActivity {
             if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
                     MyApplication.getInstance().getUser().getDpStatus() == 2) {
-                //关闭模态框
-                loginDialog.dismiss();
+                //关闭loginDialog.dismiss();模态框
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 unregisterReceiver(bluetoothReceiver);//同上
                 MyApplication.getInstance().getUser().setBindId(usbData);
                 //登录成功时，执行跳转的逻辑
@@ -438,7 +445,11 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser().getInfoResponse() == 6   &&
                     deviceIds.equals(str1) == true) {
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 unregisterReceiver(bluetoothReceiver);//同上
                 MyApplication.getInstance().getUser().setBindId(usbData);
                 //登录成功时，执行跳转的逻辑
@@ -448,7 +459,11 @@ public class LoginActivity extends BaseActivity {
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() == null) {
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 unregisterReceiver(bluetoothReceiver);//同上
                 //初始化设备
                 OfflineLogin();
@@ -458,10 +473,15 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
+                    MyApplication.getInstance().getUser().getInfoResponse() != 0 &&
                     deviceIds.equals(str1) == false) {
                 //提示训练已经完成
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 commonDialog1();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方无该设备
@@ -469,7 +489,11 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser() != null &&
                     MyApplication.getInstance().getUser().getInfoResponse() == 5) {
                 //关闭登录框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 commonDialog2();
             }
             //处方已经做完
@@ -477,7 +501,11 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser() != null &&
                     MyApplication.getInstance().getUser().getInfoResponse() == 3){
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 commonDialog7();
             }
             //处方已经废弃
@@ -485,7 +513,11 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser() != null &&
                     MyApplication.getInstance().getUser().getInfoResponse() == 4 ){
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 commonDialog8();
             }
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户无处方
@@ -493,21 +525,37 @@ public class LoginActivity extends BaseActivity {
                     MyApplication.getInstance().getUser() != null &&
                     MyApplication.getInstance().getUser().getInfoResponse() == 1) {
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 commonDialog3();
             } else if (commonMessage.getMsgType() == CommonMessage.DISCONNECTED) {
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 //提示蓝牙连接失败
                 commonDialog4();
             } else if (MyApplication.getInstance().getUser().getInfoResponse() == 0) {
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 //提示无该用户
                 commonDialog5();
             }else {
                 //关闭模态框
-                loginDialog.dismiss();
+                try {
+                    loginDialog.dismiss();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 //提示登录失败
                 commonDialog6();
             }
