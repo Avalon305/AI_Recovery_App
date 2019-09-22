@@ -86,11 +86,11 @@ public class StrengthTestActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         circularRingPercentageView = (CircularRingPercentageView) findViewById(R.id.process_circle);
-//        try {
-//            LaunchDialogLocating();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            LaunchDialogLocating();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
