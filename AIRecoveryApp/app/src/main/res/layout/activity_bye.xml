@@ -60,8 +60,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/iv_bye_not"
-            android:layout_marginLeft="30dp"
-            android:text="训练计划"
+            android:layout_marginLeft="20dp"
+            android:text="未执行康复设备列表"
             android:textColor="@color/Black"
             android:textSize="50sp" />
         <!--未完成的设备列表-->

@@ -55,13 +55,13 @@ public class CommonUtils {
      *  @time 2019/8/14  21:07
      *  @describe 根据当前设备类型转化为proto用户运动模式枚举对象
      */
-    public static  BdlProto.TrainMode getTrainMode(){
-        switch (MyApplication.getInstance().getUser().getTrainMode()){
-            case "康复模式":
+    public static  BdlProto.TrainMode getTrainMode(int trainMode){
+        switch (trainMode){
+            case 0:
                 return BdlProto.TrainMode.RehabilitationModel;
-            case "主被动模式":
+            case 1:
                 return BdlProto.TrainMode.ActiveModel;
-            case "被动模式":
+            case 2:
                 return BdlProto.TrainMode.PassiveModel;
             default:
                 return BdlProto.TrainMode.UNRECOGNIZED;

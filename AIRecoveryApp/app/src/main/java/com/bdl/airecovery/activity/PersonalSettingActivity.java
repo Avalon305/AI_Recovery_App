@@ -1,7 +1,6 @@
 package com.bdl.airecovery.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,11 +12,19 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.contoller.MotorProcess;
+import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.MenuDialog;
 import com.bdl.airecovery.entity.DTO.PersonalSettingDTO;
+import com.bdl.airecovery.entity.Personal;
+import com.bdl.airecovery.entity.TempStorage;
+import com.bdl.airecovery.personalInfoDAO;
+import com.bdl.airecovery.proto.BdlProto;
+import com.bdl.airecovery.service.StaticMotorService;
+import com.google.gson.Gson;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -25,19 +32,8 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
-import com.bdl.airecovery.MyApplication;
-import com.bdl.airecovery.entity.Personal;
-import com.bdl.airecovery.entity.TempStorage;
-import com.bdl.airecovery.entity.login.User;
-import com.bdl.airecovery.proto.BdlProto;
-import com.google.gson.Gson;
-import com.bdl.airecovery.dialog.CommonDialog;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import com.bdl.airecovery.personalInfoDAO;
-import com.bdl.airecovery.service.StaticMotorService;
 
 @ContentView(R.layout.activity_personal_setting)
 public class PersonalSettingActivity extends BaseActivity {
@@ -505,208 +501,209 @@ public class PersonalSettingActivity extends BaseActivity {
                 }
             });
             commonDialog.show();
-        }
-        //如果标识为假，表明有修改过医护设置且未保存，此时点击保存按钮可以保存
-        if (!isSave) {
-            int hasFrontBackLimit = 0; //判断是否既有前方限制，又有后方限制
-            //1.获取需要打包的数据
-            if (MyApplication.getInstance().getCurrentDevice() != null) {
-                //1.1.获取设备类型
-                if (MyApplication.getInstance().getCurrentDevice().getDeviceInnerID() != null) {
-                    deviceTypeValue = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()); //得到枚举量
-                }
+        } else {
+            //如果标识为假，表明有修改过医护设置且未保存，此时点击保存按钮可以保存
+            if (!isSave) {
+                int hasFrontBackLimit = 0; //判断是否既有前方限制，又有后方限制
+                //1.获取需要打包的数据
+                if (MyApplication.getInstance().getCurrentDevice() != null) {
+                    //1.1.获取设备类型
+                    if (MyApplication.getInstance().getCurrentDevice().getDeviceInnerID() != null) {
+                        deviceTypeValue = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()); //得到枚举量
+                    }
 //                //1.2.获取循环类型
 //                activityTypeValue = MyApplication.getInstance().getCurrentDevice().getActivityType();
-                //1.3.获取训练模式
-                //trainModeValue = curModeIndex
-                //1.4.获取医护设置参数
-                if (MyApplication.getInstance().getCurrentDevice().getPersonalList() != null && MyApplication.getInstance().getCurrentDevice().getPersonalList().size() > 0) {
-                    for (Personal curPersonal : MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
-                        switch (curPersonal.getName()) {
-                            case "前方限制":
-                                frontLimit = Integer.parseInt(curPersonal.getValue());
-                                hasFrontBackLimit++;
-                                break;
-                            case "后方限制":
-                                backLimit = Integer.parseInt(curPersonal.getValue());
-                                hasFrontBackLimit++;
-                                break;
-                            case "座位高度":
-                                seatHeight = Integer.parseInt(curPersonal.getValue());
-                                break;
-                            case "靠背距离":
-                                backDistance = Integer.parseInt(curPersonal.getValue());
-                                break;
-                            case "杠杆角度":
-                                leverAngle = Double.parseDouble(curPersonal.getValue());
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
-
-            //2.如果既有前方限制，又有后方限制，判断两者大小
-            if (hasFrontBackLimit == 2) {
-                //如果前方小于等于后方，不符合规定，弹出不能保存的模态框
-                if (frontLimit <= backLimit) {
-                    final CommonDialog cannotSaveDialog = new CommonDialog(PersonalSettingActivity.this);
-                    cannotSaveDialog.setTitle("警告");
-                    cannotSaveDialog.setMessage("前方限制必须大于后方限制，请更改后重新保存");
-                    cannotSaveDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            cannotSaveDialog.dismiss();
-                        }
-                    });
-                    cannotSaveDialog.setPositiveBtnText("我知道了");
-                    //模态框隐藏导航栏
-                    cannotSaveDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-                    cannotSaveDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                        @Override
-                        public void onSystemUiVisibilityChange(int visibility) {
-                            int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                                    //布局位于状态栏下方
-                                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                                    //全屏
-                                    //View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                    //隐藏导航栏
-                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                            if (Build.VERSION.SDK_INT >= 19) {
-                                uiOptions |= 0x00001000;
-                            } else {
-                                uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                    //1.3.获取训练模式
+                    //trainModeValue = curModeIndex
+                    //1.4.获取医护设置参数
+                    if (MyApplication.getInstance().getCurrentDevice().getPersonalList() != null && MyApplication.getInstance().getCurrentDevice().getPersonalList().size() > 0) {
+                        for (Personal curPersonal : MyApplication.getInstance().getCurrentDevice().getPersonalList()) {
+                            switch (curPersonal.getName()) {
+                                case "前方限制":
+                                    frontLimit = Integer.parseInt(curPersonal.getValue());
+                                    hasFrontBackLimit++;
+                                    break;
+                                case "后方限制":
+                                    backLimit = Integer.parseInt(curPersonal.getValue());
+                                    hasFrontBackLimit++;
+                                    break;
+                                case "座位高度":
+                                    seatHeight = Integer.parseInt(curPersonal.getValue());
+                                    break;
+                                case "靠背距离":
+                                    backDistance = Integer.parseInt(curPersonal.getValue());
+                                    break;
+                                case "杠杆角度":
+                                    leverAngle = Double.parseDouble(curPersonal.getValue());
+                                    break;
+                                default:
+                                    break;
                             }
-                            cannotSaveDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
                         }
-                    });
-                    cannotSaveDialog.show();
-
-                    return;
+                    }
                 }
-            }
 
-            //3.更新实体类User与实体类CurrentDevice
-            //3.1.更新实体类User
-            if (MyApplication.getInstance().getUser() != null) {
+                //2.如果既有前方限制，又有后方限制，判断两者大小
+                if (hasFrontBackLimit == 2) {
+                    //如果前方小于等于后方，不符合规定，弹出不能保存的模态框
+                    if (frontLimit <= backLimit) {
+                        final CommonDialog cannotSaveDialog = new CommonDialog(PersonalSettingActivity.this);
+                        cannotSaveDialog.setTitle("警告");
+                        cannotSaveDialog.setMessage("前方限制必须大于后方限制，请更改后重新保存");
+                        cannotSaveDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                cannotSaveDialog.dismiss();
+                            }
+                        });
+                        cannotSaveDialog.setPositiveBtnText("我知道了");
+                        //模态框隐藏导航栏
+                        cannotSaveDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                        cannotSaveDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                            @Override
+                            public void onSystemUiVisibilityChange(int visibility) {
+                                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                                        //布局位于状态栏下方
+                                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                                        //全屏
+                                        //View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                        //隐藏导航栏
+                                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                                if (Build.VERSION.SDK_INT >= 19) {
+                                    uiOptions |= 0x00001000;
+                                } else {
+                                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                                }
+                                cannotSaveDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                            }
+                        });
+                        cannotSaveDialog.show();
+
+                        return;
+                    }
+                }
+
+                //3.更新实体类User与实体类CurrentDevice
+                //3.1.更新实体类User
+                if (MyApplication.getInstance().getUser() != null) {
 //                MyApplication.getInstance().getUser().setDefatModeEnable(isOpenFatLossMode); //更新 是否开启减脂模式
-                MyApplication.getInstance().getUser().setTrainMode(curMode); //更新 训练模式
-            }
-            //3.2.更新实体类CurrentDevice（已实时更新）
-
-            //4.保存数据到本地PersonalInfo表
-            try {
-                if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null && MyApplication.getInstance().getCurrentDevice() != null) {
-                    personalInfoDAO.getInstance().SavrOrUpdata(
-                            MyApplication.getInstance().getUser().getUserId(),
-                            BdlProto.DeviceType.getDescriptor().getName(),
-                            MyApplication.getInstance().getUser(),
-                            MyApplication.getInstance().getCurrentDevice()
-                    );
+                    MyApplication.getInstance().getUser().setTrainMode(curMode); //更新 训练模式
                 }
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
+                //3.2.更新实体类CurrentDevice（已实时更新）
 
-            //5.打包医护设置
-            PersonalSettingDTO personalSettingDTO = new PersonalSettingDTO();
-            if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
-                personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
-                personalSettingDTO.setBind_id(MyApplication.getInstance().getUser().getBindId());
-                personalSettingDTO.setDeviceTypeValue_(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()));
-                personalSettingDTO.setTrainMode(curModeIndex);
-                personalSettingDTO.setSeatHeight(seatHeight);
-                personalSettingDTO.setBackDistance(backDistance);
-                //无踏板距离
-                personalSettingDTO.setLeverAngle(leverAngle);
-                personalSettingDTO.setForwardLimit(frontLimit);
-                personalSettingDTO.setBackLimit(backLimit);
-                personalSettingDTO.setConsequentForce(Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getConsequentForce()));
-                personalSettingDTO.setReverseForce(Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getReverseForce()));
-                //无功率
-            }
-            //6.存暂存表
-            Log.d("暂存业务", "保存医护设置数据至暂存表：" + personalSettingDTO.toString());
-            TempStorage tempStorage = new TempStorage();
-            Gson gson = new Gson();
-            tempStorage.setData(gson.toJson(personalSettingDTO)); //重传数据（转换为JSON串）
-            tempStorage.setType(1); //重传类型
-            try {
-                db.saveBindingId(tempStorage);
-            } catch (DbException e) {
-                e.printStackTrace();
-                Log.d("暂存业务", "医护设置暂存失败");
-            }
-
-
-            //更新标识
-            isSave = true;
-            //7.弹出“保存医护设置成功”模态框
-            final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
-            commonDialog.setTitle("温馨提示");
-            commonDialog.setMessage("医护设置信息保存成功");
-            commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    commonDialog.dismiss();
-                }
-            });
-            commonDialog.setPositiveBtnText("我知道了");
-            //模态框隐藏导航栏
-            commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-            commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                            //布局位于状态栏下方
-                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                            //全屏
-                            //View.SYSTEM_UI_FLAG_FULLSCREEN |
-                            //隐藏导航栏
-                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        uiOptions |= 0x00001000;
-                    } else {
-                        uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                //4.保存数据到本地PersonalInfo表
+                try {
+                    if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null && MyApplication.getInstance().getCurrentDevice() != null) {
+                        personalInfoDAO.getInstance().SavrOrUpdata(
+                                MyApplication.getInstance().getUser().getUserId(),
+                                BdlProto.DeviceType.getDescriptor().getName(),
+                                MyApplication.getInstance().getUser(),
+                                MyApplication.getInstance().getCurrentDevice()
+                        );
                     }
-                    commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                } catch (DbException e) {
+                    e.printStackTrace();
                 }
-            });
-            commonDialog.show();
-        } else {
-            //弹出“您未进行修改，无需保存”模态框
-            final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
-            commonDialog.setTitle("温馨提示");
-            commonDialog.setMessage("您尚未修改任何信息，无需保存");
-            commonDialog.setPositiveBtnText("我知道了");
-            commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    commonDialog.dismiss();
+
+                //5.打包医护设置
+                PersonalSettingDTO personalSettingDTO = new PersonalSettingDTO();
+                if (MyApplication.getInstance().getUser() != null && MyApplication.getInstance().getUser().getUserId() != null) {
+                    personalSettingDTO.setUid(MyApplication.getInstance().getUser().getUserId());
+                    personalSettingDTO.setBind_id(MyApplication.getInstance().getUser().getBindId());
+                    personalSettingDTO.setDeviceTypeValue_(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID()));
+                    personalSettingDTO.setTrainMode(curModeIndex);
+                    personalSettingDTO.setSeatHeight(seatHeight);
+                    personalSettingDTO.setBackDistance(backDistance);
+                    //无踏板距离
+                    personalSettingDTO.setLeverAngle(leverAngle);
+                    personalSettingDTO.setForwardLimit(frontLimit);
+                    personalSettingDTO.setBackLimit(backLimit);
+                    personalSettingDTO.setConsequentForce(Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getConsequentForce()));
+                    personalSettingDTO.setReverseForce(Double.parseDouble(MyApplication.getInstance().getCurrentDevice().getReverseForce()));
+                    //无功率
                 }
-            });
-            //模态框隐藏导航栏
-            commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-            commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                            //布局位于状态栏下方
-                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                            //全屏
-                            //View.SYSTEM_UI_FLAG_FULLSCREEN |
-                            //隐藏导航栏
-                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        uiOptions |= 0x00001000;
-                    } else {
-                        uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                //6.存暂存表
+                Log.d("暂存业务", "保存医护设置数据至暂存表：" + personalSettingDTO.toString());
+                TempStorage tempStorage = new TempStorage();
+                Gson gson = new Gson();
+                tempStorage.setData(gson.toJson(personalSettingDTO)); //重传数据（转换为JSON串）
+                tempStorage.setType(1); //重传类型
+                try {
+                    db.saveBindingId(tempStorage);
+                } catch (DbException e) {
+                    e.printStackTrace();
+                    Log.d("暂存业务", "医护设置暂存失败");
+                }
+
+
+                //更新标识
+                isSave = true;
+                //7.弹出“保存医护设置成功”模态框
+                final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
+                commonDialog.setTitle("温馨提示");
+                commonDialog.setMessage("医护设置信息保存成功");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        commonDialog.dismiss();
                     }
-                    commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-                }
-            });
-            commonDialog.show();
+                });
+                commonDialog.setPositiveBtnText("我知道了");
+                //模态框隐藏导航栏
+                commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                                //布局位于状态栏下方
+                                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                                //全屏
+                                //View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                //隐藏导航栏
+                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                        if (Build.VERSION.SDK_INT >= 19) {
+                            uiOptions |= 0x00001000;
+                        } else {
+                            uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                        }
+                        commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                    }
+                });
+                commonDialog.show();
+            } else {
+                //弹出“您未进行修改，无需保存”模态框
+                final CommonDialog commonDialog = new CommonDialog(PersonalSettingActivity.this);
+                commonDialog.setTitle("温馨提示");
+                commonDialog.setMessage("您尚未修改任何信息，无需保存");
+                commonDialog.setPositiveBtnText("我知道了");
+                commonDialog.setOnPositiveClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        commonDialog.dismiss();
+                    }
+                });
+                //模态框隐藏导航栏
+                commonDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                commonDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                                //布局位于状态栏下方
+                                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                                //全屏
+                                //View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                //隐藏导航栏
+                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                        if (Build.VERSION.SDK_INT >= 19) {
+                            uiOptions |= 0x00001000;
+                        } else {
+                            uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                        }
+                        commonDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                    }
+                });
+                commonDialog.show();
+            }
         }
     }
 

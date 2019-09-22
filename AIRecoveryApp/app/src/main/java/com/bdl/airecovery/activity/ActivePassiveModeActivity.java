@@ -17,7 +17,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +38,6 @@ import com.bdl.airecovery.entity.DTO.ErrorMsg;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.entity.Upload;
-import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
@@ -56,7 +54,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -127,6 +124,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     //TODO:电机相关
     private boolean needAfterMotion = true;
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
+
     /**
      * 类成员
      */
@@ -143,6 +141,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private double weight;
     Timer timer = new Timer();
     private long startTime;
+    private final int speedMax = 100; //速度条的最大值
 
     /**
      * 获取控件
@@ -502,7 +501,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
         final int frontLimit = frontLimitedPosition / tenThousand; //前方限制
         final int backLimit = rearLimitedPosition / tenThousand; //后方限制
         sp_scope.setMax(frontLimit - backLimit); //位移范围
-        sp_speed.setMax(50); //速度范围
+        sp_speed.setMax(speedMax); //速度范围
         final int interval = 100; //绘制间隔：100ms
         final int frequency = 20; //过渡动画中100ms内的绘制频率
         final int transInterval = interval / frequency;   //过渡动画的绘制间隔：5ms
