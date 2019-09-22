@@ -94,6 +94,8 @@ public class LoginActivity extends BaseActivity {
     //设备类型id
     private String deviceIds;
     private String str1;
+    //判断该用户是否已经完成该设备（在有该台设备处方的情况下）
+    boolean state = false;
     /**
      * 控件绑定
      */
@@ -392,13 +394,29 @@ public class LoginActivity extends BaseActivity {
     private void equipment(){
         int deviceId = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID());
         deviceIds = "P0" + String.valueOf(deviceId);
-        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]") {
-            str1 = "";
-        }else{
+        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]"){
+            state = false;
+        }else {
             String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
-            LogUtil.d("设备类型：" + str);
-            str1 = str.substring(1, 4);
+            LogUtil.d("设备类型："+str);
+            //将字符串数组转换成数组
+            String sTemp = str.substring(1, str.length()-1);
+            String[] sArray = sTemp.split(",");
+            for(int i=0;i<sArray.length;i++){
+                if(deviceIds.equals(sArray[i])){
+                    state = true;
+                }else{
+                    state = false;
+                }
+            }
         }
+//        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]") {
+//            str1 = "";
+//        }else{
+//            String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
+//            LogUtil.d("设备类型：" + str);
+//            str1 = str.substring(1, 4);
+//        }
     }
 
 
@@ -427,7 +445,8 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
             if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getDpStatus() == 2) {
+                    MyApplication.getInstance().getUser().getDpStatus() == 2 &&
+                    state == true) {
                 //关闭loginDialog.dismiss();模态框
                 try {
                     loginDialog.dismiss();
@@ -443,7 +462,7 @@ public class LoginActivity extends BaseActivity {
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
                     MyApplication.getInstance().getUser().getInfoResponse() == 6   &&
-                    deviceIds.equals(str1) == true) {
+                    state == true) {
                 //关闭模态框
                 try {
                     loginDialog.dismiss();
@@ -473,8 +492,8 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() != 0 &&
-                    deviceIds.equals(str1) == false) {
+                    MyApplication.getInstance().getUser().getInfoResponse() == 6 &&
+                    state == false) {
                 //提示训练已经完成
                 //关闭模态框
                 try {
@@ -681,7 +700,7 @@ public class LoginActivity extends BaseActivity {
         //关闭蓝牙
         closeBluetooth();
         commonDialog7 = new CommonDialog(LoginActivity.this);
-        commonDialog7.setMessage("该处方已经做完");
+        commonDialog7.setMessage("该大处方已经做完");
         commonDialog7.setPositiveBtnText("我知道了");
         commonDialog7.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
