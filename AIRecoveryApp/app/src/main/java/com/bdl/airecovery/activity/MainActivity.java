@@ -203,8 +203,8 @@ public class MainActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String state = intent.getStringExtra("state");
             if (state != null && state.equals("1")) {
-//                startActivity(new Intent(MainActivity.this, ScramActivity.class));
-//                MainActivity.this.finish();
+                startActivity(new Intent(MainActivity.this, ScramActivity.class));
+                MainActivity.this.finish();
             }
         }
     }
