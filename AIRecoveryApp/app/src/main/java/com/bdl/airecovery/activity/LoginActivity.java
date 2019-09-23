@@ -434,8 +434,8 @@ public class LoginActivity extends BaseActivity {
                 LogUtil.d("用户值为空");
             }else {
                 //equipment();
-                String test = MyApplication.getInstance().getUser().getDeviceTypearrList();
-                LogUtil.d("登录之后设备类型："+test);
+                int test = MyApplication.getInstance().getUser().getInfoResponse();
+                LogUtil.d("登录状态："+test);
 //                LogUtil.d("当前设备类型："+deviceIds);
 //                LogUtil.d("登录之后设备类型："+str1);
             }
@@ -460,7 +460,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() == 6) {
+                    MyApplication.getInstance().getUser().getInfoResponse() == 7) {
                 //关闭模态框
                 try {
                     loginDialog.dismiss();
@@ -490,7 +490,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() == 7) {
+                    MyApplication.getInstance().getUser().getInfoResponse() == 6) {
                 //提示训练已经完成
                 //关闭模态框
                 try {

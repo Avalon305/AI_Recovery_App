@@ -982,7 +982,9 @@ public class PassiveModeActivity extends BaseActivity {
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
                     getrate.setText(commonMessage.getAttachment());
-                    heartRateList.add(Integer.parseInt(commonMessage.getAttachment()));
+                    if (Integer.parseInt(commonMessage.getAttachment()) != 0) {
+                        heartRateList.add(Integer.parseInt(commonMessage.getAttachment()));
+                    }
                     break;
                 default:
                     LogUtil.e("未知广播，收到message：" + commonMessage.getMsgType());

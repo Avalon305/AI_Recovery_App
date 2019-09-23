@@ -490,7 +490,7 @@ public class BluetoothService extends Service {
 
                         //发心率广播，在第一用户是蓝牙手环的情况下
                         if(MyApplication.getInstance().getUser()!=null){
-                            LogUtil.d("打印当前用户："+MyApplication.getInstance().getUser().getUserId());
+                            LogUtil.d("打印当前用户："+MyApplication.getInstance().getUser().getUsername());
                             LogUtil.d("打印用户心率："+result);
                             Intent intent = new Intent("com.bdl.bluetoothmessage");
                             CommonMessage message = CommonMessage.heartBeatMsg(result);

@@ -302,7 +302,9 @@ public class StandardModeActivity extends BaseActivity {
      * 计算卡路里消耗
      */
     private double countEnergy(int count, int force){
+        LogUtil.d("个数："+count+"  力："+force);
         double res = count * (0.01 * weight + 0.02 * force);
+        LogUtil.d("卡路里："+res);
         return (double) Math.round(res * 100) / 100; //四舍五入，小数点保留两位
     }
 
@@ -1038,7 +1040,8 @@ public class StandardModeActivity extends BaseActivity {
                 upload.setFinishTime((int)trainTime);
                 upload.setConsequentForce(Integer.parseInt(positivenumber.getText().toString())); //最终顺向力
                 upload.setReverseForce(Integer.parseInt(inversusnumber.getText().toString())); //最终反向力
-                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
+                LogUtil.d("卡路里参数："+sumNum + "+" +positiveTorqueLimited);
+                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited/100));
                 upload.setHeartRateList(heartRateList);
                 MyApplication.getInstance().setUpload(upload);
 
@@ -1392,7 +1395,9 @@ public class StandardModeActivity extends BaseActivity {
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到：" + commonMessage.toString());
                     getrate.setText(commonMessage.getAttachment()); //心率数值
-                    heartRateList.add(Integer.parseInt(commonMessage.getAttachment()));
+                    if (Integer.parseInt(commonMessage.getAttachment()) != 0) {
+                        heartRateList.add(Integer.parseInt(commonMessage.getAttachment()));
+                    }
                     //心率分析
                     Pair<String, String> res = heartRateAnalysis(Integer.parseInt(commonMessage.getAttachment()));
                     if (res != null) {
