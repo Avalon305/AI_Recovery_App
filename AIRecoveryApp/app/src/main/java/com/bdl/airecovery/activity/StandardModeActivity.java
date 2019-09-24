@@ -278,19 +278,19 @@ public class StandardModeActivity extends BaseActivity {
             if (currHeartRate >= (int) maxRate*0.8) {
                 if (currHeartRate >= (int) maxRate*0.9) {
                     //90%~100%
-                    return new Pair<>("极限心率", "#df6d80");
+                    return new Pair<>("极限心率", "#B22222");
                 } else {
                     //80%~90%
-                    return new Pair<>("无氧心率", "#f1c369");
+                    return new Pair<>("无氧心率", "#FF4500");
                 }
             } else {
                 //70%~80%
-                return new Pair<>("有氧心率", "#faf97c");
+                return new Pair<>("有氧心率", "#D2691E");
             }
         } else {
             if (currHeartRate >= (int) maxRate*0.6) {
                 //60%~70%
-                return new Pair<>("燃脂心率", "#bde293");
+                return new Pair<>("燃脂心率", "	#8B4513");
             } else {
                 //50%~60%
                 return new Pair<>("热身心率", "#7fd3f8");
