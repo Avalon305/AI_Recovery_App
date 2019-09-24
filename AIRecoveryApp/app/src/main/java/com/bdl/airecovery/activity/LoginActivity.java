@@ -391,25 +391,25 @@ public class LoginActivity extends BaseActivity {
      * 截取并拼接设备id
      * 截取在线登录的设备号
      */
-    private void equipment(){
-        int deviceId = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID());
-        deviceIds = "P0" + String.valueOf(deviceId);
-        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]"){
-            state = false;
-        }else {
-            String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
-            LogUtil.d("设备类型："+str);
-            //将字符串数组转换成数组
-            String sTemp = str.substring(1, str.length()-1);
-            String[] sArray = sTemp.split(",");
-            for(int i=0;i<sArray.length;i++){
-                if(deviceIds.equals(sArray[i])){
-                    state = true;
-                }else{
-                    state = false;
-                }
-            }
-        }
+//    private void equipment(){
+//        int deviceId = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getDeviceInnerID());
+//        deviceIds = "P0" + String.valueOf(deviceId);
+//        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]"){
+//            state = false;
+//        }else {
+//            String str = MyApplication.getInstance().getUser().getDeviceTypearrList();
+//            LogUtil.d("设备类型："+str);
+//            //将字符串数组转换成数组
+//            String sTemp = str.substring(1, str.length()-1);
+//            String[] sArray = sTemp.split(",");
+//            for(int i=0;i<sArray.length;i++){
+//                if(deviceIds.equals(sArray[i])){
+//                    state = true;
+//                }else{
+//                    state = false;
+//                }
+//            }
+//        }
 //        if(MyApplication.getInstance().getUser().getDeviceTypearrList() == "[]") {
 //            str1 = "";
 //        }else{
@@ -417,7 +417,7 @@ public class LoginActivity extends BaseActivity {
 //            LogUtil.d("设备类型：" + str);
 //            str1 = str.substring(1, 4);
 //        }
-    }
+//    }
 
 
     /**
@@ -433,9 +433,9 @@ public class LoginActivity extends BaseActivity {
             if(MyApplication.getInstance().getUser() == null){
                 LogUtil.d("用户值为空");
             }else {
-                equipment();
-                String test = MyApplication.getInstance().getUser().getDeviceTypearrList();
-                LogUtil.d("登录之后设备类型："+test);
+                //equipment();
+                int test = MyApplication.getInstance().getUser().getInfoResponse();
+                LogUtil.d("登录状态："+test);
 //                LogUtil.d("当前设备类型："+deviceIds);
 //                LogUtil.d("登录之后设备类型："+str1);
             }
@@ -445,8 +445,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备未完成
             if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getDpStatus() == 2 &&
-                    state == true) {
+                    MyApplication.getInstance().getUser().getDpStatus() == 2) {
                 //关闭loginDialog.dismiss();模态框
                 try {
                     loginDialog.dismiss();
@@ -461,8 +460,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6.该设备还没做
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() == 6   &&
-                    state == true) {
+                    MyApplication.getInstance().getUser().getInfoResponse() == 7) {
                 //关闭模态框
                 try {
                     loginDialog.dismiss();
@@ -492,8 +490,7 @@ public class LoginActivity extends BaseActivity {
             //1. 蓝牙登陆 2. 联通教练机 3. 教练机有该用户 4. 该用户有处方 5. 处方有该设备 6. 该设备已完成
             else if (commonMessage.getMsgType() == CommonMessage.CONNECT_SUCCESS &&
                     MyApplication.getInstance().getUser() != null &&
-                    MyApplication.getInstance().getUser().getInfoResponse() == 6 &&
-                    state == false) {
+                    MyApplication.getInstance().getUser().getInfoResponse() == 6) {
                 //提示训练已经完成
                 //关闭模态框
                 try {
