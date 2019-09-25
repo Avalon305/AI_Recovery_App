@@ -36,6 +36,7 @@ import com.bdl.airecovery.biz.LoginBiz;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.button.NbButton;
+import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.LoginDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
@@ -894,6 +895,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MotorProcess.motorInitialization();
         setBtnQuickLoginOnClick();
         queryDevInfo(); //查询设备信息
         registerBluetoothReceiver();//蓝牙监听广播接收器的注册

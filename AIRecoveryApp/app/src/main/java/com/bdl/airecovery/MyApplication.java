@@ -55,7 +55,7 @@ public class MyApplication extends MultiDexApplication {
      */
     DbManager.DaoConfig daoConfig = new DbManager.DaoConfig()
             //设置数据库名，默认xutils.db
-            .setDbName("myapp.db")
+            .setDbName("myapp_.db")
             //设置数据库路径，默认存储在app的私有目录
             .setDbDir(new File("/mnt/sdcard/"))
             //设置数据库的版本号

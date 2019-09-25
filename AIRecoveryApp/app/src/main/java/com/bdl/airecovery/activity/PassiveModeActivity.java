@@ -126,6 +126,19 @@ public class PassiveModeActivity extends BaseActivity {
             }
         }
     };
+    private CommonDialog spasmDialog;
+    private Handler spasmDialogHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    showSpasmDialog();
+                    break;
+            }
+        }
+    };
+    
     private boolean isErrorDialogShow = false;
     private Handler errorDialogHandler = new Handler() {
         @Override
@@ -245,6 +258,40 @@ public class PassiveModeActivity extends BaseActivity {
         }
 
     }
+    /**
+     * 打开痉挛信息提示框
+     */
+    private void showSpasmDialog() {
+        spasmDialog = new CommonDialog(PassiveModeActivity.this);
+        spasmDialog.setTitle("警告");
+        spasmDialog.setMessage("系统检测到用户有痉挛现象，请医护人员确认用户是否需要帮助");
+        spasmDialog.setPositiveBtnText("结束训练");
+        spasmDialog.setCancelable(true);
+        spasmDialog.setOnPositiveClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    Intent intentLog = new Intent(PassiveModeActivity.this, BluetoothService.class);
+                    intentLog.putExtra("command", CommonCommand.LOGOUT.value());
+                    startService(intentLog);
+                    Log.d("StandardModeActivity", "request to logout");
+
+                    spasmDialog.dismiss();
+                    //新建一个跳转到待机界面Activity的显式意图
+                    Intent intent = new Intent(PassiveModeActivity.this, LoginActivity.class);
+                    //启动
+                    startActivity(intent);
+                    //结束当前Activity
+                    PassiveModeActivity.this.finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        spasmDialog.show();
+    }
+    
+    
     /**
      * 打开错误信息提示框
      */
@@ -401,8 +448,12 @@ public class PassiveModeActivity extends BaseActivity {
                             Log.e("----", String.valueOf(spasmCount[0]));
                             if (spasmCount[0] >= 1) { //如果和上次的位置差异号
                                 //痉挛
-                                //TODO 痉挛弹窗
                                 timer.cancel();
+
+                                Message message2 = spasmDialogHandler.obtainMessage();
+                                message2.what = 1;
+                                message2.arg1 = 1;
+                                spasmDialogHandler.sendMessage(message);
                             }
                         } else {
                             Log.e("----", "计数" + String.valueOf(count[0]));
@@ -1059,7 +1110,7 @@ public class PassiveModeActivity extends BaseActivity {
                 long trainTime = (System.currentTimeMillis() - startTime) / 1000;
                 upload.setFinishTime((int)trainTime);
                 upload.setSpeedRank(Integer.parseInt(getSpeed.getText().toString()));
-                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited));
+                upload.setEnergy(countEnergy(sumNum, positiveTorqueLimited / 100));
                 upload.setHeartRateList(heartRateList);
                 MyApplication.getInstance().setUpload(upload);
 

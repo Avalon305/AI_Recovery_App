@@ -49,6 +49,7 @@
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="landscape"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".activity.MainActivity"
@@ -101,7 +102,6 @@
 
         <activity
             android:name=".activity.CalibrationActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="landscape" />
 
         <!-- service -->
