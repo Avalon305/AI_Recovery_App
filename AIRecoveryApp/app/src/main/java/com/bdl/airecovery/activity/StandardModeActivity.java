@@ -47,11 +47,8 @@ import com.bdl.airecovery.entity.DTO.ErrorMsg;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.entity.Upload;
-import com.bdl.airecovery.entity.login.User;
-import com.bdl.airecovery.proto.BdlProto;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
-import com.bdl.airecovery.util.CommonUtils;
 import com.bdl.airecovery.util.MessageUtils;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -69,7 +66,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -78,7 +74,6 @@ import static com.bdl.airecovery.contoller.Writer.setInitialBounce;
 import static com.bdl.airecovery.contoller.Writer.setKeepArmTorque;
 import static com.bdl.airecovery.contoller.Writer.setParameter;
 import static java.lang.Math.abs;
-import static java.lang.Math.random;
 
 @ContentView(R.layout.activity_mode_standard)
 public class StandardModeActivity extends BaseActivity {
@@ -388,6 +383,30 @@ public class StandardModeActivity extends BaseActivity {
     }
 
     /**
+     * seekBar handler.
+     */
+    Handler seekBarHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            sp_scope.setProgress(msg.arg1);
+            sp_speed.setProgress(msg.arg2);
+
+        }
+    };
+
+    /**
+     * 发送更新UI的msg给seekBarHandler
+     */
+    void sendMsgToHandlerOfSeekBar(int position, int speed) {
+        Message msg = seekBarHandler.obtainMessage();
+        msg.arg1 = position;
+        msg.arg2 = speed;
+        seekBarHandler.sendMessage(msg);
+    }
+
+    /**
      * 速度、运动范围的SeekBar设置
      * 请求电机线程在onResume开启，在onStop关闭
      * 需要电机的速度范围与电机的位移范围（前后方限制）
@@ -430,19 +449,22 @@ public class StandardModeActivity extends BaseActivity {
                                 try {
                                     float diffPosition = (curPosition - lastPosition) / frequency; //过渡差值
                                     float diffSpeed = (curSpeed - lastSpeed) / frequency; //过渡差值
-                                    sp_scope.setProgress((int) lastPosition);
-                                    sp_speed.setProgress((int) lastSpeed);
+                                    //sp_scope.setProgress((int) lastPosition);
+                                    //sp_speed.setProgress((int) lastSpeed);
+                                    sendMsgToHandlerOfSeekBar((int)lastPosition, (int)lastSpeed);
                                     for (int i = 1; i < frequency; ++i) {
                                         Thread.sleep(transInterval);
                                         lastPosition += diffPosition;
                                         lastSpeed += diffSpeed;
-                                        sp_scope.setProgress((int) lastPosition);
-                                        sp_speed.setProgress((int) lastSpeed);
+                                        //sp_scope.setProgress((int) lastPosition);
+                                        //sp_speed.setProgress((int) lastSpeed);
+                                        sendMsgToHandlerOfSeekBar((int)lastPosition, (int)lastSpeed);
                                     }
                                     //最后一帧校准
                                     Thread.sleep(transInterval);
-                                    sp_scope.setProgress((int) curPosition);
-                                    sp_speed.setProgress((int) curSpeed);
+                                    //sp_scope.setProgress((int) curPosition);
+                                    //sp_speed.setProgress((int) curSpeed);
+                                    sendMsgToHandlerOfSeekBar((int)curPosition, (int)curSpeed);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }

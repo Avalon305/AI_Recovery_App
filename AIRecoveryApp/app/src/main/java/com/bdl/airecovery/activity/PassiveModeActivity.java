@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,12 +40,11 @@ import com.bdl.airecovery.entity.DTO.ErrorMsg;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.entity.Upload;
-import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.CardReaderService;
 import com.bdl.airecovery.util.MessageUtils;
-import com.google.gson.Gson;
 import com.bdl.airecovery.widget.MyBallView;
+import com.google.gson.Gson;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
@@ -59,7 +57,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -604,6 +601,34 @@ public class PassiveModeActivity extends BaseActivity {
         //每组个数
         tv_target_groupnum.setText(String.valueOf(MyApplication.getInstance().getUser().getGroupNum()));
     }
+
+    /**
+     * seekBar handler.
+     */
+    Handler cartoonHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            if (msg.what == 1) {
+                ball.powerX = (float) msg.obj;
+            } else if (msg.what == 2){
+                ball.speedY = (float) msg.obj;
+            }
+
+        }
+    };
+
+    /**
+     * 发送更新UI的msg给seekBarHandler
+     */
+    void sendMsgToHandlerOfCartoon(int what, float value) {
+        Message msg = cartoonHandler.obtainMessage();
+        msg.what = what;
+        msg.obj = value;
+        cartoonHandler.sendMessage(msg);
+    }
+
     /**
      * 更新小球位置线程
      */
@@ -619,7 +644,8 @@ public class PassiveModeActivity extends BaseActivity {
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         //获取推拉速度
-                        ball.speedY = Float.parseFloat(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED));
+                        //ball.speedY = Float.parseFloat(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED));
+                        sendMsgToHandlerOfCartoon(2, Float.parseFloat(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED)));
                         //获取推拉位移
                         if(lastPowerX == 0) {
                             //第一次获取，需要获取两次，才能动画过渡
@@ -638,14 +664,18 @@ public class PassiveModeActivity extends BaseActivity {
                             public void run() {
                                 try {
                                     float diff = (curPowerX - lastPowerX) / frequency; //过渡差值
-                                    ball.powerX = lastPowerX; //绘制小球开始位置
+                                    //ball.powerX = lastPowerX; //绘制小球开始位置
+                                    sendMsgToHandlerOfCartoon(1, lastPowerX);
                                     for (int i = 1; i < frequency; ++i) {
                                         Thread.sleep(transInterval);
-                                        ball.powerX += diff;
+                                        //ball.powerX += diff;
+                                        float newPowerX = ball.powerX + diff;
+                                        sendMsgToHandlerOfCartoon(1, newPowerX);
                                     }
                                     //最后一帧校准
                                     Thread.sleep(transInterval);
-                                    ball.powerX = curPowerX;
+                                    //ball.powerX = curPowerX;
+                                    sendMsgToHandlerOfCartoon(1, curPowerX);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }

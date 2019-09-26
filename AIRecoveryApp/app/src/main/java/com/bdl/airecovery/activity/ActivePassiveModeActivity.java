@@ -547,6 +547,30 @@ public class ActivePassiveModeActivity extends BaseActivity {
     }
 
     /**
+     * seekBar handler.
+     */
+    Handler seekBarHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            sp_scope.setProgress(msg.arg1);
+            sp_speed.setProgress(msg.arg2);
+
+        }
+    };
+
+    /**
+     * 发送更新UI的msg给seekBarHandler
+     */
+    void sendMsgToHandlerOfSeekBar(int position, int speed) {
+        Message msg = seekBarHandler.obtainMessage();
+        msg.arg1 = position;
+        msg.arg2 = speed;
+        seekBarHandler.sendMessage(msg);
+    }
+
+    /**
      * 速度、运动范围的SeekBar设置
      * 请求电机线程在onResume开启，在onStop关闭
      * 需要电机的速度范围与电机的位移范围（前后方限制）
@@ -589,19 +613,22 @@ public class ActivePassiveModeActivity extends BaseActivity {
                                 try {
                                     float diffPosition = (curPosition - lastPosition) / frequency; //过渡差值
                                     float diffSpeed = (curSpeed - lastSpeed) / frequency; //过渡差值
-                                    sp_scope.setProgress((int) lastPosition);
-                                    sp_speed.setProgress((int) lastSpeed);
+                                    //sp_scope.setProgress((int) lastPosition);
+                                    //sp_speed.setProgress((int) lastSpeed);
+                                    sendMsgToHandlerOfSeekBar((int)lastPosition, (int)lastSpeed);
                                     for (int i = 1; i < frequency; ++i) {
                                         Thread.sleep(transInterval);
                                         lastPosition += diffPosition;
                                         lastSpeed += diffSpeed;
-                                        sp_scope.setProgress((int) lastPosition);
-                                        sp_speed.setProgress((int) lastSpeed);
+                                        //sp_scope.setProgress((int) lastPosition);
+                                        //sp_speed.setProgress((int) lastSpeed);
+                                        sendMsgToHandlerOfSeekBar((int)lastPosition, (int)lastSpeed);
                                     }
                                     //最后一帧校准
                                     Thread.sleep(transInterval);
-                                    sp_scope.setProgress((int) curPosition);
-                                    sp_speed.setProgress((int) curSpeed);
+                                    //sp_scope.setProgress((int) curPosition);
+                                    //sp_speed.setProgress((int) curSpeed);
+                                    sendMsgToHandlerOfSeekBar((int)curPosition, (int)curSpeed);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
