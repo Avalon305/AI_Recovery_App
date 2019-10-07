@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -29,11 +28,9 @@ import com.bdl.airecovery.entity.TestItem;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.entity.login.User;
 import com.bdl.airecovery.service.BluetoothService;
-import com.bdl.airecovery.widget.PieChartView;
 import com.google.gson.Gson;
 
 import org.xutils.DbManager;
-import org.xutils.common.util.DensityUtil;
 import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
@@ -106,6 +103,8 @@ public class ByeActivity extends BaseActivity{
         mainEvent();
         //将训练结果显示在页面并存到暂存表，由重传service上传
         trainResult();
+        //初始化 自动跳转Timer
+        initFinishTimer();
     }
 
     void disConnectBLE() {
@@ -496,17 +495,23 @@ public class ByeActivity extends BaseActivity{
 
         //TODO：给电机发送复位指令
         init();
+    }
+
+    Timer finishTimer;
+
+    /**
+     * 初始化 自动跳转Timer
+     */
+    void initFinishTimer() {
         //3分钟之后若没有点击返回，自动跳转到待机页面
-        final Timer t = new Timer();
-        t.schedule(new TimerTask() {
+        finishTimer = new Timer();
+        finishTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-
                 //置空用户
                 MyApplication.getInstance().setUser(null);
                 startActivity(new Intent(ByeActivity.this,LoginActivity.class));
-                t.cancel();
-                finish(); //关闭本activity
+                finish();//关闭本activity
             }
         } , 3*60*1000);
     }
@@ -514,7 +519,6 @@ public class ByeActivity extends BaseActivity{
     //按钮监听事件，返回待机页面
     @Event(R.id.btn_return)
     private void setBtn_return(View v) {
-
         //置空用户
         MyApplication.getInstance().setUser(null);
         startActivity(new Intent(ByeActivity.this,LoginActivity.class));
@@ -552,4 +556,9 @@ public class ByeActivity extends BaseActivity{
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        finishTimer.cancel();
+        super.onDestroy();
+    }
 }
