@@ -540,6 +540,14 @@ public class PassiveModeActivity extends BaseActivity {
         }
         if (countDownThread == null) {
             createCountDownTheard(); //创建休息倒计时线程
+            try {
+                setParameter(0, MotorConstant.SET_GOING_SPEED);
+                setParameter(0, MotorConstant.SET_COMPARE_SPEED);
+                setParameter(0, MotorConstant.SET_BACK_SPEED);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             countDownThread.start(); //启动休息倒计时线程
         }
         //注册急停广播
@@ -1249,6 +1257,9 @@ public class PassiveModeActivity extends BaseActivity {
                 while (!Thread.currentThread().isInterrupted()) {
                     if (!canOpenRestDialog) continue;
 
+
+
+
                     //休息倒计时
                     countDown = MyApplication.getInstance().getUser().getRelaxTime();
                     while(countDown != 0) {
@@ -1268,6 +1279,14 @@ public class PassiveModeActivity extends BaseActivity {
                     canOpenRestDialog = false;
                     allowRecordNum = true;
                     isAlert = false;
+                    try {
+                        setParameter(-speed, MotorConstant.SET_GOING_SPEED);
+                        setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
+                        setParameter(speed, MotorConstant.SET_BACK_SPEED);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     restDialog.dismiss();
                 }
             }

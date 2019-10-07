@@ -698,7 +698,7 @@ public class LoginActivity extends BaseActivity {
         //关闭蓝牙
         closeBluetooth();
         commonDialog7 = new CommonDialog(LoginActivity.this);
-        commonDialog7.setMessage("该大处方已经做完");
+        commonDialog7.setMessage("该大处方已经做完，请重新下处方");
         commonDialog7.setPositiveBtnText("我知道了");
         commonDialog7.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
