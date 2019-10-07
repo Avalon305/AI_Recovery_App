@@ -79,6 +79,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private eStopBroadcastReceiver eStopReceiver; //急停广播
     int motorDirection = MyApplication.getInstance().motorDirection;
 
+    private boolean isStandardMode = false;
     private String errorID; //错误ID
     private CommonDialog errorDialog; //错误提示框
     private CommonDialog spasmDialog;
@@ -420,7 +421,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
         final int[] spasmCount = {0};
         final int[] count = {0};
         final boolean[] isCountEnable = {false};
-        final boolean[] isStandardMode = {false};
+
         //开速度
         setParameter(-speed, MotorConstant.SET_GOING_SPEED);
         setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
@@ -443,12 +444,12 @@ public class ActivePassiveModeActivity extends BaseActivity {
                         isCountEnable[0] = false;
                     }
                     if (Math.abs(Integer.valueOf(currentSpeed)) >= 200) {
-                        isStandardMode[0] = true;
+                        isStandardMode = true;
                         setParameter(0, MotorConstant.SET_GOING_SPEED);
                         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
                         setParameter(3500, MotorConstant.SET_BACK_SPEED);
                     }
-                    if (Math.abs(Integer.valueOf(currentSpeed)) <= 10 && !isStop[0] && isCountEnable[0] && !isStandardMode[0]) { //逼停
+                    if (Math.abs(Integer.valueOf(currentSpeed)) <= 10 && !isStop[0] && isCountEnable[0] && !isStandardMode) { //逼停
                         Log.e("----", "逼停");
                         setParameter(0, MotorConstant.SET_GOING_SPEED);
                         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
@@ -504,8 +505,8 @@ public class ActivePassiveModeActivity extends BaseActivity {
                     if (difference > 20000) { //回程
                         //超过前方限制
                         if (Integer.parseInt(currentLocation) >= frontLimitedPosition - 50000) {
-                            if (isStandardMode[0]) {
-                                isStandardMode[0] = false;
+                            if (isStandardMode) {
+                                isStandardMode = false;
                             }
                             setParameter(-speed, MotorConstant.SET_GOING_SPEED);
                             setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
@@ -527,7 +528,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                         }
                         //超过后方限制
                         if (Integer.parseInt(currentLocation) <= rearLimitedPosition + 50000) {
-                            if (!isStandardMode[0]) {
+                            if (!isStandardMode) {
                                 setParameter(speed, MotorConstant.SET_BACK_SPEED);
                             }
                             setParameter(0, MotorConstant.SET_GOING_SPEED);
