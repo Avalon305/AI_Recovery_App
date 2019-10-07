@@ -263,7 +263,7 @@ public class PassiveModeActivity extends BaseActivity {
         spasmDialog.setTitle("警告");
         spasmDialog.setMessage("系统检测到用户有痉挛现象，请医护人员确认用户是否需要帮助");
         spasmDialog.setPositiveBtnText("结束训练");
-        spasmDialog.setCancelable(true);
+        spasmDialog.setCancelable(false);
         spasmDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -540,13 +540,7 @@ public class PassiveModeActivity extends BaseActivity {
         }
         if (countDownThread == null) {
             createCountDownTheard(); //创建休息倒计时线程
-            try {
-                setParameter(0, MotorConstant.SET_GOING_SPEED);
-                setParameter(0, MotorConstant.SET_COMPARE_SPEED);
-                setParameter(0, MotorConstant.SET_BACK_SPEED);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
 
             countDownThread.start(); //启动休息倒计时线程
         }
@@ -1256,7 +1250,13 @@ public class PassiveModeActivity extends BaseActivity {
             public void run() {
                 while (!Thread.currentThread().isInterrupted()) {
                     if (!canOpenRestDialog) continue;
-
+                    try {
+                        setParameter(0, MotorConstant.SET_GOING_SPEED);
+                        setParameter(0, MotorConstant.SET_COMPARE_SPEED);
+                        setParameter(0, MotorConstant.SET_BACK_SPEED);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
 
 
