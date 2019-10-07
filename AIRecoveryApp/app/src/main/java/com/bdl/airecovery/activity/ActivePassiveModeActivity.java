@@ -139,6 +139,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private float lastSpeed = -1, curSpeed; //上一次电机速度，当前电机速度
     //    Timer monitorTorqueTimer = new Timer();
     private Upload upload = new Upload();
+    private boolean isOpenRatingDialog = false;
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
     private double weight;
     Timer timer = new Timer();
@@ -194,7 +195,9 @@ public class ActivePassiveModeActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    showSpasmDialog();
+                    if (! isOpenRatingDialog) {
+                        showSpasmDialog();
+                    }
                     break;
             }
         }
@@ -301,7 +304,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
         spasmDialog.setTitle("警告");
         spasmDialog.setMessage("系统检测到用户有痉挛现象，请医护人员确认用户是否需要帮助");
         spasmDialog.setPositiveBtnText("结束训练");
-        spasmDialog.setCancelable(true);
+        spasmDialog.setCancelable(false);
         spasmDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -429,6 +432,15 @@ public class ActivePassiveModeActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
+                    if (canOpenRestDialog) {
+                        try {
+                            setParameter(0, MotorConstant.SET_GOING_SPEED);
+                            setParameter(0, MotorConstant.SET_COMPARE_SPEED);
+                            setParameter(0, MotorConstant.SET_BACK_SPEED);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     //发送消息到handler
                     Message message = countHandler.obtainMessage();
                     message.what = 1;
@@ -448,7 +460,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
                         setParameter(3500, MotorConstant.SET_BACK_SPEED);
                     }
-                    if (Math.abs(Integer.valueOf(currentSpeed)) <= 10 && !isStop[0] && isCountEnable[0] && !isStandardMode) { //逼停
+                    if (Math.abs(Integer.valueOf(currentSpeed)) <= 10 && !isStop[0] && isCountEnable[0] && !isStandardMode && !canOpenRestDialog) { //逼停
                         Log.e("----", "逼停");
                         setParameter(0, MotorConstant.SET_GOING_SPEED);
                         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
@@ -947,6 +959,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private void openRatingDialog() {
         timer.cancel();
         MotorProcess.motorInitialization();
+        isOpenRatingDialog = true;
 
         ratingDialog = new RatingDialog(ActivePassiveModeActivity.this);
         ratingDialog.setTitle("完成训练");
@@ -1255,6 +1268,14 @@ public class ActivePassiveModeActivity extends BaseActivity {
                     canOpenRestDialog = false;
                     allowRecordNum = true;
                     isAlert = false;
+                    try {
+                        setParameter(-speed, MotorConstant.SET_GOING_SPEED);
+                        setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
+                        setParameter(speed, MotorConstant.SET_BACK_SPEED);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     restDialog.dismiss();
                 }
             }

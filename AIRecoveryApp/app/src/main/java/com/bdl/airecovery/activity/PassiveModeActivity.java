@@ -82,6 +82,7 @@ public class PassiveModeActivity extends BaseActivity {
     private eStopBroadcastReceiver eStopReceiver; //急停广播
     private String errorID; //错误ID
     private CommonDialog errorDialog; //错误提示框
+    private boolean isOpenRatingDialog = false;
     int currGroup;
     int currGroupNum;
     boolean canOpenRestDialog = false;
@@ -130,7 +131,10 @@ public class PassiveModeActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    showSpasmDialog();
+                    if (! isOpenRatingDialog) {
+                        showSpasmDialog();
+                    }
+
                     break;
             }
         }
@@ -415,6 +419,15 @@ public class PassiveModeActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
+                    if (canOpenRestDialog) {
+                        try {
+                            setParameter(0, MotorConstant.SET_GOING_SPEED);
+                            setParameter(0, MotorConstant.SET_COMPARE_SPEED);
+                            setParameter(0, MotorConstant.SET_BACK_SPEED);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     //发送消息到handler
                     Message message = countHandler.obtainMessage();
                     message.what = 1;
@@ -428,7 +441,7 @@ public class PassiveModeActivity extends BaseActivity {
                     } else {
                         isCountEnable[0] = false;
                     }
-                    if (Math.abs(Integer.valueOf(currentSpeed)) <= 10 && !isStop[0] && isCountEnable[0]) { //逼停
+                    if (Math.abs(Integer.valueOf(currentSpeed)) <= 10 && !isStop[0] && isCountEnable[0] && !canOpenRestDialog) { //逼停
                         Log.e("----", "逼停");
                         setParameter(0, MotorConstant.SET_GOING_SPEED);
                         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
@@ -489,18 +502,18 @@ public class PassiveModeActivity extends BaseActivity {
 //                        }
                         //超过前方限制
                         if (Integer.parseInt(currentLocation) >= frontLimitedPosition - 50000) {
-//                            Thread.sleep(3000);
-//                            setParameter(0, MotorConstant.SET_BACK_SPEED);
-                            setParameter(-speed, MotorConstant.SET_GOING_SPEED);
-                            setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
-                            isCompareSpeedEnable[0] = true;
-                            if (countFlag[0] && allowRecordNum) {
-                                num++;
-                                message.arg1 = num;
-                                countHandler.sendMessage(message);
-                            }
-                            countFlag[0] = false;
-                            spasmCount[0] = 0;
+
+                                setParameter(-speed, MotorConstant.SET_GOING_SPEED);
+                                setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
+                                isCompareSpeedEnable[0] = true;
+                                if (countFlag[0] && allowRecordNum) {
+                                    num++;
+                                    message.arg1 = num;
+                                    countHandler.sendMessage(message);
+                                }
+                                countFlag[0] = false;
+                                spasmCount[0] = 0;
+
                         }
                         //更新lastLocation
                         lastLocation[0] = Integer.parseInt(currentLocation);
@@ -603,6 +616,7 @@ public class PassiveModeActivity extends BaseActivity {
         //每组个数
         tv_target_groupnum.setText(String.valueOf(MyApplication.getInstance().getUser().getGroupNum()));
     }
+
 
     /**
      * 更新小球位置线程
@@ -1048,6 +1062,7 @@ public class PassiveModeActivity extends BaseActivity {
     private void openRatingDialog() {
         timer.cancel(); //结束定时任务
         MotorProcess.motorInitialization();
+        isOpenRatingDialog = true;
 
         ratingDialog = new RatingDialog(PassiveModeActivity.this);
         ratingDialog.setTitle("完成训练");
@@ -1100,7 +1115,6 @@ public class PassiveModeActivity extends BaseActivity {
         //“确定”按钮 监听
         ratingDialog.setOnPositiveClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 //设置Upload类
                 int currGroup = Integer.parseInt(tv_curr_groupcount.getText().toString());
                 int currGroupNum = Integer.parseInt(tv_curr_groupnum.getText().toString());
@@ -1218,15 +1232,6 @@ public class PassiveModeActivity extends BaseActivity {
             public void run() {
                 while (!Thread.currentThread().isInterrupted()) {
                     if (!canOpenRestDialog) continue;
-                    try {
-                        setParameter(0, MotorConstant.SET_GOING_SPEED);
-                        setParameter(0, MotorConstant.SET_COMPARE_SPEED);
-                        setParameter(0, MotorConstant.SET_BACK_SPEED);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
 
                     //休息倒计时
                     countDown = MyApplication.getInstance().getUser().getRelaxTime();
@@ -1251,6 +1256,7 @@ public class PassiveModeActivity extends BaseActivity {
                         setParameter(-speed, MotorConstant.SET_GOING_SPEED);
                         setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
                         setParameter(speed, MotorConstant.SET_BACK_SPEED);
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
