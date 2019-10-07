@@ -406,6 +406,7 @@ public class StandardModeActivity extends BaseActivity {
         seekBarHandler.sendMessage(msg);
     }
 
+    private final int speedMax = 700; //速度条的最大值
     /**
      * 速度、运动范围的SeekBar设置
      * 请求电机线程在onResume开启，在onStop关闭
@@ -416,7 +417,7 @@ public class StandardModeActivity extends BaseActivity {
         final int frontLimit = frontLimitedPosition / tenThousand; //前方限制
         final int backLimit = rearLimitedPosition / tenThousand; //后方限制
         sp_scope.setMax(frontLimit - backLimit); //位移范围
-        sp_speed.setMax(700); //速度范围
+        sp_speed.setMax(speedMax); //速度范围
         final int interval = 100; //绘制间隔：100ms
         final int frequency = 20; //过渡动画中100ms内的绘制频率ms
         final int transInterval = interval / frequency;   //过渡动画的绘制间隔：5

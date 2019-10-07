@@ -143,8 +143,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     private double weight;
     Timer timer = new Timer();
     private long startTime;
-    private final int speedMax = 100; //速度条的最大值
-
+    private final int speedMax = 700; //主动模式速度条的最大值
     /**
      * 获取控件
      */
@@ -567,6 +566,10 @@ public class ActivePassiveModeActivity extends BaseActivity {
     void sendMsgToHandlerOfSeekBar(int position, int speed) {
         Message msg = seekBarHandler.obtainMessage();
         msg.arg1 = position;
+        //被动模式
+        if (!isStandardMode) {
+            speed = speedMax / 2;
+        }
         msg.arg2 = speed;
         seekBarHandler.sendMessage(msg);
     }
@@ -582,6 +585,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
         final int backLimit = rearLimitedPosition / tenThousand; //后方限制
         sp_scope.setMax(frontLimit - backLimit); //位移范围
         sp_speed.setMax(speedMax); //速度范围
+        sp_speed.setProgress(speedMax / 2);
         final int interval = 100; //绘制间隔：100ms
         final int frequency = 20; //过渡动画中100ms内的绘制频率
         final int transInterval = interval / frequency;   //过渡动画的绘制间隔：5ms
