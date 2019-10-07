@@ -605,33 +605,6 @@ public class PassiveModeActivity extends BaseActivity {
     }
 
     /**
-     * seekBar handler.
-     */
-    Handler cartoonHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            if (msg.what == 1) {
-                ball.powerX = (float) msg.obj;
-            } else if (msg.what == 2){
-                ball.speedY = (float) msg.obj;
-            }
-
-        }
-    };
-
-    /**
-     * 发送更新UI的msg给seekBarHandler
-     */
-    void sendMsgToHandlerOfCartoon(int what, float value) {
-        Message msg = cartoonHandler.obtainMessage();
-        msg.what = what;
-        msg.obj = value;
-        cartoonHandler.sendMessage(msg);
-    }
-
-    /**
      * 更新小球位置线程
      */
     private void CreateDrawCartoonThread() {
@@ -646,8 +619,7 @@ public class PassiveModeActivity extends BaseActivity {
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         //获取推拉速度
-                        //ball.speedY = Float.parseFloat(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED));
-                        sendMsgToHandlerOfCartoon(2, Float.parseFloat(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED)));
+                        ball.speedY = Float.parseFloat(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED));
                         //获取推拉位移
                         if(lastPowerX == 0) {
                             //第一次获取，需要获取两次，才能动画过渡
@@ -666,18 +638,14 @@ public class PassiveModeActivity extends BaseActivity {
                             public void run() {
                                 try {
                                     float diff = (curPowerX - lastPowerX) / frequency; //过渡差值
-                                    //ball.powerX = lastPowerX; //绘制小球开始位置
-                                    sendMsgToHandlerOfCartoon(1, lastPowerX);
+                                    ball.powerX = lastPowerX; //绘制小球开始位置
                                     for (int i = 1; i < frequency; ++i) {
                                         Thread.sleep(transInterval);
-                                        //ball.powerX += diff;
-                                        float newPowerX = ball.powerX + diff;
-                                        sendMsgToHandlerOfCartoon(1, newPowerX);
+                                        ball.powerX += diff;
                                     }
                                     //最后一帧校准
                                     Thread.sleep(transInterval);
-                                    //ball.powerX = curPowerX;
-                                    sendMsgToHandlerOfCartoon(1, curPowerX);
+                                    ball.powerX = curPowerX;
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
