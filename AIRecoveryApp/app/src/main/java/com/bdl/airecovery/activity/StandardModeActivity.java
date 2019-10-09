@@ -570,14 +570,14 @@ public class StandardModeActivity extends BaseActivity {
                     } else if (difference < -20000) {//去程
                         //转速超过500，且与最新的限位比较，如果距离大于20000，则可以继续更改，考虑一些延时的因素
                         if (currentSpeed >= 450 && currentSpeed <= 1000 && Integer.valueOf(currentLocation) > rearLimitedPosition + 50000) {
-                            int leads = currentSpeed / 100 - 2; //提前量
+                            int leads = currentSpeed / 150 - 2; //提前量
                             setParameter(leads * 10000, MotorConstant.SET_LEADS);
                         } else if (currentSpeed > 1000 && Integer.valueOf(currentLocation) > rearLimitedPosition + 50000) {
-                            int leads = currentSpeed / 100 + calibrationParameter.getLead(); //提前量
+                            int leads = currentSpeed / 150 + calibrationParameter.getLead(); //提前量
                             setParameter(leads * 10000, MotorConstant.SET_LEADS);
                         }
                         //超过后方限制
-                        if (Integer.valueOf(currentLocation) < rearLimitedPosition + 50000) {
+                        if (Integer.valueOf(currentLocation) < rearLimitedPosition + 100000) {
 //                            setParameter(MotorConstant.speed, MotorConstant.SET_BACK_SPEED);
                             setParameter(90 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED1);
                             countFlag[0] = true; //允许计数
@@ -1075,9 +1075,7 @@ public class StandardModeActivity extends BaseActivity {
                 if (helpDialog != null && helpDialog.isShowing()) {
                     helpDialog.dismiss();
                 }
-
                 ratingDialog.dismiss();
-
                 //跳转再见页面
                 Intent intent = new Intent(StandardModeActivity.this, ByeActivity.class);
                 //启动

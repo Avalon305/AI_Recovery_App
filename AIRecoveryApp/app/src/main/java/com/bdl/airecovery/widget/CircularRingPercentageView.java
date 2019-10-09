@@ -244,13 +244,13 @@ public class CircularRingPercentageView extends View {
         paint.setColor(roundBackgroundColor);
         canvas.drawArc(oval, -90, (float) (-(100 - progress) * 3.6), false, paint);
 
-        //绘制文字刻度
-        for (int i = 1; i <= 10; i++) {
-            canvas.save();// 保存当前画布
-            canvas.rotate(360 / 10 * i, circleCenter, circleCenter);
-            canvas.drawText(i * 10 + "", circleCenter, circleCenter - radius + roundWidth / 2 + getDpValue(4) + textSize, mPaintText);
-            canvas.restore();//
-        }
+//        //绘制文字刻度
+//        for (int i = 1; i <= 10; i++) {
+//            canvas.save();// 保存当前画布
+//            canvas.rotate(360 / 10 * i, circleCenter, circleCenter);
+//            canvas.drawText(i * 10 + "", circleCenter, circleCenter - radius + roundWidth / 2 + getDpValue(4) + textSize, mPaintText);
+//            canvas.restore();//
+//        }
     }
 
 

@@ -86,6 +86,7 @@ public class PassiveModeActivity extends BaseActivity {
     int currGroup;
     int currGroupNum;
     boolean canOpenRestDialog = false;
+    boolean canStop = false;
     DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
     private Handler countHandler = new Handler() { //次数handler
         @Override
@@ -118,6 +119,7 @@ public class PassiveModeActivity extends BaseActivity {
             //如果当前组做完，进入组间休息
             if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
                 canOpenRestDialog = true;
+                canStop = true;
                 allowRecordNum = false; //期间不允许计数
                 currGroupNum = 0;
                 currGroup++;
@@ -419,7 +421,8 @@ public class PassiveModeActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
-                    if (canOpenRestDialog) {
+                    if (canStop) {
+                        canStop = false;
                         try {
                             setParameter(0, MotorConstant.SET_GOING_SPEED);
                             setParameter(0, MotorConstant.SET_COMPARE_SPEED);
@@ -501,7 +504,7 @@ public class PassiveModeActivity extends BaseActivity {
 //                            isCompareSpeedEnable[0] = true;
 //                        }
                         //超过前方限制
-                        if (Integer.parseInt(currentLocation) >= frontLimitedPosition - 50000) {
+                        if (Integer.parseInt(currentLocation) >= frontLimitedPosition - 50000 && !canOpenRestDialog) {
 
                                 setParameter(-speed, MotorConstant.SET_GOING_SPEED);
                                 setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);

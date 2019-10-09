@@ -196,9 +196,9 @@ public class LoginActivity extends BaseActivity {
                         user.setUsername("体验者");
                         user.setExisitSetting(false);
                         user.setMoveWay(0);
-                        user.setGroupCount(1);
+                        user.setGroupCount(3);
                         user.setGroupNum(2);
-                        user.setRelaxTime(5);
+                        user.setRelaxTime(10);
                         user.setSpeedRank(1);
                         user.setAge(30);
                         user.setWeight(60);
@@ -747,9 +747,9 @@ public class LoginActivity extends BaseActivity {
         user.setUsername("离线用户");
         user.setExisitSetting(false);
         user.setMoveWay(0);
-        user.setGroupCount(1);
+        user.setGroupCount(3);
         user.setGroupNum(2);
-        user.setRelaxTime(5);
+        user.setRelaxTime(10);
         user.setSpeedRank(1);
         user.setAge(30);
         user.setWeight(60);

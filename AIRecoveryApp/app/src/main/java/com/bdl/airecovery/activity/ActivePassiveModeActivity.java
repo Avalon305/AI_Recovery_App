@@ -35,6 +35,7 @@ import com.bdl.airecovery.dialog.MediumDialog;
 import com.bdl.airecovery.dialog.RatingDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
 import com.bdl.airecovery.entity.DTO.ErrorMsg;
+import com.bdl.airecovery.entity.DTO.TrainResultDTO;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.TempStorage;
 import com.bdl.airecovery.entity.Upload;
@@ -86,6 +87,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
     int currGroup;
     int currGroupNum;
     boolean canOpenRestDialog = false;
+    boolean canStop = false;
     private Handler countHandler = new Handler() { //次数handler
         @Override
         public void handleMessage(Message msg) {
@@ -117,6 +119,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
             //如果当前组做完，进入组间休息
             if (currGroupNum == MyApplication.getInstance().getUser().getGroupNum()) {
                 canOpenRestDialog = true;
+                canStop = true;
                 allowRecordNum = false; //期间不允许计数
                 currGroupNum = 0;
                 currGroup++;
@@ -432,7 +435,9 @@ public class ActivePassiveModeActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
-                    if (canOpenRestDialog) {
+                    if (canStop) {
+                        canStop = false;
+                        LogUtil.e("停止");
                         try {
                             setParameter(0, MotorConstant.SET_GOING_SPEED);
                             setParameter(0, MotorConstant.SET_COMPARE_SPEED);
@@ -515,7 +520,8 @@ public class ActivePassiveModeActivity extends BaseActivity {
                     lastDifference[0] = difference;
                     if (difference > 20000) { //回程
                         //超过前方限制
-                        if (Integer.parseInt(currentLocation) >= frontLimitedPosition - 50000) {
+                        if (Integer.parseInt(currentLocation) >= frontLimitedPosition - 50000 &&  !canOpenRestDialog) {
+                            LogUtil.e("超过前方限制");
                             if (isStandardMode) {
                                 isStandardMode = false;
                             }
@@ -538,7 +544,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                             isCompareSpeedEnable[0] = false;
                         }
                         //超过后方限制
-                        if (Integer.parseInt(currentLocation) <= rearLimitedPosition + 50000) {
+                        if (Integer.parseInt(currentLocation) <= rearLimitedPosition + 100000) {
                             if (!isStandardMode) {
                                 setParameter(speed, MotorConstant.SET_BACK_SPEED);
                             }

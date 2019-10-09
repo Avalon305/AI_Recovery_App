@@ -28,8 +28,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="-50dp">
+        android:layout_marginTop="-50dp"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -48,27 +48,85 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="150dp"
                 android:layout_marginLeft="120dp"
-                android:src="@drawable/ic_attetion"/>
+                android:layout_marginTop="150dp"
+                android:src="@drawable/ic_attetion" />
+
             <TextView
                 android:id="@+id/tv_st_tip"
                 android:layout_width="420sp"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/shadow_back"
                 android:layout_marginLeft="150dp"
-                android:lineSpacingExtra="20dp"
                 android:layout_marginTop="105dp"
+                android:lineSpacingExtra="20dp"
                 android:padding="20dp"
                 android:paddingLeft="20dp"
                 android:text="      请在医护人员的指导下将手放到握把上，由医护人员点击开始测试开始进行肌力测试。"
                 android:textSize="35dp" />
+
+            <LinearLayout
+                android:id="@+id/layout_max_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_st_tip">
+
+                <TextView
+                    android:id="@+id/tv_st_max_value_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="150dp"
+                    android:lineSpacingExtra="20dp"
+                    android:paddingLeft="20dp"
+                    android:visibility="invisible"
+                    android:text="当前最大力矩:"
+                    android:textSize="35dp" />
+
+                <TextView
+                    android:id="@+id/tv_st_max_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="20dp"
+                    android:text="--"
+                    android:textSize="35dp"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_max_value"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:id="@+id/tv_st_value_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="150dp"
+                    android:lineSpacingExtra="20dp"
+                    android:paddingLeft="20dp"
+                    android:text="当前力矩:"
+                    android:visibility="invisible"
+                    android:textSize="35dp" />
+
+                <TextView
+                    android:id="@+id/tv_st_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="20dp"
+                    android:text="--"
+                    android:textSize="35dp"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/shadow_back">
+
                 <Button
                     android:id="@+id/btn_st_start"
                     android:layout_width="200dp"
@@ -79,25 +137,26 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:text="开始测试"
-                    android:textStyle="bold"
                     android:textColor="@color/blue1"
-                    android:textSize="30sp"/>
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
                 <Button
                     android:id="@+id/btn_st_end"
                     android:layout_width="200dp"
                     android:layout_height="75dp"
-                    android:enabled="false"
                     android:layout_below="@id/tv_st_tip"
                     android:layout_marginLeft="100dp"
-
                     android:background="@drawable/button_selector"
+
+                    android:enabled="false"
                     android:gravity="center"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:text="结束"
-                    android:textStyle="bold"
                     android:textColor="@color/blue1"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

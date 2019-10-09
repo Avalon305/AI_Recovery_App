@@ -60,6 +60,19 @@ public class StrengthTestActivity extends BaseActivity {
     @ViewInject(R.id.tv_st_tip)
     private TextView tvTip;
 
+    @ViewInject(R.id.tv_st_max_value)
+    private TextView tvMaxValue;
+
+    @ViewInject(R.id.tv_st_max_value_tip)
+    private TextView tvMaxValueTip;
+
+    @ViewInject(R.id.tv_st_value_tip)
+    private TextView tvValueTip;
+
+    @ViewInject(R.id.tv_st_value)
+    private TextView tvValue;
+
+
     private LargeDialog dialog_locating;
     private int count = 0;
     private int strength = 0;
@@ -77,6 +90,21 @@ public class StrengthTestActivity extends BaseActivity {
                 case 1:
                     showCommonDialog();
                     uploadResult();
+                    break;
+                case 2:
+                    tvMaxValue.setText(msg.obj + " N");
+                    break;
+            }
+        }
+    };
+
+    private Handler strenthHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    tvValue.setText(msg.obj + " N");
                     break;
             }
         }
@@ -139,21 +167,35 @@ public class StrengthTestActivity extends BaseActivity {
     private void setStartTestOnClick(View v) {
         btnStartTest.setEnabled(false);
         btnEndTest.setEnabled(true);
-        tvTip.setText("\n    请用力拉动力臂");
+        tvTip.setText("\n请用力拉动力臂");
         tvTip.setTextColor(0xffe67e22);
+        tvMaxValueTip.setVisibility(View.VISIBLE);
+        tvMaxValue.setVisibility(View.VISIBLE);
+
+        tvValueTip.setVisibility(View.VISIBLE);
+        tvValue.setVisibility(View.VISIBLE);
+
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 try {
+                    Message message = mHandler.obtainMessage();
+                    Message message1 = strenthHandler.obtainMessage();
                     strength = Integer.parseInt(getRespData(MotorConstant.READ_TORQUE));
+                    message1.what = 1;
+                    message1.obj = ratingByResult(strength);
+                    strenthHandler.sendMessage(message1);
                     if (strength > maxStrength) { //获取最大力矩
                         maxStrength = strength;
                         resultGrade = resultGrade(maxStrength);
+                        message.what = 2;
+                        message.obj = ratingByResult(maxStrength);
+                        mHandler.sendMessage(message);
+
                     }
                     circularRingPercentageView.setProgress(strength / 5);
                     count++;
                     if (count >= 1000) {
-                        Message message = mHandler.obtainMessage();
                         message.what = 1;
                         message.arg1 = 1;
                         mHandler.sendMessage(message);
@@ -170,7 +212,7 @@ public class StrengthTestActivity extends BaseActivity {
     private String ratingByResult(int result) {
         double k = 5.0 / 60.0;
         double ratedResult = k * result + 3.33;
-        ratedResult = (double) Math.round(ratedResult * 100) / 100;
+        ratedResult = (double) Math.round(ratedResult * 100) / 10;
         return String.valueOf(ratedResult);
     }
 
