@@ -411,6 +411,13 @@ public class ActivePassiveModeActivity extends BaseActivity {
      */
     private boolean oppositeSigns(int a, int b) { return (a ^ b) < 0; }
 
+    class myTimerTask extends TimerTask {
+        int i;
+        @Override
+        public void run() {
+
+        }
+    }
     /**
      * 被动模式运动过程
      */
@@ -419,18 +426,17 @@ public class ActivePassiveModeActivity extends BaseActivity {
 
         final int[] lastLocation = {frontLimitedPosition}; //上一次的位置，初始值为前方限制
         final int[] lastDifference = {0}; //上一次的位置差初始值为0
-
         final boolean[] isStop = {false};
         final boolean[] countFlag = {false};//计数标志位
         final boolean[] isCompareSpeedEnable = {true};
         final int[] spasmCount = {0};
         final int[] count = {0};
         final boolean[] isCountEnable = {false};
-
         //开速度
         setParameter(-speed, MotorConstant.SET_GOING_SPEED);
         setParameter(-speed, MotorConstant.SET_COMPARE_SPEED);
         setParameter(speed, MotorConstant.SET_BACK_SPEED);
+
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -850,6 +856,8 @@ public class ActivePassiveModeActivity extends BaseActivity {
         final int[] cnt = {0};
         final boolean[] flag = {false};
         final SmallPwdDialog dialog = new SmallPwdDialog(ActivePassiveModeActivity.this, info, R.style.CustomDialog,
+
+
                 new SmallPwdDialog.DataBackListener() {
                     @Override
                     public void getData(String data) {
