@@ -33,13 +33,6 @@
             android:layout_marginLeft="1150dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/return_selector" />
-        <!--<ImageView-->
-            <!--android:id="@+id/btn_return"-->
-            <!--android:layout_marginLeft="1150dp"-->
-            <!--android:layout_marginTop="30dp"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/ic_return_3"/>-->
     </RelativeLayout>
 
     <!--待训练设备-->

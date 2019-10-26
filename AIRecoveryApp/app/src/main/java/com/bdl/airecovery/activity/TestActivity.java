@@ -60,29 +60,29 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     @ViewInject(R.id.test_PassiveModeActivity)
     private Button test_Passive;
 
-    @ViewInject(R.id.test_static_moveup)
-    private Button test_static_moveup;
-
-    @ViewInject(R.id.test_static_movedown)
-    private Button test_static_movedown;
-
-    @ViewInject(R.id.test_static_stop)
-    private Button test_static_stop;
-
-    @ViewInject(R.id.test_static_heartbeat)
-    private Button test_static_heartbeat;
-
-    @ViewInject(R.id.test_static_getposition)
-    private Button test_static_getposition;
-
-    @ViewInject(R.id.test_static_testlocate)
-    private Button test_static_testlocate;
-
-    @ViewInject(R.id.test_static_position)
-    private EditText test_static_position;
-
-    @ViewInject(R.id.test_static_setposition)
-    private Button test_static_setposition;
+//    @ViewInject(R.id.test_static_moveup)
+//    private Button test_static_moveup;
+//
+//    @ViewInject(R.id.test_static_movedown)
+//    private Button test_static_movedown;
+//
+//    @ViewInject(R.id.test_static_stop)
+//    private Button test_static_stop;
+//
+//    @ViewInject(R.id.test_static_heartbeat)
+//    private Button test_static_heartbeat;
+//
+//    @ViewInject(R.id.test_static_getposition)
+//    private Button test_static_getposition;
+//
+//    @ViewInject(R.id.test_static_testlocate)
+//    private Button test_static_testlocate;
+//
+//    @ViewInject(R.id.test_static_position)
+//    private EditText test_static_position;
+//
+//    @ViewInject(R.id.test_static_setposition)
+//    private Button test_static_setposition;
 
     @ViewInject(R.id.strength_test)
     private Button strengthTest;
@@ -105,13 +105,13 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         test_DropDb.setOnClickListener(this);
         test_Active.setOnClickListener(this);
         test_Passive.setOnClickListener(this);
-        test_static_moveup.setOnClickListener(this);
-        test_static_movedown.setOnClickListener(this);
-        test_static_stop.setOnClickListener(this);
-        test_static_heartbeat.setOnClickListener(this);
-        test_static_getposition.setOnClickListener(this);
-        test_static_testlocate.setOnClickListener(this);
-        test_static_setposition.setOnClickListener(this);
+//        test_static_moveup.setOnClickListener(this);
+//        test_static_movedown.setOnClickListener(this);
+//        test_static_stop.setOnClickListener(this);
+//        test_static_heartbeat.setOnClickListener(this);
+//        test_static_getposition.setOnClickListener(this);
+//        test_static_testlocate.setOnClickListener(this);
+//        test_static_setposition.setOnClickListener(this);
         strengthTest.setOnClickListener(this);
         calibration.setOnClickListener(this);
     }

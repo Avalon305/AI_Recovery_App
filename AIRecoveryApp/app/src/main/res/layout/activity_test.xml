@@ -114,82 +114,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
             <Button
-                android:id="@+id/test_static_moveup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="上升" />
-            <Button
-                android:id="@+id/test_static_movedown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="下降" />
-
-            <Button
-                android:id="@+id/test_static_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="停止电机" />
-            <Button
-                android:id="@+id/test_static_heartbeat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/color_red"
-                android:text="标定" />
-
-            <Button
-                android:id="@+id/test_static_getposition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="获得位置" />
-            <Button
-                android:id="@+id/test_static_testlocate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/color_red"
-                android:text="连测定位" />
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-            <EditText
-                android:id="@+id/test_static_position"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-            <Button
-                android:id="@+id/test_static_setposition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="设置位置" />
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-            <Button
                 android:id="@+id/strength_test"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="肌力测试" />
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
             <Button
                 android:id="@+id/calibration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="标定页面" />
-
         </TableRow>
     </TableLayout>
 </LinearLayout>

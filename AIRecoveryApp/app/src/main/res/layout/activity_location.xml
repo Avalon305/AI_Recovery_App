@@ -22,7 +22,7 @@
             android:layout_marginLeft="25dp"
             android:paddingLeft="5dp"
             android:layout_centerVertical="true"
-            android:text="连测定位"
+            android:text="联测定位"
             android:textSize="40dp" />
 
         <Button
