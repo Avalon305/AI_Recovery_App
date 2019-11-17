@@ -198,7 +198,7 @@ public class LoginActivity extends BaseActivity {
                         user.setExisitSetting(false);
                         user.setMoveWay(0);
                         user.setGroupCount(3);
-                        user.setGroupNum(2);
+                        user.setGroupNum(3);
                         user.setRelaxTime(10);
                         user.setSpeedRank(1);
                         user.setAge(30);
@@ -750,7 +750,7 @@ public class LoginActivity extends BaseActivity {
         user.setExisitSetting(false);
         user.setMoveWay(0);
         user.setGroupCount(3);
-        user.setGroupNum(2);
+        user.setGroupNum(3);
         user.setRelaxTime(10);
         user.setSpeedRank(1);
         user.setAge(30);
@@ -873,6 +873,7 @@ public class LoginActivity extends BaseActivity {
         myFmt.setTimeZone(timeZoneChina);//设置系统时区
         nowDate = myFmt.format(new Date());
         //执行业务
+
         LogUtil.d("蓝牙执行LoginBiz！！！！！！！！");
         int loginResult = LoginBiz.getInstance().loginBiz(name, LoginActivity.this.whoLogin, nowDate);
         LogUtil.d("登陆方法回调的结果：" + loginResult);

@@ -505,8 +505,8 @@ public class MainActivity extends BaseActivity {
             dialog_locating.show();
 
             //动态电机初始化部分
-            positiveTorqueLimited = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getConsequentForce()) * 100;
-            negativeTorqueLimited = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getReverseForce()) * 100;
+            positiveTorqueLimited = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getConsequentForce()) * 100 - 400;
+            negativeTorqueLimited = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getReverseForce()) * 100 - 400;
             switch (deviceType) {
                 case 1: //拉设备
                     MotorService.getInstance().initializationBeforeStart(frontLimitedPosition, deviceType, positiveTorqueLimited, negativeTorqueLimited);
@@ -775,7 +775,7 @@ public class MainActivity extends BaseActivity {
         if (MyApplication.getInstance().getUser() == null) {
             return;
         }
-        if(MyApplication.getInstance().getUser().getUsername().equals("体验者")){
+        if(MyApplication.getInstance().getUser().getUsername().equals("")){
                btn_setting.setVisibility(View.GONE);
         }else{
                btn_setting.setVisibility(View.VISIBLE);

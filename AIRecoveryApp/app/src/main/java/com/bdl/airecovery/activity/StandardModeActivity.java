@@ -81,6 +81,7 @@ public class StandardModeActivity extends BaseActivity {
 
 
     //TODO:电机相关
+    private boolean isNeedHelp = true;
     private int num = 0; //次数
     private int positiveTorqueLimited; //顺向力
     private int negativeTorqueLimited; //反向力
@@ -244,7 +245,11 @@ public class StandardModeActivity extends BaseActivity {
         iv_ms_help_onClick();//帮助图片的点击事件（使用xUtils框架会崩溃）
         iv_heartrate_help_onClick(); //心率区间 帮助按钮点击事件
 
-        chooseDeviceType(); //选择设备类型
+        try {
+            chooseDeviceType(); //选择设备类型
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //注册蓝牙用监听器
         bluetoothReceiver = new BluetoothReceiver();
         IntentFilter intentFilter = new IntentFilter("com.bdl.bluetoothmessage");
@@ -356,7 +361,7 @@ public class StandardModeActivity extends BaseActivity {
     /**
      * 选择运动过程
      */
-    private void chooseDeviceType() {
+    private void chooseDeviceType() throws Exception {
         switch (deviceType) {
             case 1: //拉设备
                 standardModeProcessByPulling();
@@ -528,12 +533,19 @@ public class StandardModeActivity extends BaseActivity {
     /**
      * 拉设备运动过程
      */
-    private void standardModeProcessByPulling() {
+    private void standardModeProcessByPulling() throws Exception {
         //打开运动过程
         final int[] lastLocation = {frontLimitedPosition}; //上一次的位置，初始值为前方限制
         final boolean[] countFlag = {false};//计数标志位
         //如果出现修改，该位置就改变
         final boolean[] haveStopped = {false};
+        if (isNeedHelp) {
+            setParameter(-5 * 100, MotorConstant.SET_GOING_SPEED);
+        } else {
+            setParameter(0, MotorConstant.SET_GOING_SPEED);
+        }
+
+
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -543,6 +555,7 @@ public class StandardModeActivity extends BaseActivity {
                     message.what = 1;
                     //读取当前位置
                     int currentSpeed = Math.abs(Integer.valueOf(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED)));
+                    int currentTorque = Integer.valueOf(Reader.getRespData(MotorConstant.READ_TORQUE));
                     String currentLocation = Reader.getRespData(MotorConstant.READ_ACTUAL_LOCATION);
                     int difference = Integer.parseInt(currentLocation) - lastLocation[0]; //本次位置和上次读到的位置差
                     if (currentSpeed <= 10 && negativeTorqueLimited < calibrationParameter.getMinBackTorque() * 100) {
@@ -552,6 +565,11 @@ public class StandardModeActivity extends BaseActivity {
                     if (difference > 20000) { //回程
                         //超过前方限制
                         if (Integer.valueOf(currentLocation) >= frontLimitedPosition - 50000) {
+                            if (isNeedHelp) {
+                                setParameter(-5 * 100, MotorConstant.SET_GOING_SPEED);
+                            } else {
+                                setParameter(0 * 100, MotorConstant.SET_GOING_SPEED);
+                            }
 
                             if (haveStopped[0]) { //是否需要恢复反向力量
                                 setParameter(negativeTorqueLimited, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
@@ -569,6 +587,11 @@ public class StandardModeActivity extends BaseActivity {
                         lastLocation[0] = Integer.parseInt(currentLocation);
                     } else if (difference < -20000) {//去程
                         //转速超过500，且与最新的限位比较，如果距离大于20000，则可以继续更改，考虑一些延时的因素
+                        Log.e("----", String.valueOf(currentTorque));
+                        if (currentTorque < -35) {
+                            Log.e("----", "来程速度设置为0");
+                            setParameter(0, MotorConstant.SET_GOING_SPEED);
+                        }
                         if (currentSpeed >= 450 && currentSpeed <= 1000 && Integer.valueOf(currentLocation) > rearLimitedPosition + 50000) {
                             int leads = currentSpeed / 150 - 2; //提前量
                             setParameter(leads * 10000, MotorConstant.SET_LEADS);
@@ -772,14 +795,17 @@ public class StandardModeActivity extends BaseActivity {
                 //传入电机的值
                 switch (deviceType) {
                     case 1: //拉设备
-                        positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
-                        negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
-                        Log.e("顺向力+反向力", String.valueOf(positiveTorqueLimited )+ String.valueOf(negativeTorqueLimited));
+                        positiveTorqueLimited = Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 - 400;
+                        negativeTorqueLimited = Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 - 400;
+                        if (Integer.valueOf(positiveTorqueLimited) >= 5 * 100) {
+                            isNeedHelp = false;
+                        } else {
+                            isNeedHelp = true;
+                        }
                         break;
                     case 2: //推设备
                         positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                         negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
-                        Log.e("顺向力+反向力", String.valueOf(positiveTorqueLimited )+ String.valueOf(negativeTorqueLimited));
                         break;
                     case 3:
                         switch (motorDirection) {
@@ -1112,12 +1138,12 @@ public class StandardModeActivity extends BaseActivity {
     public void changeTorque() {
         switch (deviceType) {
             case 1: //拉设备
-                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
-                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
+                positiveTorqueLimited = Integer.parseInt(String.valueOf(positivenumber.getText())) * 100 - 400;
+                negativeTorqueLimited = Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100 - 400;
                 break;
             case 2: //推设备
-                positiveTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(positivenumber.getText())) * 100);
-                negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
+                positiveTorqueLimited = Integer.parseInt(String.valueOf(positivenumber.getText())) * 100;
+                negativeTorqueLimited = Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100;
                 break;
             case 3:
                 switch (motorDirection) {
@@ -1130,6 +1156,11 @@ public class StandardModeActivity extends BaseActivity {
                         negativeTorqueLimited = (int) ((double)Integer.parseInt(String.valueOf(inversusnumber.getText())) * 100);
                         break;
                 }
+        }
+        if (Integer.valueOf(positiveTorqueLimited) >= 5 * 100) {
+            isNeedHelp = false;
+        } else {
+            isNeedHelp = true;
         }
 
         //改变变频器中的值
@@ -1155,6 +1186,7 @@ public class StandardModeActivity extends BaseActivity {
         if (Integer.valueOf(positivenumber.getText().toString()) < 99 && Integer.valueOf(inversusnumber.getText().toString()) < 99) {
             positivenumber.setText(Integer.valueOf(positivenumber.getText().toString()) + 1 + "");
             inversusnumber.setText(Integer.valueOf(inversusnumber.getText().toString()) + 1 + "");
+
             MyApplication.getInstance().getCurrentDevice().setReverseForce(inversusnumber.getText().toString());
             MyApplication.getInstance().getCurrentDevice().setConsequentForce(positivenumber.getText().toString());
         }

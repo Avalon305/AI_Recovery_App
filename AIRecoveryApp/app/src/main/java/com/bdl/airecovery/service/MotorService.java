@@ -212,8 +212,8 @@ public class MotorService extends Service {
                         switch (deviceType) {
                             case 1: //拉设备
                                 //初始化顺反向力
-                                setParameter((int) ((double)positiveTorqueLimited) + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
-                                setParameter((int) ((double)negativeTorqueLimited) + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
+                                setParameter(positiveTorqueLimited + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                                setParameter(negativeTorqueLimited + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                                 setInitialBounce(negativeTorqueLimited + calibrationParameter.getBounce() * 100);
                                 setKeepArmTorque(positiveTorqueLimited);
                                 break;

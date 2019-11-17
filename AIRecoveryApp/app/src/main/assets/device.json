@@ -8,14 +8,14 @@
       "helpImg": "帮助图0",
       "helpWord": "使用说明0.....",
       "DeviceInnerID": "0",
-      "consequentForce": "25",
-      "reverseForce": "25",
+      "consequentForce": "1",
+      "reverseForce": "1",
       "maxLimit": 200,
       "minLimit": 0,
       "personalList": [
         {
           "name": "前方限制",
-          "value": "130",
+          "value": "100",
           "machine": "动态电机",
           "cmd": "指令1",
           "min": "0",
@@ -23,7 +23,7 @@
         },
         {
           "name": "后方限制",
-          "value": "50",
+          "value": "30",
           "machine": "动态电机",
           "cmd": "指令2",
           "min": "0",
@@ -213,14 +213,14 @@
       "helpImg": "帮助图4",
       "helpWord": "使用说明4.....",
       "DeviceInnerID": "4",
-      "consequentForce": "40",
-      "reverseForce": "40",
+      "consequentForce": "5",
+      "reverseForce": "5",
       "maxLimit": 200,
       "minLimit": 0,
       "personalList": [
         {
           "name": "前方限制",
-          "value": "150",
+          "value": "100",
           "machine": "动态电机",
           "cmd": "指令1",
           "min": "0",
@@ -228,7 +228,7 @@
         },
         {
           "name": "后方限制",
-          "value": "20",
+          "value": "30",
           "machine": "动态电机",
           "cmd": "指令2",
           "min": "0",
