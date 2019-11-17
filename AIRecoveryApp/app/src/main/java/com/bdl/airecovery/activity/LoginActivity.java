@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -275,6 +276,7 @@ public class LoginActivity extends BaseActivity {
      */
     public void nfcService() {
         usb_edittext = (EditText) findViewById(R.id.usb_edittext);
+        usb_edittext.setInputType(InputType.TYPE_NULL);//禁止软键盘弹出
         usb_edittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

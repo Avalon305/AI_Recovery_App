@@ -47,7 +47,7 @@
             android:name=".LauncherActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.LocationActivity"
             android:screenOrientation="landscape"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
@@ -57,9 +57,6 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".activity.ByeActivity"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.LocationActivity"
             android:screenOrientation="landscape" />
         <activity
             android:name=".activity.SystemSettingActivity"
@@ -74,6 +71,11 @@
         <activity
             android:name=".activity.SelfUpdatingActivity"
 
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".activity.LoginActivity"
+
             android:screenOrientation="landscape" >
 
         </activity>
@@ -83,6 +85,7 @@
             android:name=".activity.WifiListActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Android123" />
+
         <activity
             android:name=".activity.PassiveModeActivity"
             android:launchMode="singleTask"

@@ -70,8 +70,8 @@ public class PassiveModeActivity extends BaseActivity {
      * 电机相关
      */
     private int num = 0;
-    private static final int positiveTorqueLimited = 10 * 100;
-    private static final int negativeTorqueLimited = 10 * 100;
+    private static final int positiveTorqueLimited = 5 * 100;
+    private static final int negativeTorqueLimited = 5 * 100;
     private int     frontLimitedPosition;
     private int rearLimitedPosition;
     private int deviceType = MyApplication.getInstance().getCurrentDevice().getDeviceType(); //获得设备信息

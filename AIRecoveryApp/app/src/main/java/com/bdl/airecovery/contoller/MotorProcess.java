@@ -55,7 +55,7 @@ public class MotorProcess {
                     setParameter(speed, MotorConstant.SET_BACK_SPEED);
 
                     //复位前后方限制
-                    Writer.setParameter( 200 * 4856, MotorConstant.SET_FRONTLIMIT);
+                    Writer.setParameter( 190 * 4856, MotorConstant.SET_FRONTLIMIT);
                     Writer.setParameter(0, MotorConstant.SET_REARLIMIT);
 
                     Writer.setInitialBounce(3000);
