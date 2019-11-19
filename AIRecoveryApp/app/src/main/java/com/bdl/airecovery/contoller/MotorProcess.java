@@ -22,7 +22,7 @@ public class MotorProcess {
      * 复位
      * @throws Exception
      */
-    public static void restoration(){
+    public static void restoration() {
         new Thread(new Runnable() {
             @Override
             public void run() {

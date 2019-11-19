@@ -197,8 +197,8 @@ public class LoginActivity extends BaseActivity {
                         user.setUsername("体验者");
                         user.setExisitSetting(false);
                         user.setMoveWay(0);
-                        user.setGroupCount(3);
-                        user.setGroupNum(3);
+                        user.setGroupCount(5);
+                        user.setGroupNum(2);
                         user.setRelaxTime(10);
                         user.setSpeedRank(1);
                         user.setAge(30);

@@ -415,14 +415,6 @@ public class ByeActivity extends BaseActivity{
                 if (device != null){
                     for (int i = 0;i < device.getTestItemList().size();++i){
                         if (device.getTestItemList().get(i).getMachine() != "" && device.getTestItemList().get(i).getMachine().equals("动态电机")){
-                            //处理动态电机
-//                            try {
-//                                boolean[] flag ={};
-//                                flag = Location.motorInit();
-//
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
                         }else {
 //                            //处理静态电机
 //                            StaticMotorService.Controler controler = StaticMotorService.getControler();

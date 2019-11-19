@@ -299,7 +299,6 @@ public class LocationActivity extends BaseActivity {
 
 //                                try {
 //                                    boolean[] flag ={};
-//                                    flag = Location.motorInit();
 //                                    //将连测结果添加到集合中
 //                                    for (int r = 0;r <flag.length;++r){
 //                                        locateRes.add(flag[r]);
