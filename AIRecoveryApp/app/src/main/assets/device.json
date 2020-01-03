@@ -31,7 +31,8 @@
         },
         {
           "name": "座位高度",
-          "type": "0",
+          "type": "1",
+          "direction": "0",
           "value": "0",
           "machine": "1",
           "cmd": "指令3",
@@ -48,6 +49,7 @@
         {
           "name": "座位高度",
           "type": "1",
+          "direction": "0",
           "machine": "1",
           "cmd": "指令2"
         }
@@ -86,7 +88,8 @@
         },
         {
           "name": "座位高度",
-          "type": "0",
+          "direction": "0",
+          "type": "1",
           "value": "0",
           "machine": "1",
           "cmd": "指令3",
@@ -102,7 +105,8 @@
         },
         {
           "name": "座位高度",
-          "type": "0",
+          "direction": "0",
+          "type": "1",
           "machine": "1",
           "cmd": "指令2"
         }
@@ -181,6 +185,7 @@
         },
         {
           "name": "杠杆角度",
+          "direction": "0",
           "type": "0",
           "value": "0",
           "machine": "1",
@@ -197,6 +202,7 @@
         },
         {
           "name": "杠杆角度",
+          "direction": "0",
           "type": "0",
           "machine": "1",
           "cmd": "指令2"
@@ -412,6 +418,7 @@
         },
         {
           "name": "杠杆角度",
+          "direction": "0",
           "value": "0",
           "type": "0",
           "machine": "1",
@@ -428,6 +435,7 @@
         },
         {
           "name": "杠杆角度",
+          "direction": "0",
           "machine": "1",
           "type": "0",
           "cmd": "指令2"

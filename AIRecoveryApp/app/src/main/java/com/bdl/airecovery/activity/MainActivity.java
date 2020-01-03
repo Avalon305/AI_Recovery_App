@@ -532,10 +532,10 @@ public class MainActivity extends BaseActivity {
             StaticMotorService.Controler controler = StaticMotorService.getControler();
             for (int i = 0; i < MyApplication.getInstance().getCurrentDevice().getPersonalList().size(); i++) {
                 if (MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getMachine().equals("1")) {
-                    int MotorType = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getType());
+                    int MotorType = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getDirection());
                     controler.trainLocate(1, Integer.valueOf(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getValue()) * 10 + 10,MotorType);
                 } else if (MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getMachine().equals("2")) {
-                    int MotorType = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getType());
+                    int MotorType = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getDirection());
                     controler.trainLocate(2, Integer.valueOf(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(i).getValue()) * 10 + 10,MotorType);
                 }
             }

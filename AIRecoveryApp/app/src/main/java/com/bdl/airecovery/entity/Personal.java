@@ -17,7 +17,7 @@ public class Personal {
     //最大值
     private String max;
     //静态电机类型
-    private String type;
+    private String direction;
 
     public String getName() {
         return name;
@@ -67,12 +67,12 @@ public class Personal {
         this.max = max;
     }
 
-    public String getType() {
-        return type;
+    public String getDirection() {
+        return direction;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     @Override
