@@ -190,7 +190,7 @@ public class PersonalSettingActivity extends BaseActivity {
                                 case "座位高度":
                                 case "靠背距离":
                                     int MotorIndex = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getMachine());
-                                    int MotorType = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getType());
+                                    int MotorType = Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(curIndex).getDirection());
                                     //发送参数给静态电机
                                     Intent intent = new Intent(PersonalSettingActivity.this, StaticMotorService.class);
                                     intent.putExtra("position", SeekBarCurProgress * 10 + 10);

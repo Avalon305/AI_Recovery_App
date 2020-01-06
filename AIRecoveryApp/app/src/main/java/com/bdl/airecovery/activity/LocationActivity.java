@@ -314,7 +314,7 @@ public class LocationActivity extends BaseActivity {
                             if (controler != null) {
                                 //将连测结果添加到集合中
                                 Log.d("静态", "run: 联测了！！！！！！");
-                                boolean result = controler.initLocate(Integer.valueOf(device.getTestItemList().get(i).getMachine()));
+                                boolean result = controler.initLocate(Integer.valueOf(device.getTestItemList().get(i).getMachine()), (device.getTestItemList().get(i).getType().compareTo("1") == 0)?true:false);
                                 Log.d("静态", "run: 结果："+result);
                                 if (result){
                                     locateRes[i] = 1;

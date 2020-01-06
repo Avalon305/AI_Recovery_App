@@ -10,6 +10,8 @@ public class TestItem {
     private String machine;
     //连测定位项目发送的指令
     private String cmd;
+    //静态电机类型：普通/座椅
+    private String type;
 
     public String getName() {
         return name;
@@ -35,12 +37,21 @@ public class TestItem {
         this.cmd = cmd;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void  setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "TestItem{" +
                 "name='" + name + '\'' +
                 ", machine='" + machine + '\'' +
                 ", cmd='" + cmd + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }
