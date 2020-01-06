@@ -539,13 +539,11 @@ public class StandardModeActivity extends BaseActivity {
         final boolean[] countFlag = {false};//计数标志位
         //如果出现修改，该位置就改变
         final boolean[] haveStopped = {false};
-        if (isNeedHelp) {
+        if (isNeedHelp) {  //需要助力
             setParameter(-5 * 100, MotorConstant.SET_GOING_SPEED);
         } else {
             setParameter(0, MotorConstant.SET_GOING_SPEED);
         }
-
-
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -568,9 +566,8 @@ public class StandardModeActivity extends BaseActivity {
                             if (isNeedHelp) {
                                 setParameter(-5 * 100, MotorConstant.SET_GOING_SPEED);
                             } else {
-                                setParameter(0 * 100, MotorConstant.SET_GOING_SPEED);
+                                setParameter(0, MotorConstant.SET_GOING_SPEED);
                             }
-
                             if (haveStopped[0]) { //是否需要恢复反向力量
                                 setParameter(negativeTorqueLimited, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                                 haveStopped[0] = false;

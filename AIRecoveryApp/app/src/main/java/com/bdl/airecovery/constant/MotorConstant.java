@@ -3,16 +3,23 @@ package com.bdl.airecovery.constant;
 public class MotorConstant {
 
 
-    // TODO 限制 × 4856
+    //限制 × 4856
 
     /**
-     * 初始参数
+     * 助力速度
      */
-//    public static final int speed = 3500; //返回速度
-//    public static final int initSpeed = 500; //非运动状态的速度
-//    public static final int MIN_BACK_TORQUE = 2000; //能使力力臂返回的最小力矩
-//    public static final int DIF_BETWEEN_NEG_TORQUE_AND_BOUNCE = 1000; //初始反弹力与正常返回力矩的差值
-//    public static final int MIN_KEEP_ARM_TORQUE = 1500; //
+    public static final int helpSpeed = 5;
+
+    /**
+     *
+     */
+    public static final int paramA = 10;
+
+    /**
+     *
+     */
+    public static final int paramB = 9;
+
     /**
      * 获取电机输出力矩
      */

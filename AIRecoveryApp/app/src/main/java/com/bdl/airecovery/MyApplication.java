@@ -1,7 +1,10 @@
 package com.bdl.airecovery;
 
+import android.app.DownloadManager;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Typeface;
+import android.os.Debug;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -10,6 +13,8 @@ import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.entity.CalibrationParameter;
 import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.entity.Device;
+import com.bdl.airecovery.entity.Help;
+import com.bdl.airecovery.entity.HelpDividedByTorque;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.entity.login.User;
@@ -27,6 +32,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.LogUtil;
+import org.xutils.db.sqlite.SqlInfo;
 import org.xutils.db.table.TableEntity;
 import org.xutils.ex.DbException;
 import org.xutils.x;
@@ -42,8 +49,6 @@ import java.util.UUID;
 public class MyApplication extends MultiDexApplication {
 
     public int motorDirection = 2;
-
-
 
     /**
      * 管理密码
@@ -99,18 +104,21 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         WifiUtils.openWifi(MyApplication.this); //APP启动时打开WiFi
+//        try {
+//            db.dropDb();
+//        } catch (DbException e) {
+//            e.printStackTrace();
+//        }
+
+
         x.Ext.init(this);
         x.Ext.setDebug(BuildConfig.DEBUG); // 是否输出debug日志, 开启debug会影响性能.
-
-       // Log4JConfiger.configure();//配置日志框架
         readJson();//读取json文件到list
-
         try {
             initSetting(); //初始化数据库数据
         } catch (DbException e) {
             e.printStackTrace();
         }
-
         setCurrentDevice();//根据数据库中存储的当前设备名称，查询出当前设备的一些固定信息
         //启动重传service。
         startReSendService();
@@ -118,10 +126,18 @@ public class MyApplication extends MultiDexApplication {
         initBLEManager();
         startBluetoothService();
 
+        try {
+            List<Help> helps = db.findAll(Help.class);
+            for (Help h : helps) {
+                LogUtil.e(h.toString() + "===============");
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
         //启动发卡器Service
         //startCardReaderService();
         //启动电机Service
-        startMotorService();
+        //startMotorService();
         //启动静态电机Service
         startStaticMotorService();
         //启动usb的service
@@ -212,8 +228,6 @@ public class MyApplication extends MultiDexApplication {
      * 电机service,try一下，防止抛异常启动失败，影响程序的启动。
      */
     private void startMotorService() {
-
-
         try {
             Intent intent = new Intent(this, MotorService.class);
             startService(intent);
@@ -232,6 +246,10 @@ public class MyApplication extends MultiDexApplication {
         }
         return calibrationParameter;
     }
+
+
+
+
     /**
      * 设置当前设备类型。
      */
@@ -255,7 +273,6 @@ public class MyApplication extends MultiDexApplication {
         if (setting.getDeviceName() == null || "".equals(setting.getDeviceName())){
             return;
         }
-        //到此就可以执行遍历查询的逻辑，因为数据量不多，不需要设计算法，直接遍历匹配即可。
         //Iterator<Device> iter = deviceList.iterator();
         for (int i = 0; i < deviceList.size(); i++) {
             if (deviceList.get(i).getDeviceName().equals(setting.getDeviceName())){
@@ -294,7 +311,23 @@ public class MyApplication extends MultiDexApplication {
             calibrationParameter.setLead(3);
             db.save(calibrationParameter);
         }
+        //初始化HelpDividedByTorque表
+        Help help = new Help();
+        if (db.findAll(Help.class) == null) {
+            for (int i = 20; i <= 200; i += 20) { //十个位置分段
+                for (int j = 1; j <= 5; j++) { //五个力量分段
+                    help.setTorque(j);
+                    help.setPosition(i);
+                    help.setHelpSpeed(MotorConstant.helpSpeed);
+                    help.setParamA(MotorConstant.paramA);
+                    help.setParamB(MotorConstant.paramB);
+                    db.save(help);
+                }
+            }
+        }
+
     }
+
 
     /**
      * 读取json文件到list的具体方法。

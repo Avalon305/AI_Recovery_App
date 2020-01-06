@@ -1,0 +1,207 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/timg4"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_top_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/shadow_title3">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="25dp"
+            android:paddingLeft="5dp"
+            android:text="参数标定"
+            android:textSize="40dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_top_title"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="25dp"
+            android:paddingLeft="5dp"
+            android:text="基本设定值"
+            android:textStyle="bold"
+            android:textSize="40dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="力矩值"
+                android:textSize="38sp" />
+            <TextView
+                android:id="@+id/help_torque"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text=""
+                android:textSize="38sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="前方限制"
+                android:textSize="38sp" />
+            <TextView
+                android:id="@+id/help_front_limit"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text=""
+                android:textSize="38sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="50dp"
+            android:paddingLeft="5dp"
+            android:text="标定参数"
+            android:textStyle="bold"
+            android:textSize="40dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="450sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="助力速度"
+                android:textSize="38sp" />
+
+            <Spinner
+                android:id="@+id/help_speed"
+                android:layout_width="100sp"
+                android:layout_height="50sp"></Spinner>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="450sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="参数A"
+                android:textSize="38sp" />
+
+            <Spinner
+                android:id="@+id/help_param_a"
+                android:layout_width="100sp"
+                android:layout_height="50sp"></Spinner>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="450sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="参数B"
+                android:textSize="38sp" />
+
+            <Spinner
+                android:id="@+id/help_param_b"
+                android:layout_width="100sp"
+                android:layout_height="50sp"></Spinner>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="520dp">
+
+        <Button
+            android:id="@+id/help_btn_update"
+            android:layout_width="220dp"
+            android:layout_height="75dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/button_selector"
+            android:enabled="true"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="保存设置"
+            android:textStyle="bold"
+            android:textColor="@color/blue1"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/help_btn_reset"
+            android:layout_width="280dp"
+            android:layout_height="75dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/button_selector"
+            android:enabled="true"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="恢复出厂设置"
+            android:textColor="@color/blue1"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/help_btn_return"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
+            android:background="@drawable/button_selector"
+            android:enabled="true"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="返回"
+            android:textColor="@color/blue1"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</RelativeLayout>
+
