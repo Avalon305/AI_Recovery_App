@@ -2,6 +2,7 @@ package com.bdl.airecovery.activity;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.RequiresPermission;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +16,7 @@ import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.constant.MotorConstant;
+import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Reader;
 import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.dialog.CommonDialog;
@@ -34,8 +36,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.bdl.airecovery.contoller.Writer.setInitialBounce;
-import static com.bdl.airecovery.contoller.Writer.setKeepArmTorque;
 import static com.bdl.airecovery.contoller.Writer.setParameter;
 
 @ContentView(R.layout.activity_help)
@@ -69,9 +69,10 @@ public class HelpParamCalibrationActivity extends BaseActivity {
     private int frontLimitedPosition = 0;
     private int rearLimitedPosition = 0;
 
+
     private DbManager db = MyApplication.getInstance().getDbManager(); //获取DbManager对象
     private int currentTorque = 1; //当前标定的力矩值
-    private int currentFrontLimit = 20; //当前标定的前方限制
+    private int currentFrontLimit = MotorConstant.startFrontLimit; //当前标定的前方限制
     private boolean haveDataChanged = false;
     private Help helpParam = null;
     private CalibrationParameter calibrationParameter = null;
@@ -94,8 +95,10 @@ public class HelpParamCalibrationActivity extends BaseActivity {
         initParam();
         MotorService                //运动前电机的初始化
                 .getInstance()
-                .initializationBeforeStart(20 * 10000, deviceType, 100, 100);
+                .initializationBeforeStart(MotorConstant.startFrontLimit * 4856, deviceType, currentTorque * 100, currentTorque * 100);
         initLimit();                //初始化前后方限制
+        setParamByTorqueAndLimit(currentTorque ,currentFrontLimit);
+        openMovementProcess();      //打开运动过程
         setBtnOnclickEvent();
         setSpinnerOnclickEvent();
         LogUtil.e("======"+calibrationParameter.toString());
@@ -109,9 +112,12 @@ public class HelpParamCalibrationActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
-                    Writer.setParameter(helpParam.getPosition() * 4856, MotorConstant.SET_FRONTLIMIT);
-                    Writer.setParameter(0, MotorConstant.SET_REARLIMIT);
+                    Writer.setParameter(MotorConstant.startFrontLimit * 4856, MotorConstant.SET_FRONTLIMIT);
+                    Writer.setParameter(20 * 4856, MotorConstant.SET_REARLIMIT);
+                    //TODO 1
+                    setParamByTorqueAndLimit(currentTorque, currentFrontLimit);
                     setParameter(calibrationParameter.getBackSpeed() * 100, MotorConstant.SET_BACK_SPEED);
+                    //TODO 添加初始化参数的读写
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -122,7 +128,7 @@ public class HelpParamCalibrationActivity extends BaseActivity {
     /**
      * 打开运动过程
      */
-    void onpenMovementProcess() {
+    void openMovementProcess() {
         final int[] lastLocation = {frontLimitedPosition}; //上一次的位置，初始值为前方限制
         //如果出现修改，该位置就改变
         final boolean[] haveStopped = {false};
@@ -130,6 +136,7 @@ public class HelpParamCalibrationActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
+                    LogUtil.e("==========================================");
                     //读取当前位置
                     int currentSpeed = Math.abs(Integer.valueOf(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED)));
                     int currentTorque = Integer.valueOf(Reader.getRespData(MotorConstant.READ_TORQUE));
@@ -141,8 +148,9 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                     }
                     if (difference > 20000) { //回程
                         //超过前方限制
+                        //TODO
                         if (Integer.valueOf(currentLocation) >= frontLimitedPosition - 50000) {
-                            setParameter(-5 * 100, MotorConstant.SET_GOING_SPEED);
+
                             if (haveStopped[0]) { //是否需要恢复反向力量
                                 setParameter(torque, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                                 haveStopped[0] = false;
@@ -199,9 +207,26 @@ public class HelpParamCalibrationActivity extends BaseActivity {
      * @return
      */
     int getIdByTorqueAndLimit(int torque, int limit) {
-        return torque + (limit / 20 - 1) * 5;
+        return torque + (limit / MotorConstant.startFrontLimit - 1) * 5;
     }
 
+
+    /**
+     * 根据前方限制和力矩值设置当前参数
+     * 改变前方限制和力矩值的时候需要调用此方法
+     * @param limit
+     */
+    void setParamByTorqueAndLimit(int torque, int limit) {
+        try {
+            helpParam = getHelpParamByTorqueAndLimit(torque, limit);
+//            setParameter(helpParam.getParamA() * 100, MotorConstant.WHETHER_PULL);
+            //TODO 调用setParameter方法设置参数
+        } catch (DbException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 初始化各种参数
@@ -214,18 +239,16 @@ public class HelpParamCalibrationActivity extends BaseActivity {
             e.printStackTrace();
         }
         LogUtil.e("参数值:::" + helpParam.toString());
-        List<Integer> speedList = generateRange(1, 5, 1);
-        List<Integer> paramAList = generateRange(1, 50, 3);
+        List<Integer> speedList = generateRange(-50, -1, 1);
+        List<Integer> paramAList = generateRange(-20, 199, 1);
         List<Integer> paramBList = generateRange(1, 20, 2);
         //创建Spinner
         createSpinner(speedSpinner, speedList,
                 getIndexOfList(speedList, helpParam.getHelpSpeed()));
-        //TODO 5改为数据库中的值
         createSpinner(paramASpinner, paramAList,
                 getIndexOfList(paramAList, helpParam.getParamA()));
         createSpinner(paramBSpinner, paramBList,
                 getIndexOfList(paramBList, helpParam.getParamB()));
-
     }
 
     /**
@@ -285,9 +308,7 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                 helpParam.setId(getIdByTorqueAndLimit(j, i));
                 helpParam.setTorque(j);
                 helpParam.setPosition(i);
-                helpParam.setHelpSpeed(MotorConstant.helpSpeed);
-                helpParam.setParamA(MotorConstant.paramA);
-                helpParam.setParamB(MotorConstant.paramB);
+
                 LogUtil.e("当前更新::" + helpParam.toString());
                 try {
                     db.update(helpParam);
@@ -308,6 +329,8 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                 //TODO 改变电机中的值
                 int speed = Integer.parseInt(speedSpinner.getItemAtPosition(i).toString());
                 helpParam.setHelpSpeed(speed);
+                //改变当前助力速度
+
                 haveDataChanged = true;
             }
             @Override
@@ -321,6 +344,11 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                 //TODO 改变电机中的值
                 int ParamA = Integer.parseInt(paramASpinner.getItemAtPosition(i).toString());
                 helpParam.setParamA(ParamA);
+                try {
+//                    setParameter(helpParam.getParamA() * 100, MotorConstant.WHETHER_PULL);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 haveDataChanged = true;
             }
             @Override
@@ -375,11 +403,14 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                         currentTorque = 1;
                     }
                 }
-                initParam();
+                initParam(); //重新更新UI
+                //TODO 1
+                setParamByTorqueAndLimit(currentTorque, currentFrontLimit);
                 torque = currentTorque;
                 frontLimitedPosition = currentFrontLimit;
                 try {
-                    Writer.setParameter(frontLimitedPosition, MotorConstant.SET_FRONTLIMIT);
+                    Writer.setParameter(torque * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                    Writer.setParameter(frontLimitedPosition * 4856, MotorConstant.SET_FRONTLIMIT);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -389,7 +420,6 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                 tvFrontLimit.setText(currentFrontLimit + "");
             }
         });
-
 
         //恢复出厂设置
         resetBtn.setOnClickListener(new View.OnClickListener() {
@@ -442,7 +472,12 @@ public class HelpParamCalibrationActivity extends BaseActivity {
                 }
             }
         });
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        MotorProcess.motorInitialization();
     }
 }

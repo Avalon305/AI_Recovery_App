@@ -24,7 +24,6 @@
             android:layout_centerVertical="true"
             android:text="联测定位"
             android:textSize="40dp" />
-
         <Button
             android:id="@+id/btn_test"
             android:layout_width="wrap_content"
@@ -33,6 +32,23 @@
             android:layout_marginTop="40dp"
             android:textSize="25dp"
             android:text="跳转待机页面[测试]" />
+        <!--<Button-->
+            <!--android:id="@+id/btn_top"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="200dp"-->
+            <!--android:layout_marginTop="40dp"-->
+            <!--android:textSize="25dp"-->
+            <!--android:text="发送到达顶端的广播" />-->
+        <!--<Button-->
+            <!--android:id="@+id/btn_bottom"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="500dp"-->
+            <!--android:layout_marginTop="40dp"-->
+            <!--android:textSize="25dp"-->
+            <!--android:text="发送到达底端的广播" />-->
+
     </RelativeLayout>
     <!--连测定位-->
     <TextView
@@ -203,6 +219,10 @@
             android:layout_weight="1"
             android:text="" />
 
+
+
+
+
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/btn_location_again"
             android:layout_width="wrap_content"
@@ -217,15 +237,15 @@
             android:text="再次定位"
             android:textColor="@color/qmui_config_color_white"
             android:textSize="30sp"
-
             app:qmui_radius="4dp"
             app:qmui_backgroundColor="#FF059CFF"
             app:qmui_borderWidth="0dp"
             app:qmui_isRadiusAdjustBounds="true"
              />
 
-
     </LinearLayout>
+
+
 
 
 </LinearLayout>

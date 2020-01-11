@@ -8,6 +8,7 @@ public class CalibrationParameter {
 
     @Column(name = "id", isId = true)
     private int id; //主键
+
     //最小力矩
     @Column(name = "minTorque")
     private int minTorque;

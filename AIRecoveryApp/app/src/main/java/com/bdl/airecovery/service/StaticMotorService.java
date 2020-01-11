@@ -4,12 +4,15 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.bdl.airecovery.constant.StaticMotorConstant;
 import com.bdl.airecovery.util.CodecUtils;
 import com.bdl.airecovery.util.SerialPortUtils;
+
+import org.xutils.common.util.LogUtil;
 
 import java.util.Arrays;
 
@@ -309,6 +312,9 @@ public class StaticMotorService extends Service{
     @Override
     public void onCreate() {
         super.onCreate();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("init_locate");
+        registerReceiver(initLocateReceiver, intentFilter);
         Log.d(TAG,"静态电机服务已创建");
         controler = new Controler();
         new Thread(new Runnable() {
@@ -324,6 +330,7 @@ public class StaticMotorService extends Service{
     public void onDestroy() {
         SerialClose(StaticMotorUtil_1);
         SerialClose(StaticMotorUtil_2);
+        unregisterReceiver(initLocateReceiver);
         super.onDestroy();
     }
     @Override
@@ -634,9 +641,11 @@ public class StaticMotorService extends Service{
                     if (intent.getStringExtra("seat_motor") != null) {
                         if (intent.getStringExtra("seat_motor").equals("top_limit")) {
                             sendLimit(StaticMotorUtil_1.StaticMotor, true);
+                            LogUtil.e("=====收到广播======top_limit");
 //                            initSetLimit(StaticMotorUtil_1, true);
                         } else if (intent.getStringExtra("seat_motor").equals("bot_limit")) {
                             sendLimit(StaticMotorUtil_1.StaticMotor, false);
+                            LogUtil.e("=====收到广播======bot_limit");
 //                            initSetLimit(StaticMotorUtil_1, false);
                         }
                     }

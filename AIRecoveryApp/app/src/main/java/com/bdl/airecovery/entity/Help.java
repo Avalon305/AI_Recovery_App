@@ -23,7 +23,7 @@ public class Help {
      * 如果该值为0，即代表当前区间为0~19;
      * 如果该值为20，即代表当前区间为20~39;
      */
-    @Column(name = "position")
+    @Column(name = "frontLimit")
     int position;
 
     /**

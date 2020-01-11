@@ -3,6 +3,7 @@ package com.bdl.airecovery.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.bdl.airecovery.MyApplication;
@@ -18,6 +19,7 @@ import com.bdl.airecovery.mao.MotorSocketClient;
 import com.google.gson.Gson;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 
 import java.text.SimpleDateFormat;
@@ -36,7 +38,7 @@ public class MotorService extends Service {
     private static Intent initIntent = new Intent("locate"); //运动前初始化的广播
     private static Intent locationIntent = new Intent("location"); //联测定位的广播
     private DbManager db = MyApplication.getInstance().getDbManager();
-    private CalibrationParameter calibrationParameter  = MyApplication.getInstance()
+    private CalibrationParameter calibrationParameter = MyApplication.getInstance()
             .getCalibrationParam();
 
     @Override
@@ -52,6 +54,12 @@ public class MotorService extends Service {
 
     @Override
     public void onCreate() {
+
+//        MotorService.MonitorSwitchSignal monitorSwitchSignal =
+//                MotorService.getInstance().new MonitorSwitchSignal();
+//        Timer timer = new Timer();
+//        timer.schedule(monitorSwitchSignal, 0, 50);
+
         super.onCreate();
         instance = this;
         new Thread(new Runnable() {
@@ -65,9 +73,7 @@ public class MotorService extends Service {
             }
         }).start();
         eStopBroadcast(); //急停广播
-
     }
-
 
 
     @Override
@@ -176,9 +182,9 @@ public class MotorService extends Service {
      * @param negativeTorqueLimited
      */
     public void initializationBeforeStart(final int position,
-                                    final int deviceType,
-                                    final int positiveTorqueLimited,
-                                    final int negativeTorqueLimited) {
+                                          final int deviceType,
+                                          final int positiveTorqueLimited,
+                                          final int negativeTorqueLimited) {
         //防止定位的时候力矩过小，带不起来
         try {
             setParameter(40 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
@@ -207,7 +213,6 @@ public class MotorService extends Service {
                         //关速度
                         setParameter(0, MotorConstant.SET_GOING_SPEED);
                         setParameter(0, MotorConstant.SET_COMPARE_SPEED);
-
                         timer.cancel(); //关闭当前定时轮询任务
                         switch (deviceType) {
                             case 1: //拉设备
@@ -218,8 +223,8 @@ public class MotorService extends Service {
                                 setKeepArmTorque(positiveTorqueLimited);
                                 break;
                             case 2: //推设备
-                                setParameter((int) ((double)positiveTorqueLimited ) + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
-                                setParameter((int) ((double)negativeTorqueLimited ) + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
+                                setParameter((int) ((double) positiveTorqueLimited) + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                                setParameter((int) ((double) negativeTorqueLimited) + (calibrationParameter.getMinTorque() * 100), MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                                 break;
                         }
                         //发送初始化成功的广播
@@ -233,6 +238,7 @@ public class MotorService extends Service {
         };
         timer.schedule(timerTask, 0, 100);
     }
+
     /**
      * 急停广播
      */
@@ -249,7 +255,6 @@ public class MotorService extends Service {
                     //1.error:0 stop:0 正常
                     //2.error:0 stop:1 按下急停
                     //4.error:1 stop:1 出错误按下急停
-
                     if (errorID != null && status != null) {
                         //发送错误信息广播
                         intent.putExtra("error", errorID);
@@ -271,5 +276,23 @@ public class MotorService extends Service {
     }
 
 
+    public class MonitorSwitchSignal extends TimerTask {
+        private Intent intent = new Intent("init_locate");
 
+        @Override
+        public void run() {
+            //TODO 两个开关的信号
+            String topSignal = "0";
+            String bottomSignal = "1";
+            LogUtil.e("=======发送开关状态广播======");
+            if ("0".equals(topSignal)) {
+                intent.putExtra("seat_motor", "top_limit");
+                sendBroadcast(intent);
+            }
+            if ("0".equals(bottomSignal)) {
+                intent.putExtra("seat_motor", "bot_limit");
+                sendBroadcast(intent);
+            }
+        }
+    }
 }

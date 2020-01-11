@@ -8,6 +8,7 @@ import android.os.Debug;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import com.bdl.airecovery.constant.CalibrationConstant;
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.contoller.Writer;
 import com.bdl.airecovery.entity.CalibrationParameter;
@@ -15,6 +16,7 @@ import com.bdl.airecovery.entity.CurrentTime;
 import com.bdl.airecovery.entity.Device;
 import com.bdl.airecovery.entity.Help;
 import com.bdl.airecovery.entity.HelpDividedByTorque;
+import com.bdl.airecovery.entity.SegmentCalibration;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.entity.Upload;
 import com.bdl.airecovery.entity.login.User;
@@ -24,6 +26,7 @@ import com.bdl.airecovery.service.MotorService;
 import com.bdl.airecovery.service.ReSendService;
 import com.bdl.airecovery.service.StaticMotorService;
 import com.bdl.airecovery.service.UsbService;
+import com.bdl.airecovery.util.CalibrationUtil;
 import com.bdl.airecovery.util.JsonFileUtil;
 import com.bdl.airecovery.util.WifiUtils;
 import com.clj.fastble.BleManager;
@@ -110,15 +113,23 @@ public class MyApplication extends MultiDexApplication {
 //            e.printStackTrace();
 //        }
 
-
         x.Ext.init(this);
         x.Ext.setDebug(BuildConfig.DEBUG); // 是否输出debug日志, 开启debug会影响性能.
         readJson();//读取json文件到list
+
+        CalibrationUtil c = new CalibrationUtil(db);
         try {
             initSetting(); //初始化数据库数据
+            //初始化分段标定参数
+            if (db.findFirst(SegmentCalibration.class) == null) {
+                c.initSegmentCalibration();
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
+
+
+
         setCurrentDevice();//根据数据库中存储的当前设备名称，查询出当前设备的一些固定信息
         //启动重传service。
         startReSendService();
@@ -126,18 +137,20 @@ public class MyApplication extends MultiDexApplication {
         initBLEManager();
         startBluetoothService();
 
+        List<SegmentCalibration> calibrations;
         try {
-            List<Help> helps = db.findAll(Help.class);
-            for (Help h : helps) {
-                LogUtil.e(h.toString() + "===============");
-            }
+            calibrations = c.getCalibrationsByForce(5);
+            SegmentCalibration s = c.getCalibrationsByCurrentPosition(calibrations, 162);
+            LogUtil.e("======================"+s.toString());
         } catch (DbException e) {
             e.printStackTrace();
         }
+
+
         //启动发卡器Service
         //startCardReaderService();
         //启动电机Service
-        //startMotorService();
+        startMotorService();
         //启动静态电机Service
         startStaticMotorService();
         //启动usb的service
@@ -311,23 +324,23 @@ public class MyApplication extends MultiDexApplication {
             calibrationParameter.setLead(3);
             db.save(calibrationParameter);
         }
-        //初始化HelpDividedByTorque表
-        Help help = new Help();
-        if (db.findAll(Help.class) == null) {
-            for (int i = 20; i <= 200; i += 20) { //十个位置分段
-                for (int j = 1; j <= 5; j++) { //五个力量分段
-                    help.setTorque(j);
-                    help.setPosition(i);
-                    help.setHelpSpeed(MotorConstant.helpSpeed);
-                    help.setParamA(MotorConstant.paramA);
-                    help.setParamB(MotorConstant.paramB);
-                    db.save(help);
-                }
-            }
-        }
+
+//        //初始化HelpDividedByTorque表
+//        Help help = new Help();
+//        if (db.findAll(Help.class) == null) {
+//            for (int i = MotorConstant.startFrontLimit; i <= 200; i += 20) { //十个位置分段
+//                for (int j = 1; j <= 5; j++) { //五个力量分段
+//                    help.setTorque(j);
+//                    help.setPosition(i);
+//                    help.setHelpSpeed(MotorConstant.helpSpeed);
+//                    help.setParamA(MotorConstant.paramA);
+//                    help.setParamB(MotorConstant.paramB);
+//                    db.save(help);
+//                }
+//            }
+//        }
 
     }
-
 
     /**
      * 读取json文件到list的具体方法。

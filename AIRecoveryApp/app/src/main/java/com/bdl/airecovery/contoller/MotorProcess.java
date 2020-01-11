@@ -5,6 +5,7 @@ import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.entity.CalibrationParameter;
 
 import org.xutils.DbManager;
+import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 
 import java.util.Timer;
@@ -45,6 +46,7 @@ public class MotorProcess {
             @Override
             public void run() {
                 try {
+                    LogUtil.e("初始化复位......");
                     //复位顺反向力
                     setParameter(40 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
                     setParameter(40 * 100, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);

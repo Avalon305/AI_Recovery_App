@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
+import com.bdl.airecovery.broadcast.SwitchSignalBroadcastReceiver;
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Writer;
@@ -33,6 +34,7 @@ import com.bdl.airecovery.entity.TestItem;
 import com.bdl.airecovery.service.MotorService;
 import com.bdl.airecovery.service.StaticMotorService;
 
+import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -60,6 +62,7 @@ public class LocationActivity extends BaseActivity {
     protected static final String ACTIVITY_TAG = "MyAndroid";
     private Thread locateThread;         //电机连测线程
     private Handler handler;             //处理message对象
+    private Intent intent = new Intent("init_locate");
 
 
     /**
@@ -103,6 +106,14 @@ public class LocationActivity extends BaseActivity {
 
     @ViewInject(R.id.gear_small)
     private ImageView gearSmall;
+
+//    @ViewInject(R.id.btn_top)
+//    private Button btnTop;
+//
+//    @ViewInject(R.id.btn_bottom)
+//    private Button btnBottom;
+
+
     //广播对象
     locationReceiver LocationReceiver = new locationReceiver();
     IntentFilter filterHR = new IntentFilter();
@@ -388,6 +399,19 @@ public class LocationActivity extends BaseActivity {
         }
     }
 
+//    @Event(R.id.btn_top)
+//    private void btnTopClick(View v) {
+//        LogUtil.e("点击top按钮");
+//        intent.putExtra("seat_motor", "top_limit");
+//        sendBroadcast(intent);
+//    }
+//
+//    @Event(R.id.btn_bottom)
+//    private void btnBottomClick(View v) {
+//        LogUtil.e("点击bottom按钮");
+//        intent.putExtra("seat_motor", "bot_limit");
+//        sendBroadcast(intent);
+//    }
     /**
      * 再次定位按钮的点击事件
      *

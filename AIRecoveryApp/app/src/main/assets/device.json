@@ -8,14 +8,14 @@
       "helpImg": "帮助图0",
       "helpWord": "使用说明0.....",
       "DeviceInnerID": "0",
-      "consequentForce": "1",
-      "reverseForce": "1",
+      "consequentForce": "5",
+      "reverseForce": "5",
       "maxLimit": 200,
       "minLimit": 0,
       "personalList": [
         {
           "name": "前方限制",
-          "value": "100",
+          "value": "140",
           "machine": "动态电机",
           "cmd": "指令1",
           "min": "0",

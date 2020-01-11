@@ -4,21 +4,10 @@ public class MotorConstant {
 
 
     //限制 × 4856
-
     /**
-     * 助力速度
+     * 第一个开始标定的助力区间前方限制
      */
-    public static final int helpSpeed = 5;
-
-    /**
-     *
-     */
-    public static final int paramA = 10;
-
-    /**
-     *
-     */
-    public static final int paramB = 9;
+    public static final int startFrontLimit = 80;
 
     /**
      * 获取电机输出力矩
@@ -94,6 +83,22 @@ public class MotorConstant {
             0x00, 0x00, 0x02, 0x00,
             (byte) 0xD8, 0x01, 0x00, 0x00,
             0x01, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+
+
+    //TODO 确定设置第几号参数
+    //TODO 确定设置第几号参数
+    //TODO 确定设置第几号参数
+    //TODO 确定设置第几号参数
+    /**
+     * 设置9号参数，此值的作用是判断原点是否拉了力臂
+     */
+    public static final byte[] SET_PULL_THRESHOLD = {
+            0x01, (byte) 0x83, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x02, 0x00,
+            (byte) 0xD8, 0x01, 0x00, 0x00,
+            0x09, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
