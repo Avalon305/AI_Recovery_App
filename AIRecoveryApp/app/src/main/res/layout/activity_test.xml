@@ -125,6 +125,27 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="标定页面" />
+
+            <Button
+                android:id="@+id/seat_locate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="座椅联测定位" />
+
+            <Button
+                android:id="@+id/limit_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="到达上方限位" />
+
+            <Button
+                android:id="@+id/limit_bot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="到达下方限位" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

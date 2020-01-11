@@ -12,6 +12,7 @@ import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.service.BluetoothService;
+import com.bdl.airecovery.service.StaticMotorService;
 
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
@@ -90,6 +91,15 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     @ViewInject(R.id.calibration)
     private Button calibration;
 
+    @ViewInject(R.id.limit_top)
+    private Button limitTop;
+
+    @ViewInject(R.id.limit_bot)
+    private Button limitBot;
+
+    @ViewInject(R.id.seat_locate)
+    private Button seatLocate;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         test_ByeActivity.setOnClickListener(this);
@@ -114,6 +124,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 //        test_static_setposition.setOnClickListener(this);
         strengthTest.setOnClickListener(this);
         calibration.setOnClickListener(this);
+        limitTop.setOnClickListener(this);
+        limitBot.setOnClickListener(this);
+        seatLocate.setOnClickListener(this);
     }
 
     @Override
@@ -159,6 +172,26 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             startActivity(new Intent(TestActivity.this, StrengthTestActivity.class));
         } else if (view == calibration) {
             startActivity(new Intent(TestActivity.this, CalibrationActivity.class));
+        } else if (view == limitTop) {
+
+
+            Intent intent = new Intent("init_locate");
+            intent.putExtra("seat_motor", "top_limit");
+            sendBroadcast(intent);
+        } else if (view == limitBot) {
+            Intent intent = new Intent("init_locate");
+            intent.putExtra("seat_motor", "bot_limit");
+            sendBroadcast(intent);
+        } else if (view == seatLocate) {
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    StaticMotorService.Controler controler = StaticMotorService.getControler();
+                    boolean result = controler.initLocate(1, true);
+                    Toast.makeText(TestActivity.this, "座椅联测定位结果："+result, Toast.LENGTH_SHORT).show();
+                }
+            }.start();
         }
     }
 }
