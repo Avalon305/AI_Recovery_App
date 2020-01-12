@@ -49,6 +49,7 @@ public class StaticMotorService extends Service{
         public boolean isSeat = false;//是否是座椅
         public boolean onRePosition = false;//是否标定完成正在复位
         public boolean isRePositionSuccess = false;//是否复位成功
+        public int limitType = 0;//此次接收限位类型：0-默认，1-顶部，2-底部
         //训练前定位
         public boolean onTrainSet = false;//是否处于训练前定位
     }
@@ -165,18 +166,26 @@ public class StaticMotorService extends Service{
             answerOvercurrent(util.StaticMotor);
         }else if (Arrays.equals(util.responseMsg,StaticMotorConstant.FINISH_INIT)){
             Log.d(TAG,"收到了标定完成应答");
-            moveDown(util.StaticMotor);
-            //TODO
-            util.onRePosition = true;
-            locateBroadcast.putExtra("initlocate",true);
-            sendBroadcast(locateBroadcast);
-            if (util.isSeat) {
+            if (util.isSeat && util.limitType == 1) {
+                moveDown(util.StaticMotor);
+                //TODO
+                util.onRePosition = true;
+                locateBroadcast.putExtra("initlocate", true);
+                sendBroadcast(locateBroadcast);
                 try {
                     Thread.sleep(1000 * 2);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 allowLimitBroad = true;
+            } else if (!util.isSeat) {
+                moveDown(util.StaticMotor);
+                //TODO
+                util.onRePosition = true;
+                locateBroadcast.putExtra("initlocate", true);
+                sendBroadcast(locateBroadcast);
+            } else {
+                Log.e(TAG, "run: 限位开关方向异常，中断标定");
             }
         }else if (Arrays.equals(analyzeHead,StaticMotorConstant.ANSWER_GETPOSITION_HEAD)){
             Log.d(TAG,"收到了获取位置应答");
@@ -238,7 +247,7 @@ public class StaticMotorService extends Service{
             util.onInitGet = true;
         } else if (Arrays.equals(util.responseMsg,StaticMotorConstant.ANSWER_LIMIT)) {
             Log.d(TAG, "收到了限位通知应答");
-            if (util.onInitSet){
+            if (util.onInitSet && util.limitType == 2){
                 Log.d(TAG,"标定流程2：标定指令");
                 util.onInitSet = false;
                 initMotor(util.StaticMotor);
@@ -257,19 +266,20 @@ public class StaticMotorService extends Service{
                                 initMotor(util.StaticMotor);
                             } else {
                                 Log.d(TAG, "run: 不发标定了！！！！！！！！");
-                                allowLimitBroad = true;
                                 break;
                             }
                         }
                     }
                 }.start();
-            } else if (util.onInitGet) {
+            } else if (util.onInitGet && util.limitType == 1) {
                 util.onInitGet = false;
                 Log.d(TAG, "run: 标定完成，电机复位");
-            } else if (util.onRePosition) {
+            } else if (util.onRePosition && util.limitType == 2) {
                 util.isRePositionSuccess = true;
                 util.onRePosition = false;
                 Log.d(TAG, "run: 电机复位完成，流程结束");
+            } else {
+                Log.e(TAG, "run: 限位开关方向异常，中断标定");
             }
         }else {
             Log.e(TAG,"收到未识别的报文："+Arrays.toString(util.responseMsg));
@@ -344,7 +354,6 @@ public class StaticMotorService extends Service{
                 SerialSet();
             }
         }).start();
-
     }
 
     @Override
@@ -670,10 +679,13 @@ public class StaticMotorService extends Service{
                         if (intent.getStringExtra("seat_motor") != null) {
                             if (intent.getStringExtra("seat_motor").equals("top_limit")) {
                                 sendLimit(StaticMotorUtil_1.StaticMotor, true);
+                                StaticMotorUtil_1.limitType = 1;
                                 LogUtil.e("=====收到广播======top_limit");
+
 //                            initSetLimit(StaticMotorUtil_1, true);
                             } else if (intent.getStringExtra("seat_motor").equals("bot_limit")) {
                                 sendLimit(StaticMotorUtil_1.StaticMotor, false);
+                                StaticMotorUtil_1.limitType = 2;
                                 LogUtil.e("=====收到广播======bot_limit");
 //                            initSetLimit(StaticMotorUtil_1, false);
                             }
