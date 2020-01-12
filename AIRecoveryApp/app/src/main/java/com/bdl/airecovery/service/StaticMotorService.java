@@ -486,9 +486,12 @@ public class StaticMotorService extends Service{
         util.onInitSet = true;//设置当前处于标定流程状态
         util.onInitGet = false;
         //Step 1:发送心跳
-        sendHeartbeat(util.StaticMotor);
+//        sendHeartbeat(util.StaticMotor);
         try {
-            Thread.sleep(500);
+            for (int i = 0; i < 3; i++) {
+                sendHeartbeat(util.StaticMotor);
+                Thread.sleep(500);
+            }
             if (util.onMotorAlive) {
                 util.onMotorAlive = false;
                 //Step 2:发送下降
@@ -497,30 +500,29 @@ public class StaticMotorService extends Service{
                     Thread.sleep(1000 * 25);//等待复位完成
                     if (util.onInitSet){
                         util.onInitSet = false;
-//                        locateBroadcast.putExtra("initlocate",false);
-//                        sendBroadcast(locateBroadcast);
+                        Log.e(TAG, "Error1");
                         return false;
                     } else {
+                        if(!util.isRePositionSuccess){
+                            Log.e(TAG, "Error5");
+                        }
                         return util.isRePositionSuccess;
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     util.onInitSet = false;
-//                    locateBroadcast.putExtra("initlocate",false);
-//                    sendBroadcast(locateBroadcast);
+                    Log.e(TAG, "Error2");
                     return false;
                 }
             }else {
                 util.onInitSet = false;
-//                locateBroadcast.putExtra("initlocate",false);
-//                sendBroadcast(locateBroadcast);
+                Log.e(TAG, "Error3");
                 return false;
             }
         } catch (InterruptedException e) {
             util.onInitSet = false;
             e.printStackTrace();
-//            locateBroadcast.putExtra("initlocate",false);
-//            sendBroadcast(locateBroadcast);
+            Log.e(TAG, "Error4");
             return false;
         }
     }
@@ -536,7 +538,10 @@ public class StaticMotorService extends Service{
         //Step 1:发送心跳
         sendHeartbeat(util.StaticMotor);
         try {
-            Thread.sleep(500);
+            for (int i = 0; i < 3; i++) {
+                Thread.sleep(500);
+                sendHeartbeat(util.StaticMotor);
+            }
             if (util.onMotorAlive) {
                 util.onMotorAlive = false;
                 //Step 2:发送下降
