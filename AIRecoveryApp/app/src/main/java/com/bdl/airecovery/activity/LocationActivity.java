@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
-import com.bdl.airecovery.broadcast.SwitchSignalBroadcastReceiver;
 import com.bdl.airecovery.constant.MotorConstant;
 import com.bdl.airecovery.contoller.MotorProcess;
 import com.bdl.airecovery.contoller.Writer;
@@ -34,7 +33,6 @@ import com.bdl.airecovery.entity.TestItem;
 import com.bdl.airecovery.service.MotorService;
 import com.bdl.airecovery.service.StaticMotorService;
 
-import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -59,6 +57,8 @@ public class LocationActivity extends BaseActivity {
     int[] locateRes = {0,0,0};           //连测结果，0为未知，1为成功，2为失败
     int a = 0;                           //统计连测成功的个数
     int b = 0;
+    int dynamicTestItemsNum; //需要连测的动态电机参数个数
+    int dynamicSuccessItemsNum; //连测成功的动态电机参数个数
     protected static final String ACTIVITY_TAG = "MyAndroid";
     private Thread locateThread;         //电机连测线程
     private Handler handler;             //处理message对象
@@ -225,6 +225,10 @@ public class LocationActivity extends BaseActivity {
                     Log.e("--------------", String.valueOf(testItemRes.size()));
                     for (int i = 0; i < device.getTestItemList().size(); ++i) {
 
+                        if (device.getTestItemList().get(i).getMachine().equals("动态电机")) {
+                            dynamicTestItemsNum++; //统计动态电机的待测参数个数
+                        }
+
                         if (device.getTestItemList().get(i).getMachine() != "") {
                             if (locateRes.length >= i + 1) {
                                 if (locateRes[i] == 2) {
@@ -239,6 +243,10 @@ public class LocationActivity extends BaseActivity {
                                     testItemRes.get(i).setTextColor(getResources().getColor(R.color.green));
                                     //统计连测成功的个数
                                     ++successNum;
+
+                                    if (device.getTestItemList().get(i).getMachine().equals("动态电机")) {
+                                        dynamicSuccessItemsNum++; //统计动态电机连测参数成功的个数
+                                    }
                                 }
                             } else {
                                 Log.e("Locationtttttt", "handleMessage: indexoutofbounds");
@@ -264,6 +272,12 @@ public class LocationActivity extends BaseActivity {
 //                            }
                         }
                     }
+
+                    //如果动态电机连测成功，显示 可跳转的按钮
+                    if (dynamicSuccessItemsNum == dynamicTestItemsNum) {
+                        btn_test.setVisibility(View.VISIBLE);
+                    }
+
                     a = successNum;
                     if (a == device.getTestItemList().size()) {
                         //两秒之后跳转到待机页面
