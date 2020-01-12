@@ -266,6 +266,7 @@ public class StaticMotorService extends Service{
                                 initMotor(util.StaticMotor);
                             } else {
                                 Log.d(TAG, "run: 不发标定了！！！！！！！！");
+                                allowLimitBroad = true;
                                 break;
                             }
                         }
