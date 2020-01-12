@@ -215,7 +215,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            <Button
                 android:id="@+id/btn_location_again"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -227,15 +227,12 @@
                 android:paddingRight="40dp"
                 android:paddingTop="10dp"
                 android:text="再次定位"
-                android:textColor="@color/qmui_config_color_white"
-                android:textSize="30sp"
-                app:qmui_radius="4dp"
-                app:qmui_backgroundColor="#FF059CFF"
-                app:qmui_borderWidth="0dp"
-                app:qmui_isRadiusAdjustBounds="true"
-                />
+                android:background="@drawable/button_selector"
+                android:textStyle="bold"
+                android:textColor="@color/blue1"
+                android:textSize="30sp" />
 
-            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            <Button
                 android:id="@+id/btn_test"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -247,14 +244,11 @@
                 android:paddingRight="40dp"
                 android:paddingTop="10dp"
                 android:text="跳过定位"
+                android:background="@drawable/button_selector"
                 android:visibility="invisible"
-                android:textColor="@color/qmui_config_color_white"
-                android:textSize="30sp"
-                app:qmui_radius="4dp"
-                app:qmui_backgroundColor="#FF059CFF"
-                app:qmui_borderWidth="0dp"
-                app:qmui_isRadiusAdjustBounds="true"
-                />
+                android:textStyle="bold"
+                android:textColor="@color/blue1"
+                android:textSize="30sp" />
         </RelativeLayout>
 
     </LinearLayout>
