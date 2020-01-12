@@ -99,6 +99,7 @@ public class MotorService extends Service {
             @Override
             public void run() {
                 try {
+                    Writer.setParameter(9000, MotorConstant.SET_PUSH_TORQUE);
                     String homingAvailable = Reader.getStatus(Reader.StatusBit.HOMING_POSIAVAILABLE);
                     Log.e(TAG, "homingAvailable" + homingAvailable);
                     if (homingAvailable.equals("1")) { //触发回零开关
