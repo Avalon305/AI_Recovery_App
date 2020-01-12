@@ -178,11 +178,11 @@ public class StaticMotorService extends Service{
                             Thread.sleep(1000 * 2);
                             allowLimitBroad = true;
                             Thread.sleep(1000 * 5);
-                            if(!util.isRePositionSuccess) {
-                                util.isRePositionSuccess = true;
-                                util.onRePosition = false;
-                                Log.d(TAG, "run: 电机复位完成，流程结束");
-                            }
+//                            if(!util.isRePositionSuccess) {
+//                                util.isRePositionSuccess = true;
+//                                util.onRePosition = false;
+//                                Log.d(TAG, "run: 电机复位完成，流程结束");
+//                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
