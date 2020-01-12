@@ -55,6 +55,7 @@ public class MotorService extends Service {
     @Override
     public void onCreate() {
 
+        //监听开关信号
         MotorService.MonitorSwitchSignal monitorSwitchSignal =
                 this.new MonitorSwitchSignal();
         Timer timer = new Timer();
@@ -276,6 +277,9 @@ public class MotorService extends Service {
     }
 
 
+    /**
+     * 监听开关信号类
+     */
     public class MonitorSwitchSignal extends TimerTask {
         private Intent intent = new Intent("init_locate");
 

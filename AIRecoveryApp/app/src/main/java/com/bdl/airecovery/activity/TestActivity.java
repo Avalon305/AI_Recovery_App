@@ -172,7 +172,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         } else if (view == strengthTest) {
             startActivity(new Intent(TestActivity.this, StrengthTestActivity.class));
         } else if (view == calibration) {
-            startActivity(new Intent(TestActivity.this, CalibrationActivity.class));
+            startActivity(new Intent(TestActivity.this, SegmentCalibrationActivity.class));
         } else if (view == limitTop) {
 
 
