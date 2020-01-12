@@ -55,10 +55,10 @@ public class MotorService extends Service {
     @Override
     public void onCreate() {
 
-//        MotorService.MonitorSwitchSignal monitorSwitchSignal =
-//                MotorService.getInstance().new MonitorSwitchSignal();
-//        Timer timer = new Timer();
-//        timer.schedule(monitorSwitchSignal, 0, 50);
+        MotorService.MonitorSwitchSignal monitorSwitchSignal =
+                this.new MonitorSwitchSignal();
+        Timer timer = new Timer();
+        timer.schedule(monitorSwitchSignal, 0, 50);
 
         super.onCreate();
         instance = this;
@@ -282,14 +282,22 @@ public class MotorService extends Service {
         @Override
         public void run() {
             //TODO 两个开关的信号
-            String topSignal = "0";
-            String bottomSignal = "1";
             LogUtil.e("=======发送开关状态广播======");
-            if ("0".equals(topSignal)) {
+            String topSignal = null;
+            String bottomSignal = null;
+            try {
+                topSignal = Reader.getStatus(Reader.StatusBit.TOP_LIMIT);
+                bottomSignal = Reader.getStatus(Reader.StatusBit.BOTTOM_LIMIT);
+                LogUtil.e("==============topSignal==============" + topSignal);
+                LogUtil.e("==============bottomSignal==============" + bottomSignal);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if ("1".equals(topSignal)) {
                 intent.putExtra("seat_motor", "top_limit");
                 sendBroadcast(intent);
             }
-            if ("0".equals(bottomSignal)) {
+            if ("1".equals(bottomSignal)) {
                 intent.putExtra("seat_motor", "bot_limit");
                 sendBroadcast(intent);
             }

@@ -17,7 +17,14 @@ public class Reader {
          * 急停
          */
         EStop(1),
-
+        /**
+         * 顶部限位,接6
+         */
+        TOP_LIMIT(2),
+        /**
+         * 顶部限位,接7
+         */
+        BOTTOM_LIMIT(3),
         /**
          * 回零相关
          */

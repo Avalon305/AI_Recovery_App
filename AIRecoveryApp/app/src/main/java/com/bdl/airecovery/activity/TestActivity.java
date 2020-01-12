@@ -14,6 +14,7 @@ import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.service.BluetoothService;
 import com.bdl.airecovery.service.StaticMotorService;
 
+import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
@@ -189,7 +190,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     super.run();
                     StaticMotorService.Controler controler = StaticMotorService.getControler();
                     boolean result = controler.initLocate(1, true);
-                    Toast.makeText(TestActivity.this, "座椅联测定位结果："+result, Toast.LENGTH_SHORT).show();
+                    LogUtil.e("座椅联测定位结果："+result);
                 }
             }.start();
         }
