@@ -170,12 +170,18 @@ public class StaticMotorService extends Service{
                 moveDown(util.StaticMotor);
                 //TODO
                 util.onRePosition = true;
-                try {
-                    Thread.sleep(1000 * 2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                allowLimitBroad = true;
+                new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+                        try {
+                            Thread.sleep(1000 * 2);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        allowLimitBroad = true;
+                    }
+                }.start();
             } else if (!util.isSeat) {
                 moveDown(util.StaticMotor);
                 //TODO
