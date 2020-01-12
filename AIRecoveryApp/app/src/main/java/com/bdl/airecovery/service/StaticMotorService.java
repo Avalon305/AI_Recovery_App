@@ -176,10 +176,16 @@ public class StaticMotorService extends Service{
                         super.run();
                         try {
                             Thread.sleep(1000 * 2);
+                            allowLimitBroad = true;
+                            Thread.sleep(1000 * 5);
+                            if(!util.isRePositionSuccess) {
+                                util.isRePositionSuccess = true;
+                                util.onRePosition = false;
+                                Log.d(TAG, "run: 电机复位完成，流程结束");
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        allowLimitBroad = true;
                     }
                 }.start();
             } else if (!util.isSeat) {
@@ -503,7 +509,7 @@ public class StaticMotorService extends Service{
                 //Step 2:发送下降
                 moveDown(util.StaticMotor);
                 try {
-                    Thread.sleep(1000 * 25);//等待复位完成
+                    Thread.sleep(1000 * 30);//等待复位完成
                     if (util.onInitSet){
                         util.onInitSet = false;
                         Log.e(TAG, "Error1");
