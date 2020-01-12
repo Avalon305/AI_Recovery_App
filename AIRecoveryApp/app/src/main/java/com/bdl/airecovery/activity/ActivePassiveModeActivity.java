@@ -378,7 +378,7 @@ public class ActivePassiveModeActivity extends BaseActivity {
                 try {
                     Writer.setParameter(positiveTorqueLimited, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
                     Writer.setParameter(negativeTorqueLimited, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
-                    Writer.setParameter(negativeTorqueLimited, MotorConstant.SET_PUSH_TORQUE);
+                    Writer.setParameter(15 * 100, MotorConstant.SET_PUSH_TORQUE);
                     Writer.setParameter(2000, MotorConstant.SET_INITIAL_BOUNCE);
                 } catch (Exception e) {
                     e.printStackTrace();
