@@ -170,8 +170,6 @@ public class StaticMotorService extends Service{
                 moveDown(util.StaticMotor);
                 //TODO
                 util.onRePosition = true;
-                locateBroadcast.putExtra("initlocate", true);
-                sendBroadcast(locateBroadcast);
                 try {
                     Thread.sleep(1000 * 2);
                 } catch (InterruptedException e) {
@@ -279,6 +277,8 @@ public class StaticMotorService extends Service{
                 util.isRePositionSuccess = true;
                 util.onRePosition = false;
                 Log.d(TAG, "run: 电机复位完成，流程结束");
+//                locateBroadcast.putExtra("initlocate", true);
+//                sendBroadcast(locateBroadcast);
             } else {
                 Log.e(TAG, "run: 限位开关方向异常，中断标定");
             }
@@ -479,6 +479,9 @@ public class StaticMotorService extends Service{
     private boolean initSet(StaticMotorUtil util){
         if (util.isSeat) {
             allowLimitBroad = true;
+            util.limitType = 0;
+            util.onRePosition = false;//是否标定完成正在复位
+            util.isRePositionSuccess = false;//是否复位成功
         }
         util.onInitSet = true;//设置当前处于标定流程状态
         util.onInitGet = false;
@@ -494,6 +497,8 @@ public class StaticMotorService extends Service{
                     Thread.sleep(1000 * 25);//等待复位完成
                     if (util.onInitSet){
                         util.onInitSet = false;
+//                        locateBroadcast.putExtra("initlocate",false);
+//                        sendBroadcast(locateBroadcast);
                         return false;
                     } else {
                         return util.isRePositionSuccess;
@@ -501,15 +506,21 @@ public class StaticMotorService extends Service{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     util.onInitSet = false;
+//                    locateBroadcast.putExtra("initlocate",false);
+//                    sendBroadcast(locateBroadcast);
                     return false;
                 }
             }else {
                 util.onInitSet = false;
+//                locateBroadcast.putExtra("initlocate",false);
+//                sendBroadcast(locateBroadcast);
                 return false;
             }
         } catch (InterruptedException e) {
             util.onInitSet = false;
             e.printStackTrace();
+//            locateBroadcast.putExtra("initlocate",false);
+//            sendBroadcast(locateBroadcast);
             return false;
         }
     }
@@ -681,13 +692,13 @@ public class StaticMotorService extends Service{
                             if (intent.getStringExtra("seat_motor").equals("top_limit")) {
                                 sendLimit(StaticMotorUtil_1.StaticMotor, true);
                                 StaticMotorUtil_1.limitType = 1;
-                                LogUtil.e("=====收到广播======top_limit");
+                                Log.e(TAG,"=====收到广播======top_limit");
 
 //                            initSetLimit(StaticMotorUtil_1, true);
                             } else if (intent.getStringExtra("seat_motor").equals("bot_limit")) {
                                 sendLimit(StaticMotorUtil_1.StaticMotor, false);
                                 StaticMotorUtil_1.limitType = 2;
-                                LogUtil.e("=====收到广播======bot_limit");
+                                Log.e(TAG,"=====收到广播======bot_limit");
 //                            initSetLimit(StaticMotorUtil_1, false);
                             }
                         }
