@@ -46,6 +46,8 @@ public class StaticMotorService extends Service{
         public boolean onMotorAlive = false;//是否返回心跳应答
         public boolean onInitGet = false;//是否返回了标定应答
         public boolean isSeat = false;//是否是座椅
+        public boolean onRePosition = false;//是否标定完成正在复位
+        public boolean isRePositionSuccess = false;//是否复位成功
         //训练前定位
         public boolean onTrainSet = false;//是否处于训练前定位
     }
@@ -164,6 +166,7 @@ public class StaticMotorService extends Service{
             Log.d(TAG,"收到了标定完成应答");
             moveDown(util.StaticMotor);
             //TODO
+            util.onRePosition = true;
             locateBroadcast.putExtra("initlocate",true);
             sendBroadcast(locateBroadcast);
         }else if (Arrays.equals(analyzeHead,StaticMotorConstant.ANSWER_GETPOSITION_HEAD)){
@@ -205,12 +208,16 @@ public class StaticMotorService extends Service{
                     }.start();
                 }
             } else if (util.onInitGet) {
-                if (util.isSeat) {
-                    Log.d(TAG,"取消标定，限位开关故障");
-                } else {
-                    util.onInitGet = false;
-                    Log.d(TAG, "run: 标定完成，电机复位");
-                }
+//                if (util.isSeat) {
+//                    Log.d(TAG,"取消标定，限位开关故障");
+//                } else {
+                util.onInitGet = false;
+                Log.d(TAG, "run: 标定完成，电机复位");
+//                }
+            } else if (util.onRePosition) {
+                util.isRePositionSuccess = true;
+                util.onRePosition = false;
+                Log.d(TAG, "run: 电机复位完成，流程结束");
             }
         }else if (Arrays.equals(analyzeHead,StaticMotorConstant.ANSWER_HEARTBEAT_HEAD)) {
             Log.d(TAG, "收到了心跳应答");
@@ -249,6 +256,10 @@ public class StaticMotorService extends Service{
             } else if (util.onInitGet) {
                 util.onInitGet = false;
                 Log.d(TAG, "run: 标定完成，电机复位");
+            } else if (util.onRePosition) {
+                util.isRePositionSuccess = true;
+                util.onRePosition = false;
+                Log.d(TAG, "run: 电机复位完成，流程结束");
             }
         }else {
             Log.e(TAG,"收到未识别的报文："+Arrays.toString(util.responseMsg));
@@ -441,7 +452,7 @@ public class StaticMotorService extends Service{
             Log.d(TAG,"发送了设置位置:"+Arrays.toString(sendMsg));
         }
     }
-    //标定流程(连测定位)
+    //标定流程(连测定位)-------------正在使用
     private boolean initSet(StaticMotorUtil util){
         util.onInitSet = true;//设置当前处于标定流程状态
         util.onInitGet = false;
@@ -454,12 +465,12 @@ public class StaticMotorService extends Service{
                 //Step 2:发送下降
                 moveDown(util.StaticMotor);
                 try {
-                    Thread.sleep(1000 * 10);//等待到达限位（最低点）
+                    Thread.sleep(1000 * 25);//等待复位完成
                     if (util.onInitSet){
                         util.onInitSet = false;
                         return false;
-                    }else {
-                        return true;
+                    } else {
+                        return util.isRePositionSuccess;
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -476,13 +487,13 @@ public class StaticMotorService extends Service{
             return false;
         }
     }
-    //标定流程2发送限位
+    //标定流程2发送限位---------暂时废弃
     private void initSetLimit(StaticMotorUtil util, boolean isTop) {
         if (util.onInitSet) {
             sendLimit(util.StaticMotor, isTop);
         }
     }
-    //连测定位
+    //连测定位-----------------暂时废弃
     private void initSet2(StaticMotorUtil util){
         util.onInitSet = true;//设置当前处于标定流程状态
         //Step 1:发送心跳
