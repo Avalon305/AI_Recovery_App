@@ -268,17 +268,16 @@ public class StaticMotorService extends Service{
                         while (true) {
                             try {
                                 Thread.sleep(1000);
-                                Log.d(TAG, "run: 是否开始标定："+util.onInitGet);
-                                if (!util.onInitGet){
-                                    initMotor(util.StaticMotor);
-                                } else {
-                                    Log.d(TAG, "run: 不发标定了！！！！！！！！");
-                                    Thread.sleep(1000);
-                                    allowLimitBroad = true;
-                                    break;
-                                }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                            }
+                            Log.d(TAG, "run: 是否开始标定："+util.onInitGet);
+                            if (!util.onInitGet){
+                                initMotor(util.StaticMotor);
+                            } else {
+                                Log.d(TAG, "run: 不发标定了！！！！！！！！");
+                                allowLimitBroad = true;
+                                break;
                             }
                         }
                     }
