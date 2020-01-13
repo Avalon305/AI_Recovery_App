@@ -65,7 +65,7 @@ public class LoginActivity extends BaseActivity {
      * 待机登录界面
      * 主要业务：
      *      1. 查询设备信息
-     *      2. 监听广播（蓝牙）
+     *      2. 使用mac地址连接蓝牙手环
      *      3.根据登录返回信息判断用于以什么身份登录
      */
     /**
