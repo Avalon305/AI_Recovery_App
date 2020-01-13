@@ -19,9 +19,11 @@ public class ScramActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //若为体验者模式登录，只显示急停界面
         if(MyApplication.getInstance().getUser().getUsername().equals("体验者")){
             return;
         }else {
+            //若为其他模式，急停界面显示过程中要关闭蓝牙连接
             MyApplication.getInstance().setUser(null);
             //关闭蓝牙连接
             Intent intentLog = new Intent(ScramActivity.this, BluetoothService.class);

@@ -12,7 +12,7 @@ public class User {
     //用户姓名
     private String username;
 
-    //待训练设备列表
+    //待训练设备列表TrainMode
     private String deviceTypearrList;
 
     //是否存在医护设置

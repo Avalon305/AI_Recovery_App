@@ -65,12 +65,9 @@ public class MainActivity extends BaseActivity {
      *      查询当前设备的图片
      *      根据蓝牙手环接收心率
      *      校准时间（训练时间/休息时间）
-     *      根据当前用户的权限（会员/教练）：
-     *          如果是教练刷卡/手环登录，显示“医护设置”按钮，不显示“连接教练手环”按钮；
-     *          如果是会员刷卡登录，不显示“医护设置”按钮，显示“连接教练手环”按钮，教练可刷卡/手环登录；
-     *          如果是会员刷手环登录，不显示“医护设置”按钮，不显示“连接教练手环”按钮，教练可刷卡登录。
      *      监听“开始训练”、“退出训练”、“医护设置”、“连接教练手环”按钮
      *      监听顺反向力的“+”和“-”按钮
+     *      根据用户登录训练方式跳转相应界面
      */
 
     //TODO:电机数据
@@ -99,7 +96,7 @@ public class MainActivity extends BaseActivity {
     private int locateDone;                 //定位完成的项目数量
     private int locateTodo = 1;                 //需要定位的项目数量
     private BluetoothReceiver bluetoothReceiver;        //蓝牙广播接收器，监听用户的登录广播
-    private DbManager db = MyApplication.getInstance().getDbManager();
+    private DbManager db = MyApplication.getInstance().getDbManager();//定义数据库访问对象
     private Timer locationTimer = new Timer();
 
     //控件绑定
@@ -164,17 +161,20 @@ public class MainActivity extends BaseActivity {
 //        testupload();
     }
 
+    /**
+     * 是否显示肌力测试按钮
+     */
     private void isBtnVisible() {
-        Setting setting = new Setting();
+        Setting setting = new Setting();//获取系统设置表对象
         try {
-            setting = db.findFirst(Setting.class);
+            setting = db.findFirst(Setting.class);//获取数据库访问接口
         } catch (DbException e) {
             e.printStackTrace();
         }
         if (setting.getCanStrengthTest()) {
-            btnEnterStrengthTest.setVisibility(View.VISIBLE);
+            btnEnterStrengthTest.setVisibility(View.VISIBLE);//若为true显示按钮
         } else {
-            btnEnterStrengthTest.setVisibility(View.INVISIBLE);
+            btnEnterStrengthTest.setVisibility(View.INVISIBLE);//否者不显示按钮
         }
 
     }
@@ -182,11 +182,11 @@ public class MainActivity extends BaseActivity {
      * 初始化前方限制、后方限制、设备类型
      */
     private void initMotor() {
-        String deviceName = MyApplication.getInstance().getCurrentDevice().getDisplayName();
-        deviceType = MyApplication.getInstance().getCurrentDevice().getDeviceType(); //获得设备信息
+        String deviceName = MyApplication.getInstance().getCurrentDevice().getDisplayName();//获取初始化设备名称
+        deviceType = MyApplication.getInstance().getCurrentDevice().getDeviceType(); //获得设备类型
         if ("腿部内弯机".equals(deviceName) ||
                 "蝴蝶机".equals(deviceName) ||
-                "反向蝴蝶机".equals(deviceName)) { //只有后方限制的机器
+                "反向蝴蝶机".equals(deviceName)) { //符合上述条件，只有后方限制的机器
             frontLimitedPosition = MyApplication.getInstance().getCurrentDevice().getMaxLimit() * 10000;
             rearLimitedPosition = MessageUtils.getMappedValue(Integer.parseInt(MyApplication.getInstance().getCurrentDevice().getPersonalList().get(0).getValue())) * 10000;
         } else {
@@ -196,7 +196,8 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 接收广播
+     * 接收广播，用于急停使用
+     * 当打开急停开关，跳转到该页面后接收急停广播，跳转到急停界面
      */
     private class eStopBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -259,6 +260,8 @@ public class MainActivity extends BaseActivity {
             //单车跑步机无顺反向力
             if (MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("椭圆跑步机") || MyApplication.getInstance().getCurrentDevice().getDisplayName().equals("健身车"))
             {
+
+                //将所有按钮隐藏
                 iv_ms_positiveplus.setVisibility(View.GONE);
                 iv_ms_positiveminus.setVisibility(View.GONE);
                 iv_ms_inversusplus.setVisibility(View.GONE);
@@ -286,10 +289,11 @@ public class MainActivity extends BaseActivity {
      */
     private void queryUserInfo() {
         //判空，如果非空是正常登陆
+        //只要登录进来user对象就不为空，，里面就是有数据的
         if(MyApplication.getInstance().getUser() != null) {
-            //非空的情况下，把第一用户的名字进行设置到指定位置
+            //非空的情况下，把第一用户的名字进行设置到指定位置，在欢迎您后面显示
             tv_user_name.setText(MyApplication.getInstance().getUser().getUsername());
-            //界面左上角模式标题
+            //界面左上角模式标题：分为康复模式，被动模式和主被动模式
             tv_train_mode.setText(MyApplication.getInstance().getUser().getTrainMode());
             Log.e(":::::::", String.valueOf(MyApplication.getInstance().getUser().getAge()));
             age.setText(MyApplication.getInstance().getUser().getAge() + "");
@@ -301,12 +305,12 @@ public class MainActivity extends BaseActivity {
     }
 
     //按钮监听事件
-    //“开始训练”
+    //点击“开始训练”按钮触发的事件
     @Event(R.id.btn_start)
     private void setBtn_start_onClick(View v) {
-        dialog_locating = new LargeDialog(MainActivity.this);
-        LaunchHandlerLocating();
-        Message message1 = handler_dialoglocating.obtainMessage();
+        dialog_locating = new LargeDialog(MainActivity.this);//点击按钮弹出提示框
+        LaunchHandlerLocating();//启动电机定位模态框handler
+        Message message1 = handler_dialoglocating.obtainMessage();//用于电机定位模态框ui线程中获取倒计时线程创建的Message对象
         handler_dialoglocating.sendMessage(message1);
     }
 
@@ -316,14 +320,10 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(MainActivity.this, StrengthTestActivity.class));
     }
     //“退出训练”
+    //点击退出训练按钮退出到等待界面
     @Event(R.id.btn_quit)
     private void setBtn_quit_onClick(View v) {
-
-        //退出登录请求
-        /*Intent intentLog2 = new Intent(this, CardReaderService.class);
-        intentLog2.putExtra("command", CommonCommand.LOGOUT.value());
-        startService(intentLog2);*/
-        MyApplication.getInstance().setUser(null);
+        MyApplication.getInstance().setUser(null);//将user对象置空，防止下次登陆时出现意外情况
         Intent intentLog = new Intent(this, BluetoothService.class);
         intentLog.putExtra("command", CommonCommand.LOGOUT.value());
         startService(intentLog);
@@ -334,6 +334,7 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
         MainActivity.this.finish();//销毁当前activity
     }
+    //------------以下代码为废弃代码------------
     //扫描教练的定时任务
     Timer timer = new Timer();
     TimerTask task = new TimerTask() {
@@ -345,6 +346,8 @@ public class MainActivity extends BaseActivity {
 
         }
     };
+
+    //-----------------------------------------
 
     DbManager dbManager = MyApplication.getInstance().getDbManager();
     Setting setting;
@@ -366,6 +369,8 @@ public class MainActivity extends BaseActivity {
         final boolean[] flag = {false};
         final SmallPwdDialog dialog = new SmallPwdDialog(MainActivity.this, info, R.style.CustomDialog,
                 new SmallPwdDialog.DataBackListener() {
+
+            //判断密码是否输入正确
                     @Override
                     public void getData(String data) {
                         String result = data;
@@ -383,7 +388,7 @@ public class MainActivity extends BaseActivity {
                         cnt[0]++;
                     }
                 });
-
+        //---------------------隐藏导航栏的代码，可有可无---------------------------------
         dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
         params.y = 100;
@@ -409,20 +414,25 @@ public class MainActivity extends BaseActivity {
         });
         dialog.show();
         initImmersiveMode(); //隐藏虚拟按键和状态栏
+
+        //-----------------------------------------------------------------------------
     }
 
     //顺向力的“+”
     @Event(R.id.iv_ms_positiveplus)
     private void setIv_ms_positiveplus_onClick(View v) {
         //显示
-        if (Integer.valueOf(tv_ms_positivenumber.getText().toString()) < 99 && Integer.valueOf(tv_ms_inversusnumber.getText().toString()) < 99) {
-            tv_ms_positivenumber.setText(Integer.valueOf(tv_ms_positivenumber.getText().toString()) + 1 + "");
-            tv_ms_inversusnumber.setText(Integer.valueOf(tv_ms_inversusnumber.getText().toString()) + 1 + "");
+        if (Integer.valueOf(tv_ms_positivenumber.getText().toString()) < 99 && Integer.valueOf(tv_ms_inversusnumber.getText().toString()) < 99)
+        //判断顺反向力的值是否小于99，若小于99执行以下代码
+        {
+            tv_ms_positivenumber.setText(Integer.valueOf(tv_ms_positivenumber.getText().toString()) + 1 + "");//点击按钮顺向力加一
+            tv_ms_inversusnumber.setText(Integer.valueOf(tv_ms_inversusnumber.getText().toString()) + 1 + "");//点击按钮反向力加一
+            //将点击按钮改变之后的数值写入全局变量，供之后使用
             MyApplication.getInstance().getCurrentDevice().setReverseForce(tv_ms_inversusnumber.getText().toString());
             MyApplication.getInstance().getCurrentDevice().setConsequentForce(tv_ms_positivenumber.getText().toString());
         }
     }
-    //顺向力的“-”
+    //顺向力的“-”，顺向力的设置相反
     @Event(R.id.iv_ms_positiveminus)
     private void setIv_ms_positiveminus_onClick(View v) {
         //显示
@@ -670,6 +680,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 启动相应训练模式界面
+     * 根据登录时设置的模式跳转
      */
     private void LaunchModeActivity() {//TODO:处理顺反向力
         Intent intent = null;
@@ -700,6 +711,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 隐藏状态栏，导航栏
      */
+    //---------------------------------不重要，直接复制---------------------------------
     @SuppressLint("NewApi")
     private void initImmersiveMode() {
         if (Build.VERSION.SDK_INT >= 19) {
@@ -728,7 +740,7 @@ public class MainActivity extends BaseActivity {
             );
         }
     }
-
+   //------------------------------------------------------------------------------------
     /**
      * 广播接收类
      */
@@ -798,6 +810,7 @@ public class MainActivity extends BaseActivity {
             String messageJson = intent.getStringExtra("message");
             CommonMessage commonMessage = transfer(messageJson);
             switch (commonMessage.getMsgType()){
+                //------------------废弃代码,已经不使用-----------------
                 //第一用户登录成功
                 case CommonMessage.LOGIN_REGISTER_OFFLINE:
                 case CommonMessage.LOGIN_REGISTER_ONLINE:
@@ -810,6 +823,7 @@ public class MainActivity extends BaseActivity {
                 case CommonMessage.DISCONNECTED:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
                     break;
+                //----------------------------------------------
                 //获得心率
                 case CommonMessage.HEART_BEAT:
                     LogUtil.d("广播接收器收到："+ commonMessage.toString());
