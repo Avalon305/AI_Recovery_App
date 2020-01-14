@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.Message;
 
 import com.bdl.airecovery.MyApplication;
-import com.bdl.airecovery.activity.LoginActivity;
 import com.bdl.airecovery.bluetooth.CommonCommand;
 import com.bdl.airecovery.bluetooth.CommonMessage;
 import com.bdl.airecovery.bluetooth.MyBluetoothGattCharacteristic;
@@ -20,16 +19,19 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.data.BleScanState;
 import com.clj.fastble.exception.BleException;
 import com.google.gson.Gson;
+
 import org.xutils.common.util.LogUtil;
-import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import static android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT16;
 import static android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8;
 
+/**
+ * 蓝牙Service
+ */
 public class BluetoothService extends Service {
 
     //蓝牙是否打开并且可用的标志。默认不可用登陆方法回调的结果
@@ -37,7 +39,12 @@ public class BluetoothService extends Service {
     //标记蓝牙当前的状态
     private volatile Status status = Status.NORMAL;
 
-    //蓝牙状态
+    /**
+     * 蓝牙状态
+     * 注意：三代采用刷卡获取MAC地址直连的方式
+     *      只存在NORMAL正常状态、TRY_CONNECTING尝试连接状态、CONNECTING连接状态
+     *      不存在扫描SCANNING状态
+     */
     private enum Status{
         NORMAL(1), //正常(未扫描、未连接的状态)
         SCANNING(2), //扫描(扫描附近可连接的、最近的设备的状态)
@@ -85,6 +92,7 @@ public class BluetoothService extends Service {
      * 检查并启动蓝牙模块，达到可以接受请求的状态。
      */
     private void initBluetooth() {
+        //检查设备是否支持蓝牙模块
         if (BleManager.getInstance().isSupportBle()){
             LogUtil.d("设备支持低功耗蓝牙");
             isBluetoothUseful = true;
@@ -92,7 +100,9 @@ public class BluetoothService extends Service {
             isBluetoothUseful = false;
             LogUtil.d("设备不支持蓝牙");
         }
-        //查看本机器蓝牙的状态
+        //查看本设备的蓝牙状态
+        //    若未开启则通过BleManager的enableBluetooth开启蓝牙
+        //    若已开启则跳过，不必重复开启蓝牙
         boolean result = BleManager.getInstance().isBlueEnable();
         if (result){
             LogUtil.d("bluetooth has started");
@@ -104,8 +114,9 @@ public class BluetoothService extends Service {
 
     /**
      * 请求接收的处理
+     * 外部调用蓝牙Service的入口
      * 每次调用startService时都会执行
-     * @param intent
+     * @param intent 意图：提供组件相互调用的相关信息
      * @param flags
      * @param startId
      * @return
@@ -114,11 +125,12 @@ public class BluetoothService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtil.d("收到了command");
 
-        //不支持BLE蓝牙的设备，拒绝执行任何命令！
+        //检查当前设备的蓝牙是否可用，非可用状态下拒绝执行任何命令
         if (!isBluetoothUseful){
             return super.onStartCommand(intent, flags, startId);
         }
 
+        //获取外部组件的调用命令
         String command = intent.getStringExtra("command");
 
         //初始化的时候，肯定是不带指令的，所以直接return
@@ -126,13 +138,13 @@ public class BluetoothService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
 
+        //String转Enum
         CommonCommand commonCommand = CommonCommand.getEnumByString(command);
         switch (commonCommand){
             case LOGIN: //开启蓝牙扫描，自动连接附近设备。若成功会发送提示广播，并连续广播心率。
-                String nfcMessage = intent.getStringExtra("message");
-                //scanDevice();
-                this.status = Status.TRY_CONNECTING;
-                connectMAC(nfcMessage);
+                String nfcMessage = intent.getStringExtra("message"); //获取MAC地址
+                this.status = Status.TRY_CONNECTING; //更新蓝牙状态：尝试连接
+                connectMAC(nfcMessage); //根据MAC地址直连蓝牙手环
                 break;
             case LOGOUT: //断开蓝牙连接
                 disConnect();
@@ -142,7 +154,6 @@ public class BluetoothService extends Service {
                 break;
         }
         return super.onStartCommand(intent, flags, startId);
-
     }
 
     @Override
@@ -255,6 +266,7 @@ public class BluetoothService extends Service {
     /**
      * 扫描附近的设备列表，x秒一个扫描周期，最后会放在list里面。选出其中名称合法的，并且强度最大，
      * 并且该强度满足距离要求的设备，调用连接方法mac开始连接！
+     * （未使用该方法，不需要扫描过程，维护人员可略过此方法）
      */
     private synchronized void scanDevice(){
         //如果蓝牙模块在扫描状态，则返回，否则设置为Normal
@@ -439,9 +451,9 @@ public class BluetoothService extends Service {
     private void disConnect(){
         LogUtil.d("执行断开连接命令");
         BleManager.getInstance().disconnectAllDevice();
-        this.status = Status.NORMAL;
+        this.status = Status.NORMAL; //更新蓝牙状态
         int msgType = CommonMessage.DISCONNECTED;
-        sendBroadcastMsg(msgType);
+        sendBroadcastMsg(msgType); //广播通知外部组件，蓝牙断开了
     }
 
     /**
