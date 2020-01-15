@@ -102,7 +102,7 @@ public class MotorSocketClient {
      */
     public byte[] sendMessage(byte[] message) throws Exception {
         synchronized (this) {
-            if (cf.channel() != null && cf.channel().isActive()) {
+            if (cf != null && cf.channel() != null && cf.channel().isActive()) {
                 ByteBuf byteBuf = cf.channel().alloc().buffer(); //初始化byteBuf
                 byteBuf.writeBytes(message); //将byte[]数组转换为ByteBuf类型
                 cf.channel().writeAndFlush(byteBuf); //写入并刷新

@@ -1,6 +1,5 @@
 package com.bdl.airecovery.activity;
 
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,7 +25,6 @@ import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bdl.airecovery.MyApplication;
 import com.bdl.airecovery.R;
 import com.bdl.airecovery.appEnum.LoginResp;
@@ -56,42 +54,56 @@ import com.google.gson.Gson;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-
 import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.bdl.airecovery.contoller.Writer.setInitialBounce;
-import static com.bdl.airecovery.contoller.Writer.setKeepArmTorque;
 import static com.bdl.airecovery.contoller.Writer.setParameter;
 import static java.lang.Math.abs;
 
 @ContentView(R.layout.activity_mode_standard)
 public class StandardModeActivity extends BaseActivity {
-    //TODO:发送训练结果,顺反向力存入设置表
+    /**
+     * 运动次数，当用户执行完一次拉过来，力臂回去的过程之后，num++
+     */
+    private int num = 0;
 
+    /**
+     * 顺向力，即拉过程中电机输出的阻力
+     */
+    private int positiveTorqueLimited;
 
-    //TODO:电机相关
-    private boolean isNeedHelp = true;
-    private int num = 0; //次数
-    private int positiveTorqueLimited; //顺向力
-    private int negativeTorqueLimited; //反向力
-    private int frontLimitedPosition; //前方限制
-    private int rearLimitedPosition; //后方限制
-    private int deviceType = MyApplication.getInstance().getCurrentDevice().getDeviceType(); //设备类型
+    /**
+     * 反向力，即返回过程中电机输出的阻力
+     */
+    private int negativeTorqueLimited;
+
+    /**
+     * 前方限制，运动过程中最前方的限位
+     */
+    private int frontLimitedPosition;
+
+    /**
+     * 后方限制，运动过程中最后方的限位
+     */
+    private int rearLimitedPosition;
+
+    /**
+     * 为true时，允许计数
+     */
     private boolean allowRecordNum = true; //允许计数
+
+    private int deviceType = MyApplication.getInstance().getCurrentDevice().getDeviceType(); //设备类型
     private String errorID; //错误ID
     private CommonDialog errorDialog; //错误提示框
     //double rate = MyApplication.getCurrentRate();
@@ -349,7 +361,7 @@ public class StandardModeActivity extends BaseActivity {
                         case 1: //拉设备
                             Writer.setParameter(frontLimitedPosition / 10000 * 4856, MotorConstant.SET_FRONTLIMIT);
                             Writer.setParameter(rearLimitedPosition / 10000 * 4856, MotorConstant.SET_REARLIMIT);
-                            //初始化速度
+                            //将各种初始化参数写入电机
                             setParameter(calibrationInProcess.getGoingTorque() * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
                             setParameter(calibrationInProcess.getReturnTorque()* 100, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
                             setParameter(calibrationInProcess.getGoingSpeed()* 100, MotorConstant.SET_GOING_SPEED);
@@ -564,6 +576,7 @@ public class StandardModeActivity extends BaseActivity {
                     int currentSpeed = Math.abs(Integer.valueOf(Reader.getRespData(MotorConstant.READ_ROTATIONAL_SPEED)));
                     int currentTorque = Integer.valueOf(Reader.getRespData(MotorConstant.READ_TORQUE));
                     String currentLocation = Reader.getRespData(MotorConstant.READ_ACTUAL_LOCATION);
+                    // 根据当前位置获取该位置的标定参数
                     calibrationInProcess = calibrationUtil.getCalibrationsByCurrentPosition(calibrations, Integer.parseInt(currentLocation) / 10000);
                     setParameter(calibrationInProcess.getGoingTorque() * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
                     setParameter(calibrationInProcess.getReturnTorque()* 100, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
@@ -571,7 +584,8 @@ public class StandardModeActivity extends BaseActivity {
                     setParameter(calibrationInProcess.getReturnSpeed()* 100, MotorConstant.SET_BACK_SPEED);
                     setParameter((calibrationInProcess.getBounce() + calibrationInProcess.getGoingTorque()) * 100, MotorConstant.SET_INITIAL_BOUNCE);
                     setParameter(calibrationInProcess.getPullThresholdVal() * 100, MotorConstant.SET_PULL_THRESHOLD);
-                    int difference = Integer.parseInt(currentLocation) - lastLocation[0]; //本次位置和上次读到的位置差
+                    // 本次位置和上次读到的位置差
+                    int difference = Integer.parseInt(currentLocation) - lastLocation[0];
                     if (currentSpeed <= 10) {
                         haveStopped[0] = true;
                     }
@@ -594,11 +608,6 @@ public class StandardModeActivity extends BaseActivity {
                         lastLocation[0] = Integer.parseInt(currentLocation);
                     } else if (difference < -20000) {//去程
                         //转速超过500，且与最新的限位比较，如果距离大于20000，则可以继续更改，考虑一些延时的因素
-                        Log.e("----", String.valueOf(currentTorque));
-//                        if (currentTorque < -35) {
-//                            Log.e("----", "来程速度设置为0");
-//                            setParameter(0, MotorConstant.SET_GOING_SPEED);
-//                        }
                         if (currentSpeed >= 450 && currentSpeed <= 1000 && Integer.valueOf(currentLocation) > rearLimitedPosition + 50000) {
                             int leads = currentSpeed / 150 - 2; //提前量
                             setParameter(leads * 10000, MotorConstant.SET_LEADS);
@@ -608,7 +617,6 @@ public class StandardModeActivity extends BaseActivity {
                         }
                         //超过后方限制
                         if (Integer.valueOf(currentLocation) < rearLimitedPosition + 100000) {
-//                            setParameter(MotorConstant.speed, MotorConstant.SET_BACK_SPEED);
                             setParameter(90 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED1);
                             countFlag[0] = true; //允许计数
                         }
@@ -778,6 +786,10 @@ public class StandardModeActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        // 取消电机运动过程的timer，并进行电机初始化
+        // 由于初始化需要一定的实时性，所以不要写在onDestroy方法中；
+        // 执行finnish方法后会首先执行onPause方法；
+        // onDestroy会在内存回收之后才执行
         timer.cancel();
         MotorProcess.motorInitialization();
     }
