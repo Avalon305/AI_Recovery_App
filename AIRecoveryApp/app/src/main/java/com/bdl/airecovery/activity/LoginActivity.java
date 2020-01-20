@@ -307,21 +307,21 @@ public class LoginActivity extends BaseActivity {
                     startBluetooth(readerConvertIntoMAC(usb_edittext.getText().toString()));//开启蓝牙扫描
                     usb_edittext.setText(null);
                 }
-                //若手环不为十六位，提示其手环不可用，并制空手环Mac地址
-                else if(usb_edittext.length() != 16){
-                    commonDialog9 = new CommonDialog(LoginActivity.this);
-                    commonDialog9.setTitle("温馨提示");
-                    commonDialog9.setMessage("该手环不可用，请使用指定手环!");
-                    commonDialog9.setPositiveBtnText("我知道了");
-                    commonDialog9.setOnPositiveClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            commonDialog9.dismiss();
-                            //设置输入框为空
-                            usb_edittext.setText(null);
-                        }
-                    });
-                    commonDialog9.show();
-                }
+//                //若手环不为十六位，提示其手环不可用，并制空手环Mac地址
+//                else if(usb_edittext.length() != 16){
+//                    commonDialog9 = new CommonDialog(LoginActivity.this);
+//                    commonDialog9.setTitle("温馨提示");
+//                    commonDialog9.setMessage("该手环不可用，请使用指定手环!");
+//                    commonDialog9.setPositiveBtnText("我知道了");
+//                    commonDialog9.setOnPositiveClickListener(new View.OnClickListener() {
+//                        public void onClick(View v) {
+//                            commonDialog9.dismiss();
+//                            //设置输入框为空
+//                            usb_edittext.setText(null);
+//                        }
+//                    });
+//                    commonDialog9.show();
+//                }
             }
         });
     }
