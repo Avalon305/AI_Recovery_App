@@ -20,6 +20,11 @@ android {
             main { jni.srcDirs = [] }
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 configurations.all {
@@ -45,5 +50,6 @@ dependencies {
     implementation 'commons-codec:commons-codec:20041127.091804'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.1'
     implementation 'com.clj.fastble:FastBleLib:2.3.4'
-
+    implementation files('libs\\poi-4.0.1.jar')
+    implementation 'com.github.angads25:filepicker:1.1.1'
 }

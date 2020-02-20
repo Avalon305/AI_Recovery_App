@@ -144,4 +144,12 @@ public class SegmentCalibration {
                 ", pullThresholdVal=" + pullThresholdVal +
                 '}';
     }
+
+    public static String[] headerData() {
+        return new String[]{
+                "id",
+                "force", "segmentPosition", "goingTorque", "returnTorque",
+                "goingSpeed", "returnSpeed", "bounce", "pullThresholdVal"};
+    }
+
 }

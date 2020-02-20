@@ -15,10 +15,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,21 +26,31 @@ import com.bdl.airecovery.R;
 import com.bdl.airecovery.base.BaseActivity;
 import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.InputDialog;
-import com.bdl.airecovery.dialog.MenuDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
-import com.bdl.airecovery.entity.Device;
+import com.bdl.airecovery.entity.SegmentCalibration;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.netty.DataSocketClient;
+import com.bdl.airecovery.util.ExcelReaderUtil;
 import com.bdl.airecovery.util.WifiUtils;
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
-import org.xutils.ex.DbException;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -301,6 +309,108 @@ public class SystemSettingActivity extends BaseActivity {
             }
         });
         dialog.show();
+    }
+
+    /**
+     * 导入Excel的数据到segment_calibration表
+     * @param view
+     */
+    @Event(R.id.btn_import_excel)
+    private void importExcelClick(View view) {
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+        FilePickerDialog dialog = new FilePickerDialog(SystemSettingActivity.this,properties);
+        dialog.setTitle("Select a File");
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                // files is the array of the paths of files selected by the Application User.
+                if (!files[0].endsWith(".xls")) {
+                    Toast toast = Toast.makeText(SystemSettingActivity.this, "非XLS文件不能导入", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                String filePath = files[0];
+
+                // 读取Excel
+                List<SegmentCalibration> scDataList = ExcelReaderUtil.readExcel(filePath);
+                if (null == scDataList) return;
+
+                // 更新或新增数据至数据库
+                DbManager dbManager = MyApplication.getInstance().getDbManager();
+                try {
+                    dbManager.dropTable(SegmentCalibration.class);
+                    dbManager.save(scDataList);
+
+                    Toast toast = Toast.makeText(SystemSettingActivity.this, "导入成功", Toast.LENGTH_LONG);
+                    toast.show();
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        dialog.show();
+    }
+
+
+
+    /**
+     * 将segment_calibration表的数据导出Excel
+     * @param view
+     */
+    @Event(R.id.btn_export_excel)
+    private void exportExcelClick(View view) {
+        HSSFWorkbook workbook = new HSSFWorkbook(); // 创建HSSF工作簿
+        HSSFSheet sheet = workbook.createSheet(); // 创建页
+
+        //表头
+        HSSFRow headerRow = sheet.createRow(0);
+
+        HSSFCell cell;
+
+        String[] headerContent = SegmentCalibration.headerData();
+        for (int i = 0; i < headerContent.length; i++) {
+            cell = headerRow.createCell(i);
+            cell.setCellValue(headerContent[i]);
+        }
+
+        //数据
+        try {
+            List<SegmentCalibration> scList = MyApplication.getInstance().getDbManager().findAll(SegmentCalibration.class);
+            int i = 1; //当前行数
+            for (SegmentCalibration sc : scList) {
+                HSSFRow dataRow = sheet.createRow(i++);
+                dataRow.createCell(0).setCellValue(sc.getId());
+                dataRow.createCell(1).setCellValue(sc.getForce());
+                dataRow.createCell(2).setCellValue(sc.getSegmentPosition());
+                dataRow.createCell(3).setCellValue(sc.getGoingTorque());
+                dataRow.createCell(4).setCellValue(sc.getReturnTorque());
+                dataRow.createCell(5).setCellValue(sc.getGoingSpeed());
+                dataRow.createCell(6).setCellValue(sc.getReturnSpeed());
+                dataRow.createCell(7).setCellValue(sc.getBounce());
+                dataRow.createCell(8).setCellValue(sc.getPullThresholdVal());
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream file = new FileOutputStream("/mnt/sdcard/scdata.xls");
+            workbook.write(file);
+            file.close();
+            Toast toast = Toast.makeText(SystemSettingActivity.this, "导出成功 /mnt/sdcard/scdata.xls", Toast.LENGTH_LONG);
+            toast.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -564,4 +674,5 @@ public class SystemSettingActivity extends BaseActivity {
             );
         }
     }
+
 }
