@@ -130,21 +130,24 @@ public class MotorService extends Service {
         String homingAvailable = Reader.getStatus(Reader.StatusBit.HOMING_POSIAVAILABLE);
         String ready = Reader.getStatus(Reader.StatusBit.READY);
         String inhibit = Reader.getStatus(Reader.StatusBit.INHIBIT);
-        //防止定位的时候力矩过小，带不起来
+        String switchStatus = Reader.getStatus(Reader.StatusBit.SWITCH_STATUS);
         try {
             setParameter(40 * 100, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
             setParameter(40 * 100, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "联测定位初始状态位->" +
-                "HomingAvailable:" + homingAvailable + " " +
-                "Ready:" + ready + " " +
-                "inhibit" + inhibit + " ");
-        if (homingAvailable.equals("0")
-                && ready.equals("0")
-                && inhibit.equals("1")) { //第一次上电
-            //开机以后上使能
+        if ("0".equals(homingAvailable)
+                && "0".equals(ready)
+                && "1".equals(inhibit)) { //第一次上电
+
+            //TODO: need test
+            if ("1".equals(switchStatus)) { //初始位置在开关处
+                setParameter(100, MotorConstant.SET_HOMING_MODE);
+            } else {
+                setParameter(9, MotorConstant.SET_HOMING_MODE);
+            }
+            //上使能
             Writer.setParameter(1, MotorConstant.MOTOR_ENABLE);
             Thread.sleep(1000);
             Writer.setParameter(0, MotorConstant.MOTOR_ENABLE);

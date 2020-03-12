@@ -13,6 +13,7 @@ public class Reader {
 
     //各状态位信息
     public enum StatusBit {
+        SWITCH_STATUS(0),
         /**
          * 急停
          */
