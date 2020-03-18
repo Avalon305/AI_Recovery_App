@@ -165,7 +165,12 @@ public class MotorService extends Service {
             sendBroadcast(locationIntent);
         } else if (homingAvailable.equals("0")
                 && ready.equals("1")
-                && inhibit.equals("0")) { //上电一次以后再次进入联测定位页面
+                && inhibit.equals("0")) {
+            if ("1".equals(switchStatus)) { //初始位置在开关处
+                setParameter(100, MotorConstant.SET_HOMING_MODE);
+            } else {
+                setParameter(9, MotorConstant.SET_HOMING_MODE);
+            }
             //step 2:进入寻零模式
             setParameter(1, MotorConstant.OPERATION_MODE);
             //step 3:发送HomingStartStop命令
