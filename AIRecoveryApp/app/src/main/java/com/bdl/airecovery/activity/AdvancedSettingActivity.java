@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,7 +31,9 @@ import com.bdl.airecovery.dialog.CommonDialog;
 import com.bdl.airecovery.dialog.InputDialog;
 import com.bdl.airecovery.dialog.MenuDialog;
 import com.bdl.airecovery.dialog.SmallPwdDialog;
+import com.bdl.airecovery.entity.DTO.StrengthTest;
 import com.bdl.airecovery.entity.Device;
+import com.bdl.airecovery.entity.SegmentCalibration;
 import com.bdl.airecovery.entity.Setting;
 import com.bdl.airecovery.util.WifiUtils;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -42,6 +45,7 @@ import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,6 +78,8 @@ public class AdvancedSettingActivity extends BaseActivity {
     private QMUIRoundButton gotoCalibration; //标定界面入口
     @ViewInject(R.id.ic_advanced_setting)
     private ImageView iconAdSetting;
+    @ViewInject(R.id.tv_adset_passive_torque)
+    private TextView tvPassiveTorque;
 
     Setting setting = null; //接收数据库数据的Setting对象
     String deviceNameArray[] = getDeviceNameArray(); //获取设备名称数组
@@ -132,21 +138,24 @@ public class AdvancedSettingActivity extends BaseActivity {
                 setting.setCanQuickLogin(null);
                 setting.setCanStrengthTest(null);
                 setting.setMedicalSettingPassword("admin"); //默认密码
+                setting.setPassiveTorque(null);
             }
             //处理数据库中查询到的数据
             setTextView(tvDeviceName, setting.getDeviceName());
             //版本
             setTextView(tvVersion, setting.getVersion());
             //是否开启快速登录
-            String canQuickLogin = setting.getCanQuickLogin() == true ? "开启":"关闭";
+            String canQuickLogin = setting.getCanQuickLogin() ? "开启":"关闭";
             setTextView(tvQuickLogin, "当前状态：" + canQuickLogin);
             btnQuickLogin.setText(canQuickLogin);
             //是否开启肌力测试
-            String canStrengthTest = setting.getCanStrengthTest() == true ? "开启":"关闭";
+            String canStrengthTest = setting.getCanStrengthTest() ? "开启":"关闭";
             setTextView(tvStrengthTest, "当前状态：" + canStrengthTest);
             btnStrengthTest.setText(canStrengthTest);
             //医护设置密码
             setTextView(tvMedicalPwd, setting.getMedicalSettingPassword());
+            //
+            setTextView(tvPassiveTorque, String.valueOf(setting.getPassiveTorque()));
         }
     }
 
@@ -195,7 +204,7 @@ public class AdvancedSettingActivity extends BaseActivity {
         }
 
         final MenuDialog menuDialog = new MenuDialog(AdvancedSettingActivity.this);
-        menuDialog.setTitle("选择训练模式");
+        menuDialog.setTitle("选择设备类型");
         menuDialog.setMenuItems(menuItemsList);
         menuDialog.setSelectedIndex(getCurrentDeviceIndex());
         //ListView子项点击事件监听
@@ -236,8 +245,7 @@ public class AdvancedSettingActivity extends BaseActivity {
      */
     @Event(R.id.btn_goto_calibration)
     private void gotoCalibration(View view) {
-        Intent intent = new Intent(AdvancedSettingActivity.this, CalibrationActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(AdvancedSettingActivity.this, SegmentCalibrationActivity.class));
         AdvancedSettingActivity.this.finish();
     }
 
@@ -324,6 +332,52 @@ public class AdvancedSettingActivity extends BaseActivity {
         initImmersiveMode(); //隐藏虚拟按键和状态栏
     }
 
+    /**
+     * 修改设备类型
+     *
+     * @param view
+     */
+    @Event(R.id.btn_passive_torque)
+    private void setPassiveTorqueClick(View view) {
+        isModify = true;
+        final List<String> menuItemsList = Arrays.asList("5", "10", "15", "20", "25", "30");
+        final MenuDialog torqueMenuDialog = new MenuDialog(AdvancedSettingActivity.this);
+        torqueMenuDialog.setTitle("选择力矩大小");
+        torqueMenuDialog.setMenuItems(menuItemsList);
+        torqueMenuDialog.setSelectedIndex(menuItemsList.indexOf(tvPassiveTorque.getText().toString()));
+        //ListView子项点击事件监听
+        torqueMenuDialog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //更新当前选择项的索引
+                tvPassiveTorque.setText(menuItemsList.get(i));
+                torqueMenuDialog.dismiss();
+            }
+        });
+        //模态框隐藏导航栏
+        torqueMenuDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        torqueMenuDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        //布局位于状态栏下方
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        //全屏
+                        //View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        //隐藏导航栏
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                if (Build.VERSION.SDK_INT >= 19) {
+                    uiOptions |= 0x00001000;
+                } else {
+                    uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                }
+                torqueMenuDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+            }
+        });
+        torqueMenuDialog.show();
+    }
+
 
     /**
      * 按下确认按钮更新数据库并重启
@@ -335,7 +389,6 @@ public class AdvancedSettingActivity extends BaseActivity {
         ObjectAnimator rotate = ObjectAnimator.ofFloat(imgUpdate, "rotation", 0f, 360f).setDuration(800);
         rotate.setInterpolator(new BounceInterpolator());
         rotate.start();
-
         new UpdateAsyncTask().execute(); //执行更新数据库的异步任务
     }
 
@@ -380,6 +433,7 @@ public class AdvancedSettingActivity extends BaseActivity {
         setting.setCanQuickLogin(btnQuickLogin.getText().equals("开启"));
         setting.setCanStrengthTest(btnStrengthTest.getText().equals("开启"));
         setting.setMedicalSettingPassword(tvMedicalPwd.getText().toString());
+        setting.setPassiveTorque(Integer.valueOf(tvPassiveTorque.getText().toString()));
         return setting;
     }
 

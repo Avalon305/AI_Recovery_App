@@ -38,6 +38,17 @@ public class Setting {
     @Column(name = "medicalSettingPassword")
     private String medicalSettingPassword; //医护设置进入密码
 
+    @Column(name = "passiveTorque")
+    private Integer passiveTorque; //被动模式的力矩大小
+
+    public Integer getPassiveTorque() {
+        return passiveTorque;
+    }
+
+    public void setPassiveTorque(Integer passiveTorque) {
+        this.passiveTorque = passiveTorque;
+    }
+
     public int getId() {
         return id;
     }
@@ -122,6 +133,7 @@ public class Setting {
                 ", canQuickLogin=" + canQuickLogin +
                 ", canStrengthTest=" + canStrengthTest +
                 ", medicalSettingPassword='" + medicalSettingPassword + '\'' +
+                ", passiveTorque=" + passiveTorque +
                 '}';
     }
 }

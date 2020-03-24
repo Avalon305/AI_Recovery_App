@@ -128,8 +128,6 @@ public class MyApplication extends MultiDexApplication {
             e.printStackTrace();
         }
 
-
-
         setCurrentDevice();//根据数据库中存储的当前设备名称，查询出当前设备的一些固定信息
         //启动重传service。
         startReSendService();
@@ -311,6 +309,7 @@ public class MyApplication extends MultiDexApplication {
             setting.setCanQuickLogin(true);
             setting.setCanStrengthTest(false);
             setting.setMedicalSettingPassword("admin");
+            setting.setPassiveTorque(20);
             db.save(setting);
         }
         //标定参数

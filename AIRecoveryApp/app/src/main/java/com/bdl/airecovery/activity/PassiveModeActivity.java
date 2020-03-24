@@ -65,13 +65,12 @@ import static com.bdl.airecovery.contoller.Writer.setParameter;
 @ContentView(R.layout.activity_mode_passive)
 public class PassiveModeActivity extends BaseActivity {
 
-
     /**
      * 电机相关
      */
     private int num = 0;
-    private static final int positiveTorqueLimited = 5 * 100;
-    private static final int negativeTorqueLimited = 5 * 100;
+    private int positiveTorqueLimited = 10 * 100;
+    private int negativeTorqueLimited = 10 * 100;
     private int     frontLimitedPosition;
     private int rearLimitedPosition;
     private int deviceType = MyApplication.getInstance().getCurrentDevice().getDeviceType(); //获得设备信息
@@ -364,9 +363,14 @@ public class PassiveModeActivity extends BaseActivity {
             @Override
             public void run() {
                 try {
-                    Writer.setParameter(positiveTorqueLimited, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
-                    Writer.setParameter(negativeTorqueLimited, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
-                    Writer.setParameter(15 * 100, MotorConstant.SET_PUSH_TORQUE);
+                    DbManager dbManager = MyApplication.getInstance().getDbManager();
+                    Setting setting = dbManager.selector(Setting.class).findFirst();
+                    positiveTorqueLimited = setting.getPassiveTorque() * 100;
+                    negativeTorqueLimited = setting.getPassiveTorque() * 100;
+                    System.out.println("==========================" + negativeTorqueLimited + "");
+                    setParameter(positiveTorqueLimited, MotorConstant.SET_POSITIVE_TORQUE_LIMITED);
+                    setParameter(negativeTorqueLimited, MotorConstant.SET_NEGATIVE_TORQUE_LIMITED);
+                    setParameter(15 * 100, MotorConstant.SET_PUSH_TORQUE);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
