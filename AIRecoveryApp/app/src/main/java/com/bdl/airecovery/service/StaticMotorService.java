@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bdl.airecovery.constant.StaticMotorConstant;
@@ -189,9 +190,7 @@ public class StaticMotorService extends Service{
         Log.e(TAG,"收到报文："+Arrays.toString(util.responseMsg));
         byte[] analyzeHead = {0, 0, 0, 0, 0, 0, 0, 0};
         if (util.responseMsg.length >= 8) {
-            for (int i = 0; i < 8; i++) {
-                analyzeHead[i] = util.responseMsg[i];
-            }
+            System.arraycopy(util.responseMsg, 0, analyzeHead, 0, 8);
         }
         if (Arrays.equals(util.responseMsg,StaticMotorConstant.ANSWER_MOVE)){
             Log.d(TAG,"收到了位移应答");
@@ -293,6 +292,7 @@ public class StaticMotorService extends Service{
             if (util.onInitSet && util.limitType == 2){
                 Log.d(TAG,"标定流程2：标定指令");
                 util.onInitSet = false;
+//                allowLimitBroad = false; // 防止触底后电机被困于限位开关范围内，暂停对限位开关的响应
                 initMotor(util.StaticMotor);
                 new Thread(){
                     @Override
@@ -301,16 +301,18 @@ public class StaticMotorService extends Service{
                         while (true) {
                             try {
                                 Thread.sleep(1000);
+
+                                Log.d(TAG, "run: 是否开始标定："+util.onInitGet);
+                                if (!util.onInitGet){
+                                    initMotor(util.StaticMotor);
+                                } else {
+                                    Log.d(TAG, "run: 不发标定了！！！！！！！！");
+                                    Thread.sleep(1000);
+                                    allowLimitBroad = true;
+                                    break;
+                                }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
-                            }
-                            Log.d(TAG, "run: 是否开始标定："+util.onInitGet);
-                            if (!util.onInitGet){
-                                initMotor(util.StaticMotor);
-                            } else {
-                                Log.d(TAG, "run: 不发标定了！！！！！！！！");
-                                allowLimitBroad = true;
-                                break;
                             }
                         }
                     }
@@ -392,12 +394,7 @@ public class StaticMotorService extends Service{
         registerReceiver(initLocateReceiver, intentFilter);
         Log.d(TAG,"静态电机服务已创建");
         controler = new Controler();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SerialSet();
-            }
-        }).start();
+        new Thread(this::SerialSet).start();
     }
     @Override
     public void onDestroy() {
@@ -511,9 +508,7 @@ public class StaticMotorService extends Service{
             byte checkByte = CodecUtils.getXor(checkMsg);
             sendMsg[8] = dataByte;
             sendMsg[9] = checkByte;
-            for (int i = 0; i < 2; i++){
-                sendMsg[i + 10] = StaticMotorConstant.TILL[i];
-            }
+            System.arraycopy(StaticMotorConstant.TILL, 0, sendMsg, 10, 2);
             util.StaticMotor.sendByteArray(sendMsg);
             Log.d(TAG,"发送了设置位置:"+Arrays.toString(sendMsg));
         }
@@ -661,9 +656,8 @@ public class StaticMotorService extends Service{
                 StaticMotorUtil_1.receiveMsg[i] = buffer[i];
                 StaticMotorUtil_1.receive_Head[i] = buffer[i];
             }
-            for (int i = 2; i < size - 2; i++) {
-                StaticMotorUtil_1.receiveMsg[i] = buffer[i];
-            }
+            if (size - 2 - 2 >= 0)
+                System.arraycopy(buffer, 2, StaticMotorUtil_1.receiveMsg, 2, size - 2 - 2);
             for (int i = size - 2; i < size; i++) {
                 StaticMotorUtil_1.receiveMsg[i] = buffer[i];
                 StaticMotorUtil_1.receive_Till[i + 2 - size] = buffer[i];
@@ -696,9 +690,8 @@ public class StaticMotorService extends Service{
                 StaticMotorUtil_2.receiveMsg[i] = buffer[i];
                 StaticMotorUtil_2.receive_Head[i] = buffer[i];
             }
-            for (int i = 2; i < size - 2; i++) {
-                StaticMotorUtil_2.receiveMsg[i] = buffer[i];
-            }
+            if (size - 2 - 2 >= 0)
+                System.arraycopy(buffer, 2, StaticMotorUtil_2.receiveMsg, 2, size - 2 - 2);
             for (int i = size - 2; i < size; i++) {
                 StaticMotorUtil_2.receiveMsg[i] = buffer[i];
                 StaticMotorUtil_2.receive_Till[i + 2 - size] = buffer[i];
@@ -724,14 +717,13 @@ public class StaticMotorService extends Service{
      * 限位广播接收类
      */
     public class InitLocateReceiver extends BroadcastReceiver {
-
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, @NonNull Intent intent) {
             if (allowLimitBroad) {
                 allowLimitBroad = false;
                 String intentAction = intent.getAction();
                 try {
-                    if (intentAction.equals("init_locate")) {
+                    if (intentAction != null && intentAction.equals("init_locate")) {
                         if (intent.getStringExtra("seat_motor") != null) {
                             if (intent.getStringExtra("seat_motor").equals("top_limit")) {
                                 sendLimit(StaticMotorUtil_1.StaticMotor, true);
