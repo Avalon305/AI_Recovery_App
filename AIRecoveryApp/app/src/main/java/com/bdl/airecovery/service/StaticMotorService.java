@@ -72,8 +72,10 @@ public class StaticMotorService extends Service{
     private static String TAG = "静态电机service";  // 日志TAG（过滤日志用）
     private byte[] receive_Flag = {0x55, (byte) 0xAA};  // 电机报文分隔符，分隔符内为报文具体内容（用于对比接收到的实际报文分隔符是否与此分隔符一致）
     private Intent locateBroadcast = new Intent("locate");  // 定位广播，目前只在训练前定位、设置界面使用
-    private InitLocateReceiver initLocateReceiver = new InitLocateReceiver();  // 限位广播监听类，收到该广播则向电机发送限位通知（通知电机到达临界点）
-    private volatile boolean allowLimitBroad = false;  // 控制对限位广播的接收开关，true为处理此次广播，false为忽略此次广播
+    private InitLocateReceiver initLocateReceiver;  // 限位广播监听类，收到该广播则向电机发送限位通知（通知电机到达临界点）
+    private volatile boolean allowLimitBroad = false;  // 控制对限位广播的接收开关，true为处理此次广播，false为忽略此次广播，或废弃
+    private volatile long lastActiveTime;  // 上次限位广播触发时间（ms），用于替代allowLimitBroad的线程睡眠阻挡异常限位广播方案
+    private volatile String lastLimitType = "";  // 上次限位广播触发类型（“top”/“bot”），用于替代allowLimitBroad的线程睡眠阻挡异常限位广播方案
     //静态电机工具包实例（每个电机的状态量等）
     private class StaticMotorUtil{
         public byte[] receive_Head = {0,0};  // 报文首部分隔符
@@ -212,19 +214,19 @@ public class StaticMotorService extends Service{
                 moveDown(util.StaticMotor);
                 //TODO
                 util.onRePosition = true;
-                new Thread(){
-                    @Override
-                    public void run() {
-                        super.run();
-                        try {
-                            Thread.sleep(1000 * 2);
-                            allowLimitBroad = true;
-                            Thread.sleep(1000 * 5);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
+//                new Thread(){
+//                    @Override
+//                    public void run() {
+//                        super.run();
+//                        try {
+//                            Thread.sleep(1000 * 2);
+//                            allowLimitBroad = true;
+//                            Thread.sleep(1000 * 5);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }.start();
             } else if (!util.isSeat) {
                 moveDown(util.StaticMotor);
                 //TODO
@@ -307,7 +309,7 @@ public class StaticMotorService extends Service{
                                     initMotor(util.StaticMotor);
                                 } else {
                                     Log.d(TAG, "run: 不发标定了！！！！！！！！");
-                                    Thread.sleep(1000);
+//                                    Thread.sleep(1000);
                                     allowLimitBroad = true;
                                     break;
                                 }
@@ -391,6 +393,7 @@ public class StaticMotorService extends Service{
         super.onCreate();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("init_locate");
+        initLocateReceiver = new InitLocateReceiver();
         registerReceiver(initLocateReceiver, intentFilter);
         Log.d(TAG,"静态电机服务已创建");
         controler = new Controler();
@@ -488,7 +491,7 @@ public class StaticMotorService extends Service{
     //运动到指定位置（训练前定位、设置界面）
     private void setPosition(StaticMotorUtil util,int position) {
         if (util.isSeat) {
-            allowLimitBroad = true;
+            allowLimitBroad = true;  // 或废弃
         }
         if (util.direction == 1){             //如果装反了则反向设置
             position = 100 - position;
@@ -516,7 +519,7 @@ public class StaticMotorService extends Service{
     //标定流程(连测定位)--------正在使用
     private boolean initSet(StaticMotorUtil util){
         if (util.isSeat) {
-            allowLimitBroad = true;
+            allowLimitBroad = true;  // 或废弃
             util.limitType = 0;
             util.onRePosition = false;//是否标定完成正在复位
             util.isRePositionSuccess = false;//是否复位成功
@@ -719,38 +722,25 @@ public class StaticMotorService extends Service{
     public class InitLocateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, @NonNull Intent intent) {
-            if (allowLimitBroad) {
-                allowLimitBroad = false;
-                String intentAction = intent.getAction();
-                try {
-                    if (intentAction != null && intentAction.equals("init_locate")) {
-                        if (intent.getStringExtra("seat_motor") != null) {
-                            if (intent.getStringExtra("seat_motor").equals("top_limit")) {
-                                sendLimit(StaticMotorUtil_1.StaticMotor, true);
-                                StaticMotorUtil_1.limitType = 1;
-                                Log.e(TAG,"=====收到广播======top_limit");
+            String limitType = intent.getStringExtra("seat_motor");
+            // 当两次触发间隔小于1000ms，忽略本次广播
+            if (System.currentTimeMillis() - lastActiveTime < 1000) return;
+            // 当触发类型为空 或 与上次触发类型相同（同为顶部或同为底部），忽略本次广播
+            if (limitType == null || limitType.equals(lastLimitType)) return;
 
-//                            initSetLimit(StaticMotorUtil_1, true);
-                            } else if (intent.getStringExtra("seat_motor").equals("bot_limit")) {
-                                sendLimit(StaticMotorUtil_1.StaticMotor, false);
-                                StaticMotorUtil_1.limitType = 2;
-                                Log.e(TAG,"=====收到广播======bot_limit");
-//                            initSetLimit(StaticMotorUtil_1, false);
-                            }
-                        }
-//                    else if (intent.getStringExtra("static_motor2") != null) {
-//                        if (intent.getStringExtra("static_motor2").equals("top_limit")) {
-//                            sendLimit(StaticMotorUtil_2.StaticMotor, true);
-////                            initSetLimit(StaticMotorUtil_2, true);
-//                        } else if (intent.getStringExtra("static_motor2").equals("bot_limit")) {
-//                            sendLimit(StaticMotorUtil_2.StaticMotor, false);
-////                            initSetLimit(StaticMotorUtil_2, false);
-//                        }
-//                    }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            lastLimitType = intent.getStringExtra("seat_motor");  // 将当前时间设为上次触发时间，阻挡触发过快广播
+            lastActiveTime = System.currentTimeMillis();  // 将当前触发类型设为上次触发类型，阻挡相同类型广播
+
+            if (limitType.equals("top_limit")) {
+                // 正常触发顶部广播
+                sendLimit(StaticMotorUtil_1.StaticMotor, true);
+                StaticMotorUtil_1.limitType = 1;
+                Log.e(TAG,"StaticMotor广播：正常top_limit");
+            } else if (limitType.equals("bot_limit")) {
+                // 正常触发底部广播
+                sendLimit(StaticMotorUtil_1.StaticMotor, false);
+                StaticMotorUtil_1.limitType = 2;
+                Log.e(TAG,"StaticMotor广播：正常bot_limit");
             }
         }
     }
