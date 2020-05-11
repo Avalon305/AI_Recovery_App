@@ -67,49 +67,51 @@ import java.util.Arrays;
  */
 
 public class StaticMotorService extends Service{
-
+    // 设置参数
+    private static final long LIMIT_ACTIVE_DELAY_MILLIS = 1000;  // 限位广播生效延迟（单位毫秒）：距上次生效[1000]毫秒后可再次生效
     //全局变量
-    private static String TAG = "静态电机service";  // 日志TAG（过滤日志用）
-    private byte[] receive_Flag = {0x55, (byte) 0xAA};  // 电机报文分隔符，分隔符内为报文具体内容（用于对比接收到的实际报文分隔符是否与此分隔符一致）
-    private Intent locateBroadcast = new Intent("locate");  // 定位广播，目前只在训练前定位、设置界面使用
-    private InitLocateReceiver initLocateReceiver;  // 限位广播监听类，收到该广播则向电机发送限位通知（通知电机到达临界点）
-    private volatile boolean allowLimitBroad = false;  // 控制对限位广播的接收开关，true为处理此次广播，false为忽略此次广播，或废弃
-    private volatile long lastActiveTime;  // 上次限位广播触发时间（ms），用于替代allowLimitBroad的线程睡眠阻挡异常限位广播方案
-    private volatile String lastLimitType = "";  // 上次限位广播触发类型（“top”/“bot”），用于替代allowLimitBroad的线程睡眠阻挡异常限位广播方案
+    private static final String TAG             = "静态电机service";            // 日志TAG（过滤日志用）
+    private static final byte[] receiveFlag     = {0x55, (byte) 0xAA};         // 电机报文分隔符，分隔符内为报文具体内容（用于对比接收到的实际报文分隔符是否与此分隔符一致）
+    private Intent              locateBroadcast = new Intent("locate");  // 定位广播，目前只在训练前定位、设置界面使用
+    private InitLocateReceiver  initLocateReceiver;                            // 限位广播监听类，收到该广播则向电机发送限位通知（通知电机到达临界点）
+    private volatile boolean    allowLimitBroad = false;                       // 控制对限位广播的接收开关，true为处理此次广播，false为忽略此次广播，或废弃
+    private volatile boolean    ignoreLimitBroad = false;
+    private volatile long       lastActiveTime;                                // 上次限位广播触发时间（ms），用于替代allowLimitBroad的线程睡眠阻挡异常限位广播方案
+    private volatile String     lastLimitType   = "";                          // 上次限位广播触发类型（“top”/“bot”），用于替代allowLimitBroad的线程睡眠阻挡异常限位广播方案
     //静态电机工具包实例（每个电机的状态量等）
-    private class StaticMotorUtil{
-        public byte[] receive_Head = {0,0};  // 报文首部分隔符
-        public byte[] receive_Till = {0,0};  // 报文尾部分隔符
-        public byte[] receiveMsg;  // 从电机串口收到的报文（未校验）
-        public byte[] responseMsg; // 符合校验的报文
-        public int checkThisPosition;  // 设置此电机需要移动的位置，并检查是否移动到此位置
-        public boolean isPositionNeedCheck = false;  // 电机是否需要检查位置准确性
-        public SerialPortUtils StaticMotor;  // 串口类，对串口开闭读写等操作
-        public int direction = 0;  //安装时是否装反了
+    private static class StaticMotorUtil{
+        byte[]          receiveHead = {0,0};  // 报文首部分隔符
+        byte[]          receiveTill = {0,0};  // 报文尾部分隔符
+        byte[]          receiveMsg;                   // 从电机串口收到的报文（未校验）
+        byte[]          responseMsg;                  // 符合校验的报文
+        int             checkThisPosition;            // 设置此电机需要移动的位置，并检查是否移动到此位置
+        boolean         isPositionNeedCheck = false;  // 电机是否需要检查位置准确性
+        SerialPortUtils staticMotor;                  // 串口类，对串口开闭读写等操作
+        int             direction           = 0;      //安装时是否装反了
 
         //连测定位
-        public boolean onInitSet = false;  //是否处于连测定位（联测定位第一阶段：下降至底端）
-        public boolean onMotorAlive = false;  //是否返回心跳应答
-        public boolean onInitGet = false;  //是否返回了标定应答（联测定位第二阶段：标定过程从底端上升至顶端）
-        public boolean isSeat = false;  //是否是座椅电机
-        public boolean onRePosition = false;  //是否标定完成正在复位（联测定位第三阶段：复位至底端）（座椅电机限定）
-        public boolean isRePositionSuccess = false;  //是否复位成功（座椅电机限定）
-        public int limitType = 0;  //此次接收限位广播类型：0-默认，1-顶部，2-底部（座椅电机限定）
+        boolean onInitSet           = false;  //是否处于连测定位（联测定位第一阶段：下降至底端）
+        boolean onMotorAlive        = false;  //是否返回心跳应答
+        boolean onInitGet           = false;  //是否返回了标定应答（联测定位第二阶段：标定过程从底端上升至顶端）
+        boolean isSeat              = false;  //是否是座椅电机
+        boolean onRePosition        = false;  //是否标定完成正在复位（联测定位第三阶段：复位至底端）（座椅电机限定）
+        boolean isRePositionSuccess = false;  //是否复位成功（座椅电机限定）
+        int     limitType           = 0;      //此次接收限位广播类型：0-默认，1-顶部，2-底部（座椅电机限定）
         //训练前定位
-        public boolean onTrainSet = false;//是否处于训练前定位
+        boolean onTrainSet          = false;  //是否处于训练前定位
     }
     StaticMotorUtil StaticMotorUtil_1 = new StaticMotorUtil();  // 电机1
     StaticMotorUtil StaticMotorUtil_2 = new StaticMotorUtil();  // 电机2（至多2个静态电机接入）
     //联测定位外部专用接口（单词拼错懒得改了）
     public class Controler {
         //连测定位（返回值方式）----目前联测定位界面正在使用，【参数：电机序号（电机1/电机2），是否为座椅电机】，会线程阻塞，需要单独线程执行
-        public boolean initLocate(int MotorIndex, boolean isSeat) {
+        public boolean initLocate(int motorIndex, boolean isSeat) {
             Log.d(TAG, "initLocate: 联测了！！！！！");
             boolean result = false;
-            if (MotorIndex == 1) {
+            if (motorIndex == 1) {
                 StaticMotorUtil_1.isSeat = isSeat;
                 result = initSet(StaticMotorUtil_1);  // 进入联测流程，线程阻塞等待返回联测结果
-            } else if (MotorIndex == 2) {
+            } else if (motorIndex == 2) {
                 StaticMotorUtil_2.isSeat = isSeat;
                 result = initSet(StaticMotorUtil_2);  // 进入联测流程，线程阻塞等待返回联测结果
             } else {
@@ -119,25 +121,25 @@ public class StaticMotorService extends Service{
         }
         //连测定位（广播方式）----暂未使用
         @Deprecated
-        public void initLocate2(int MotorIndex){
-            if (MotorIndex == 1) {
+        public void initLocate2(int motorIndex){
+            if (motorIndex == 1) {
                 initSet2(StaticMotorUtil_1);
-            } else if (MotorIndex == 2) {
+            } else if (motorIndex == 2) {
                 initSet2(StaticMotorUtil_2);
             } else {
                 Log.e(TAG, "initLocate: 无此静态电机");
             }
         }
         //训练前定位（广播方式）
-        public void trainLocate(int MotorIndex,int position,int MotorDirection) {
+        public void trainLocate(int motorIndex,int position,int motorDirection) {
             Log.d(TAG, "trainLocate: 训练前定位了！！！！！！！！！！");
-            Log.d(TAG, "电机为: "+MotorIndex);
+            Log.d(TAG, "电机为: "+motorIndex);
             Log.d(TAG, "位置为: "+position);
-            if (MotorIndex == 1) {
-                StaticMotorUtil_1.direction = MotorDirection;
+            if (motorIndex == 1) {
+                StaticMotorUtil_1.direction = motorDirection;
                 trainSet(StaticMotorUtil_1,position);
-            } else if (MotorIndex == 2) {
-                StaticMotorUtil_2.direction = MotorDirection;
+            } else if (motorIndex == 2) {
+                StaticMotorUtil_2.direction = motorDirection;
                 trainSet(StaticMotorUtil_2,position);
             } else {
                 Log.e(TAG, "initLocate: 无此静态电机");
@@ -153,35 +155,35 @@ public class StaticMotorService extends Service{
      * 串口生命周期
      */
     //设置串口（服务启动时执行）
-    private void SerialSet() {
-        StaticMotorUtil_1.StaticMotor = new SerialPortUtils("/dev/ttyO2",9600);
-        StaticMotorUtil_2.StaticMotor = new SerialPortUtils("/dev/ttyO3",9600);
-        SerialOpen(StaticMotorUtil_1);
-        SerialOpen2(StaticMotorUtil_2);
+    private void serialSet() {
+        StaticMotorUtil_1.staticMotor = new SerialPortUtils("/dev/ttyO2",9600);
+        StaticMotorUtil_2.staticMotor = new SerialPortUtils("/dev/ttyO3",9600);
+        serialOpen(StaticMotorUtil_1);
+        serialOpen2(StaticMotorUtil_2);
     }
     //打开电机1串口,获取串口读写方法
-    private void SerialOpen(StaticMotorUtil util) {
+    private void serialOpen(StaticMotorUtil util) {
         try {
-            util.StaticMotor.openSerialPort();
-            util.StaticMotor.setOnDataReceiveListener(new Recived());
+            util.staticMotor.openSerialPort();
+            util.staticMotor.setOnDataReceiveListener(new Recived());
             Log.d(TAG,"打开电机1串口成功");
         }catch (Exception e){
             Log.e(TAG,"openSerialPort: 打开电机1串口异常：" + e.toString());
         }
     }
     //打开电机2串口
-    private void SerialOpen2(StaticMotorUtil util) {
+    private void serialOpen2(StaticMotorUtil util) {
         try {
-            util.StaticMotor.openSerialPort();
-            util.StaticMotor.setOnDataReceiveListener(new Recived_2());
+            util.staticMotor.openSerialPort();
+            util.staticMotor.setOnDataReceiveListener(new Recived_2());
             Log.d(TAG,"打开电机2串口成功");
         }catch (Exception e){
             Log.e(TAG,"openSerialPort: 打开电机2串口异常：" + e.toString());
         }
     }
     //关闭串口（服务销毁时执行）
-    private void SerialClose(StaticMotorUtil util){
-        util.StaticMotor.closeSerialPort();
+    private void serialClose(StaticMotorUtil util){
+        util.staticMotor.closeSerialPort();
     }
 
     /**
@@ -198,8 +200,8 @@ public class StaticMotorService extends Service{
             Log.d(TAG,"收到了位移应答");
         }else if (Arrays.equals(util.responseMsg,StaticMotorConstant.MOVEDONE)){
             Log.d(TAG,"收到了位移完毕通知");
-            answerMovedone(util.StaticMotor);
-            getPosition(util.StaticMotor);
+            answerMovedone(util.staticMotor);
+            getPosition(util.staticMotor);
             util.isPositionNeedCheck = true;
         }else if (Arrays.equals(util.responseMsg,StaticMotorConstant.ANSWER_START)){
             Log.d(TAG,"收到了开始移动应答");
@@ -207,12 +209,11 @@ public class StaticMotorService extends Service{
             Log.d(TAG,"收到了停止移动应答");
         }else if (Arrays.equals(util.responseMsg,StaticMotorConstant.OVERCURRENT)){
             Log.d(TAG,"收到了过流通知");
-            answerOvercurrent(util.StaticMotor);
+            answerOvercurrent(util.staticMotor);
         }else if (Arrays.equals(util.responseMsg,StaticMotorConstant.FINISH_INIT)){
             Log.d(TAG,"收到了标定完成通知");
             if (util.isSeat && util.limitType == 1) {
-                moveDown(util.StaticMotor);
-                //TODO
+                moveDown(util.staticMotor);
                 util.onRePosition = true;
 //                new Thread(){
 //                    @Override
@@ -228,8 +229,7 @@ public class StaticMotorService extends Service{
 //                    }
 //                }.start();
             } else if (!util.isSeat) {
-                moveDown(util.StaticMotor);
-                //TODO
+                moveDown(util.staticMotor);
                 util.onRePosition = true;
                 locateBroadcast.putExtra("initlocate", true);
                 sendBroadcast(locateBroadcast);
@@ -244,14 +244,14 @@ public class StaticMotorService extends Service{
             }
         }else if (Arrays.equals(analyzeHead,StaticMotorConstant.REACHLIMIT_HEAD)){
             Log.d(TAG,"收到了到达限位通知");
-            answerReachLimit(util.StaticMotor);
+            answerReachLimit(util.staticMotor);
             if (util.onInitSet){
                 if (util.isSeat){
-                    Log.d(TAG,"取消标定，限位开关故障");
+                    Log.d(TAG,"联测定位：取消标定，限位开关故障");
                 } else {
-                    Log.d(TAG,"标定流程2：标定指令");
+                    Log.d(TAG,"联测定位：标定流程2-发送标定指令");
                     util.onInitSet = false;
-                    initMotor(util.StaticMotor);
+                    initMotor(util.staticMotor);
                     new Thread(){
                         @Override
                         public void run() {
@@ -260,13 +260,13 @@ public class StaticMotorService extends Service{
                                 try {
                                     Thread.sleep(1000);
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                    Log.e(TAG, "联测定位：重复标定指令线程睡眠发生中断");
                                 }
-                                Log.d(TAG, "run: 是否开始标定："+util.onInitGet);
+                                Log.d(TAG, "联测定位：是否已开始标定："+util.onInitGet);
                                 if (!util.onInitGet){
-                                    initMotor(util.StaticMotor);
+                                    initMotor(util.staticMotor);
                                 }else {
-                                    Log.d(TAG, "run: 不发标定了！！！！！！！！");
+                                    Log.d(TAG, "联测定位：已开始标定，此线程结束");
                                     break;
                                 }
                             }
@@ -292,10 +292,10 @@ public class StaticMotorService extends Service{
         } else if (Arrays.equals(util.responseMsg,StaticMotorConstant.ANSWER_LIMIT)) {
             Log.d(TAG, "收到了限位通知应答");
             if (util.onInitSet && util.limitType == 2){
-                Log.d(TAG,"标定流程2：标定指令");
+                Log.d(TAG,"联测定位：标定流程2-发送标定指令");
                 util.onInitSet = false;
 //                allowLimitBroad = false; // 防止触底后电机被困于限位开关范围内，暂停对限位开关的响应
-                initMotor(util.StaticMotor);
+                initMotor(util.staticMotor);
                 new Thread(){
                     @Override
                     public void run() {
@@ -303,18 +303,16 @@ public class StaticMotorService extends Service{
                         while (true) {
                             try {
                                 Thread.sleep(1000);
-
-                                Log.d(TAG, "run: 是否开始标定："+util.onInitGet);
-                                if (!util.onInitGet){
-                                    initMotor(util.StaticMotor);
-                                } else {
-                                    Log.d(TAG, "run: 不发标定了！！！！！！！！");
-//                                    Thread.sleep(1000);
-                                    allowLimitBroad = true;
-                                    break;
-                                }
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "联测定位：重复标定指令线程睡眠发生中断");
+                            }
+                            Log.d(TAG, "联测定位：是否已开始标定："+util.onInitGet);
+                            if (!util.onInitGet){
+                                initMotor(util.staticMotor);
+                            } else {
+                                Log.d(TAG, "联测定位：已开始标定，此线程结束");
+                                allowLimitBroad = true;
+                                break;
                             }
                         }
                     }
@@ -334,22 +332,21 @@ public class StaticMotorService extends Service{
         }
     }
     //发送心跳
-    private void sendHeartbeat(SerialPortUtils StaticMotor){
+    private void sendHeartbeat(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.HEARTBEAT;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了心跳"+Arrays.toString(sendMsg));
     }
     //获取位置
-    private void getPosition(SerialPortUtils StaticMotor){
+    private void getPosition(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.GETPOSITION;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了获取位置"+Arrays.toString(sendMsg));
     }
     //校验位置
     private void checkPosition(StaticMotorUtil util){
         util.isPositionNeedCheck = false;
         byte dataByte = util.responseMsg[8];
-//        if (dataByte != util.checkThisPosition){
         if (dataByte < util.checkThisPosition-1 || dataByte > util.checkThisPosition+1){
             Log.e(TAG,"位置有误，重新定位");
             setPosition(util,util.checkThisPosition);
@@ -363,21 +360,21 @@ public class StaticMotorService extends Service{
         }
     }
     //位移完毕应答
-    private void answerMovedone(SerialPortUtils StaticMotor){
+    private void answerMovedone(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.ANSWER_MOVEDONE;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了位移完成应答"+Arrays.toString(sendMsg));
     }
     //过流通知应答
-    private void answerOvercurrent(SerialPortUtils StaticMotor){
+    private void answerOvercurrent(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.ANSWER_OVERCURRENT;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了过流通知应答"+Arrays.toString(sendMsg));
     }
     //到达限位通知应答
-    private void answerReachLimit(SerialPortUtils StaticMotor){
+    private void answerReachLimit(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.ANSWER_REACHLIMIT;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了到达限位通知应答"+Arrays.toString(sendMsg));
     }
 
@@ -397,87 +394,90 @@ public class StaticMotorService extends Service{
         registerReceiver(initLocateReceiver, intentFilter);
         Log.d(TAG,"静态电机服务已创建");
         controler = new Controler();
-        new Thread(this::SerialSet).start();
+        new Thread(this::serialSet).start();
     }
     @Override
     public void onDestroy() {
-        SerialClose(StaticMotorUtil_1);
-        SerialClose(StaticMotorUtil_2);
+        serialClose(StaticMotorUtil_1);
+        serialClose(StaticMotorUtil_2);
         unregisterReceiver(initLocateReceiver);
         super.onDestroy();
     }
     // 指令式外部接口----------设置界面
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        ignoreLimitBroad = true;
+        String motor1Tag = "静态电机1";
+        String motor2Tag = "静态电机2";
         if (intent.getIntExtra("index",0) == 1){      //电机1
             switch (intent.getStringExtra("command")){
                 case "SETPOSITION":
-                    Log.d("静态电机1", "请求设置位置");
+                    Log.d(motor1Tag, "请求设置位置");
                     StaticMotorUtil_1.checkThisPosition = intent.getIntExtra("position",0);
                     StaticMotorUtil_1.direction = intent.getIntExtra("type",0);
                     setPosition(StaticMotorUtil_1,intent.getIntExtra("position",0));
                     break;
                 case "TESTLOCATE":
-                    Log.d("静态电机1", "请求连测定位");
+                    Log.d(motor1Tag, "请求连测定位");
                     StaticMotorUtil_1.checkThisPosition = 1;
-                    testLocate(StaticMotorUtil_1.StaticMotor);
+                    testLocate(StaticMotorUtil_1.staticMotor);
                     break;
                 case "GETPOSITION":
-                    Log.d("静态电机1", "请求获得位置");
+                    Log.d(motor1Tag, "请求获得位置");
                     StaticMotorUtil_2.isPositionNeedCheck = false;
-                    getPosition(StaticMotorUtil_1.StaticMotor);
+                    getPosition(StaticMotorUtil_1.staticMotor);
                     break;
                 case "STOP":
-                    Log.d("静态电机1", "请求停止");
-                    stopMove(StaticMotorUtil_1.StaticMotor);
+                    Log.d(motor1Tag, "请求停止");
+                    stopMove(StaticMotorUtil_1.staticMotor);
                     break;
                 case "SENDHEARTBEAT":
-                    Log.d("静态电机1", "请求标定");
-                    initMotor(StaticMotorUtil_1.StaticMotor);
+                    Log.d(motor1Tag, "请求标定");
+                    initMotor(StaticMotorUtil_1.staticMotor);
                     break;
                 case "MOVEUP":
-                    Log.d("静态电机1", "请求上升");
-                    moveUp(StaticMotorUtil_1.StaticMotor);
+                    Log.d(motor1Tag, "请求上升");
+                    moveUp(StaticMotorUtil_1.staticMotor);
                     break;
                 case "MOVEDOWN":
-                    Log.d("静态电机1", "请求下降");
-                    moveDown(StaticMotorUtil_1.StaticMotor);
+                    Log.d(motor1Tag, "请求下降");
+                    moveDown(StaticMotorUtil_1.staticMotor);
                     break;
                 default:break;
             }
         }else if (intent.getIntExtra("index",0) == 2){//电机2
             switch (intent.getStringExtra("command")){
                 case "SETPOSITION":
-                    Log.d("静态电机2", "请求设置位置");
+                    Log.d(motor2Tag, "请求设置位置");
                     StaticMotorUtil_2.checkThisPosition = intent.getIntExtra("position",0);
                     StaticMotorUtil_2.direction = intent.getIntExtra("type",0);
                     setPosition(StaticMotorUtil_2,intent.getIntExtra("position",0));
                     break;
                 case "TESTLOCATE":
-                    Log.d("静态电机2", "请求连测定位");
+                    Log.d(motor2Tag, "请求连测定位");
                     StaticMotorUtil_2.checkThisPosition = 1;
-                    testLocate(StaticMotorUtil_2.StaticMotor);
+                    testLocate(StaticMotorUtil_2.staticMotor);
                     break;
                 case "GETPOSITION":
-                    Log.d("静态电机2", "请求获得位置");
+                    Log.d(motor2Tag, "请求获得位置");
                     StaticMotorUtil_2.isPositionNeedCheck = false;
-                    getPosition(StaticMotorUtil_2.StaticMotor);
+                    getPosition(StaticMotorUtil_2.staticMotor);
                     break;
                 case "STOP":
-                    Log.d("静态电机2", "请求停止");
-                    stopMove(StaticMotorUtil_2.StaticMotor);
+                    Log.d(motor2Tag, "请求停止");
+                    stopMove(StaticMotorUtil_2.staticMotor);
                     break;
                 case "SENDHEARTBEAT":
-                    Log.d("静态电机2", "请求发送心跳");
-                    sendHeartbeat(StaticMotorUtil_2.StaticMotor);
+                    Log.d(motor2Tag, "请求发送心跳");
+                    sendHeartbeat(StaticMotorUtil_2.staticMotor);
                     break;
                 case "MOVEUP":
-                    Log.d("静态电机2", "请求上升");
-                    moveUp(StaticMotorUtil_2.StaticMotor);
+                    Log.d(motor2Tag, "请求上升");
+                    moveUp(StaticMotorUtil_2.staticMotor);
                     break;
                 case "MOVEDOWN":
-                    Log.d("静态电机2", "请求下降");
-                    moveDown(StaticMotorUtil_2.StaticMotor);
+                    Log.d(motor2Tag, "请求下降");
+                    moveDown(StaticMotorUtil_2.staticMotor);
                     break;
                 default:break;
             }
@@ -490,6 +490,7 @@ public class StaticMotorService extends Service{
      */
     //运动到指定位置（训练前定位、设置界面）
     private void setPosition(StaticMotorUtil util,int position) {
+        ignoreLimitBroad = true;
         if (util.isSeat) {
             allowLimitBroad = true;  // 或废弃
         }
@@ -512,48 +513,41 @@ public class StaticMotorService extends Service{
             sendMsg[8] = dataByte;
             sendMsg[9] = checkByte;
             System.arraycopy(StaticMotorConstant.TILL, 0, sendMsg, 10, 2);
-            util.StaticMotor.sendByteArray(sendMsg);
+            util.staticMotor.sendByteArray(sendMsg);
             Log.d(TAG,"发送了设置位置:"+Arrays.toString(sendMsg));
         }
     }
     //标定流程(连测定位)--------正在使用
     private boolean initSet(StaticMotorUtil util){
         if (util.isSeat) {
-            allowLimitBroad = true;  // 或废弃
-            util.limitType = 0;
-            util.onRePosition = false;//是否标定完成正在复位
-            util.isRePositionSuccess = false;//是否复位成功
+            allowLimitBroad          = true;   // 或废弃
+            ignoreLimitBroad         = false;
+            util.limitType           = 0;
+            util.onRePosition        = false;  // 是否标定完成正在复位
+            util.isRePositionSuccess = false;  // 是否复位成功
         }
-        util.onInitSet = true;//设置当前处于标定流程状态
+        util.onInitSet = true;  // 设置当前处于标定流程状态
         util.onInitGet = false;
         //Step 1:发送心跳
-//        sendHeartbeat(util.StaticMotor);
         try {
             for (int i = 0; i < 3; i++) {
-                sendHeartbeat(util.StaticMotor);
+                sendHeartbeat(util.staticMotor);
                 Thread.sleep(500);
             }
             if (util.onMotorAlive) {
                 util.onMotorAlive = false;
                 //Step 2:发送下降
-                moveDown(util.StaticMotor);
-                try {
-                    Thread.sleep(1000 * 30);//等待复位完成
-                    if (util.onInitSet){
-                        util.onInitSet = false;
-                        Log.e(TAG, "Error1");
-                        return false;
-                    } else {
-                        if(!util.isRePositionSuccess){
-                            Log.e(TAG, "Error5");
-                        }
-                        return util.isRePositionSuccess;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                moveDown(util.staticMotor);
+                Thread.sleep(1000 * (long)30);  //等待复位完成
+                if (util.onInitSet){
                     util.onInitSet = false;
-                    Log.e(TAG, "Error2");
+                    Log.e(TAG, "Error1");
                     return false;
+                } else {
+                    if(!util.isRePositionSuccess){
+                        Log.e(TAG, "Error5");
+                    }
+                    return util.isRePositionSuccess;
                 }
             }else {
                 util.onInitSet = false;
@@ -562,58 +556,58 @@ public class StaticMotorService extends Service{
             }
         } catch (InterruptedException e) {
             util.onInitSet = false;
-            e.printStackTrace();
             Log.e(TAG, "Error4");
             return false;
         }
     }
     //训练前定位
     private void trainSet(StaticMotorUtil util,int position){
+        ignoreLimitBroad = true;
         util.onTrainSet = true;
         Log.d(TAG, "设置位置了！！！！！！！！！！！！！！！！！！");
         util.checkThisPosition = position;
         setPosition(util,position);
     }
     //运动到位置1--------------测试用
-    private void testLocate(SerialPortUtils StaticMotor) {
+    private void testLocate(SerialPortUtils staticMotor) {
         byte[] sendMsg = StaticMotorConstant.MOVE;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了测试移动:"+Arrays.toString(sendMsg));
     }
     //顶升（忽略位置）
-    private void moveUp(SerialPortUtils StaticMotor){
+    private void moveUp(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.STARTUP;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了上升请求:"+Arrays.toString(sendMsg));
     }
     //下降(连测定位)（忽略位置）
-    private void moveDown(SerialPortUtils StaticMotor){
+    private void moveDown(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.STARTDOWN;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了下降请求"+Arrays.toString(sendMsg));
     }
     //停止
-    private void stopMove(SerialPortUtils StaticMotor){
+    private void stopMove(SerialPortUtils staticMotor){
         byte[] sendMsg = StaticMotorConstant.STOP;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了停止请求"+Arrays.toString(sendMsg));
     }
     //标定(连测定位)（向“上次移动的相反方向”移动至限位后，完成标定，须手动回到标定前位置）
-    private void initMotor(SerialPortUtils StaticMotor){
+    private void initMotor(SerialPortUtils staticMotor){
         //Step 3:发送标定
         byte[] sendMsg = StaticMotorConstant.INIT;
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了标定请求"+Arrays.toString(sendMsg));
     }
     //限位通知
-    private void sendLimit(SerialPortUtils StaticMotor, boolean isTop) {
+    private void sendLimit(SerialPortUtils staticMotor, boolean isTop) {
         byte[] sendMsg;
         if (isTop) {
             sendMsg = StaticMotorConstant.TOP_LIMIT;
         } else {
             sendMsg = StaticMotorConstant.BOT_LIMIT;
         }
-        StaticMotor.sendByteArray(sendMsg);
+        staticMotor.sendByteArray(sendMsg);
         Log.d(TAG,"发送了限位通知"+Arrays.toString(sendMsg));
     }
     //标定流程(连测定位)-----------------暂时废弃
@@ -621,22 +615,21 @@ public class StaticMotorService extends Service{
     private void initSet2(StaticMotorUtil util){
         util.onInitSet = true;//设置当前处于标定流程状态
         //Step 1:发送心跳
-        sendHeartbeat(util.StaticMotor);
+        sendHeartbeat(util.staticMotor);
         try {
             for (int i = 0; i < 3; i++) {
                 Thread.sleep(500);
-                sendHeartbeat(util.StaticMotor);
+                sendHeartbeat(util.staticMotor);
             }
             if (util.onMotorAlive) {
                 util.onMotorAlive = false;
                 //Step 2:发送下降
-                moveDown(util.StaticMotor);
+                moveDown(util.staticMotor);
             }else {
                 locateBroadcast.putExtra("initlocate",false);
                 sendBroadcast(locateBroadcast);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
             locateBroadcast.putExtra("initlocate",false);
             sendBroadcast(locateBroadcast);
         }
@@ -657,23 +650,23 @@ public class StaticMotorService extends Service{
             StaticMotorUtil_1.receiveMsg = new byte[size];
             for (int i = 0; i < 2; i++) {
                 StaticMotorUtil_1.receiveMsg[i] = buffer[i];
-                StaticMotorUtil_1.receive_Head[i] = buffer[i];
+                StaticMotorUtil_1.receiveHead[i] = buffer[i];
             }
             if (size - 2 - 2 >= 0)
                 System.arraycopy(buffer, 2, StaticMotorUtil_1.receiveMsg, 2, size - 2 - 2);
             for (int i = size - 2; i < size; i++) {
                 StaticMotorUtil_1.receiveMsg[i] = buffer[i];
-                StaticMotorUtil_1.receive_Till[i + 2 - size] = buffer[i];
+                StaticMotorUtil_1.receiveTill[i + 2 - size] = buffer[i];
             }
 
-            if (Arrays.equals(StaticMotorUtil_1.receive_Head, receive_Flag) && Arrays.equals(StaticMotorUtil_1.receive_Till, receive_Flag)) {
+            if (Arrays.equals(StaticMotorUtil_1.receiveHead, receiveFlag) && Arrays.equals(StaticMotorUtil_1.receiveTill, receiveFlag)) {
                 StaticMotorUtil_1.responseMsg = StaticMotorUtil_1.receiveMsg;
                 analyzeMsg(StaticMotorUtil_1);
                 //初始化
-                StaticMotorUtil_1.receive_Head[0] = 0;
-                StaticMotorUtil_1.receive_Head[1] = 0;
-                StaticMotorUtil_1.receive_Till[0] = 0;
-                StaticMotorUtil_1.receive_Till[1] = 0;
+                StaticMotorUtil_1.receiveHead[0] = 0;
+                StaticMotorUtil_1.receiveHead[1] = 0;
+                StaticMotorUtil_1.receiveTill[0] = 0;
+                StaticMotorUtil_1.receiveTill[1] = 0;
                 StaticMotorUtil_1.receiveMsg = null;
                 StaticMotorUtil_1.responseMsg = null;
             } else {
@@ -691,23 +684,23 @@ public class StaticMotorService extends Service{
             StaticMotorUtil_2.receiveMsg = new byte[size];
             for (int i = 0; i < 2; i++) {
                 StaticMotorUtil_2.receiveMsg[i] = buffer[i];
-                StaticMotorUtil_2.receive_Head[i] = buffer[i];
+                StaticMotorUtil_2.receiveHead[i] = buffer[i];
             }
             if (size - 2 - 2 >= 0)
                 System.arraycopy(buffer, 2, StaticMotorUtil_2.receiveMsg, 2, size - 2 - 2);
             for (int i = size - 2; i < size; i++) {
                 StaticMotorUtil_2.receiveMsg[i] = buffer[i];
-                StaticMotorUtil_2.receive_Till[i + 2 - size] = buffer[i];
+                StaticMotorUtil_2.receiveTill[i + 2 - size] = buffer[i];
             }
 
-            if (Arrays.equals(StaticMotorUtil_2.receive_Head, receive_Flag) && Arrays.equals(StaticMotorUtil_2.receive_Till, receive_Flag)) {
+            if (Arrays.equals(StaticMotorUtil_2.receiveHead, receiveFlag) && Arrays.equals(StaticMotorUtil_2.receiveTill, receiveFlag)) {
                 StaticMotorUtil_2.responseMsg = StaticMotorUtil_2.receiveMsg;
                 analyzeMsg(StaticMotorUtil_2);
                 //初始化
-                StaticMotorUtil_2.receive_Head[0] = 0;
-                StaticMotorUtil_2.receive_Head[1] = 0;
-                StaticMotorUtil_2.receive_Till[0] = 0;
-                StaticMotorUtil_2.receive_Till[1] = 0;
+                StaticMotorUtil_2.receiveHead[0] = 0;
+                StaticMotorUtil_2.receiveHead[1] = 0;
+                StaticMotorUtil_2.receiveTill[0] = 0;
+                StaticMotorUtil_2.receiveTill[1] = 0;
                 StaticMotorUtil_2.receiveMsg = null;
                 StaticMotorUtil_2.responseMsg = null;
             } else {
@@ -722,23 +715,30 @@ public class StaticMotorService extends Service{
     public class InitLocateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, @NonNull Intent intent) {
+            if (ignoreLimitBroad) {
+                return;
+            }
             String limitType = intent.getStringExtra("seat_motor");
             // 当两次触发间隔小于1000ms，忽略本次广播
-            if (System.currentTimeMillis() - lastActiveTime < 1000) return;
+            if (System.currentTimeMillis() - lastActiveTime < LIMIT_ACTIVE_DELAY_MILLIS) {
+                return;
+            }
             // 当触发类型为空 或 与上次触发类型相同（同为顶部或同为底部），忽略本次广播
-            if (limitType == null || limitType.equals(lastLimitType)) return;
+            if (limitType == null || limitType.equals(lastLimitType)) {
+                return;
+            }
 
             lastLimitType = intent.getStringExtra("seat_motor");  // 将当前时间设为上次触发时间，阻挡触发过快广播
             lastActiveTime = System.currentTimeMillis();  // 将当前触发类型设为上次触发类型，阻挡相同类型广播
 
-            if (limitType.equals("top_limit")) {
+            if ("top_limit".equals(limitType)) {
                 // 正常触发顶部广播
-                sendLimit(StaticMotorUtil_1.StaticMotor, true);
+                sendLimit(StaticMotorUtil_1.staticMotor, true);
                 StaticMotorUtil_1.limitType = 1;
                 Log.e(TAG,"StaticMotor广播：正常top_limit");
-            } else if (limitType.equals("bot_limit")) {
+            } else if ("bot_limit".equals(limitType)) {
                 // 正常触发底部广播
-                sendLimit(StaticMotorUtil_1.StaticMotor, false);
+                sendLimit(StaticMotorUtil_1.staticMotor, false);
                 StaticMotorUtil_1.limitType = 2;
                 Log.e(TAG,"StaticMotor广播：正常bot_limit");
             }
