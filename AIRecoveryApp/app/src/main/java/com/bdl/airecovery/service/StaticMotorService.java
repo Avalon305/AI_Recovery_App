@@ -521,7 +521,7 @@ public class StaticMotorService extends Service{
     private boolean initSet(StaticMotorUtil util){
         if (util.isSeat) {
             allowLimitBroad          = true;   // 或废弃
-            ignoreLimitBroad         = false;
+//            ignoreLimitBroad         = false;  // 需要等待至发送下降指令后解开广播
             util.limitType           = 0;
             util.onRePosition        = false;  // 是否标定完成正在复位
             util.isRePositionSuccess = false;  // 是否复位成功
@@ -538,6 +538,10 @@ public class StaticMotorService extends Service{
                 util.onMotorAlive = false;
                 //Step 2:发送下降
                 moveDown(util.staticMotor);
+                Thread.sleep(500);
+                if (util.isSeat) {
+                    ignoreLimitBroad = false;
+                }
                 Thread.sleep(1000 * (long)30);  //等待复位完成
                 if (util.onInitSet){
                     util.onInitSet = false;
